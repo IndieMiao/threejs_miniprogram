@@ -160,7 +160,7 @@ function getRandomTextSize()
  
 //  cubeMaterial.color.set('#ffb9df')
  cubeMaterial.transmission = 0.9
- cubeMaterial.opacity= 0.8
+ cubeMaterial.opacity= 0.7
  cubeMaterial.ior= 1.25
 //  cubeMaterial.emissive.set('#ffb9df')
  cubeMaterial.emissive.set('#ffb9bc')
@@ -171,7 +171,7 @@ function getRandomTextSize()
  cubeMaterial.reflectivity = 0.2
  cubeMaterial.thickness= 4.5
  cubeMaterial.envMap = environmentMap;
- cubeMaterial.envMapIntensity = 2;
+ cubeMaterial.envMapIntensity = 1.2;
  cubeMaterial.clearcoat = 2;
  cubeMaterial.clearcoatMap= environmentMap;
 gui.add(cubeMaterial, 'metalness').min(0).max(1).step(0.0001)
@@ -194,12 +194,11 @@ gui.add(cubeMaterial,'emissiveIntensity').min(0).max(1).step(0.001)
  
 //  let mixer = null
 
-var beveledCube;
-var isFinished= false;
+let beveledCube =null;
 
  
  gltfLoader.load(
-     '/models/bevelCube.gltf',
+     '/models/bevelCube2.gltf',
      (gltf) =>
      {
         beveledCube = gltf.scene.children[0];
@@ -208,7 +207,6 @@ var isFinished= false;
          scene.add(gltf.scene)
          beveledCube.material = cubeMaterial
         gltf.scene.position.set(0,0.15,0.22)
-        isFinished = true;
         updateAllMaterials();
      }
  )
@@ -363,7 +361,7 @@ const tick = () =>
     controls.update()
     
     //cube animation 
-    if(isFinished)
+    if(beveledCube!=null)
     {
         beveledCube.rotation.x += rotationSpeed
         beveledCube.rotation.y += rotationSpeed
