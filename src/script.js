@@ -117,7 +117,8 @@ const textMaterialIns = new THREE.MeshBasicMaterial()
              textGeometry.translate(px,0.1,pz) ;
              text.material = textMaterialIns ;
              text.geometry = textGeometry ;
-             scene.add(text) ;
+            // temperaly display background
+            //  scene.add(text) ;
              textList[i] = text ;
          }
          //生成文本移动速度
@@ -204,7 +205,8 @@ let beveledCube =null;
         beveledCube = gltf.scene.children[0];
          const scale =0.3 
          gltf.scene.scale.set(scale, scale, scale) 
-         scene.add(gltf.scene)
+         // temperaly display background
+        //  scene.add(gltf.scene)
          beveledCube.material = cubeMaterial
         gltf.scene.position.set(0,0.15,0.22)
         updateAllMaterials();
