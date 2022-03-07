@@ -13,6 +13,9 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { floorPowerOfTwo } from 'three/src/math/mathutils'
 import cubeVertexShader from './shaders/water/cubevertex.glsl'
 import cubeFragmentShader from './shaders/water/cubefragment.glsl'
+import cube2VertexShader from './shaders/cube2vertex.glsl'
+import cube2FragmentShader from './shaders/cube2fragment.glsl'
+
 
 
 /**
@@ -52,23 +55,6 @@ const updateAllMaterials = () =>
     }
     )
 }
-
-/**
- * Light
- */
-
-const light1 = new THREE.PointLight()
-light1.position.set (-0.1,0.25,0)
-
-const light2 = new THREE.PointLight()
-light2.position.set (0.1,0.05,0.2)
-
-const light3 = new THREE.PointLight()
-light3.position.set (-0.1,0.0,0.3)
-
-scene.add(light1)
-scene.add(light2)
-scene.add(light3)
 
 
 /**
@@ -141,78 +127,6 @@ function getRandomTextSize()
     var textSize =  Math.random()*minsize +minsize;
     return textSize ;
 }
-/**
- * Cube
- */
-//  const cubesize = 0.04;
-//  const cubesize = 1;
-//  const cubeGeo = new THREE.BoxGeometry( cubesize, cubesize, cubesize )
- const cubeMaterial = new THREE.MeshPhysicalMaterial( )
- cubeMaterial.transparent = true
- cubeMaterial.side = THREE.DoubleSide
-
-
- const cube = new THREE.Mesh()
- cube.position.set(0,0.15,0.22)
-//  scene.add( cube )
-
- /**
-  * Material Cube
-  */
- 
-//  cubeMaterial.color.set('#ffb9df')
- cubeMaterial.transmission = 0.9
- cubeMaterial.opacity= 0.7
- cubeMaterial.ior= 1.25
-//  cubeMaterial.emissive.set('#ffb9df')
- cubeMaterial.emissive.set('#ffb9bc')
- cubeMaterial.emissiveIntensity = 0.1
-
- cubeMaterial.roughness= 0.45
- cubeMaterial.metalness= 0.06 
- cubeMaterial.reflectivity = 0.2
- cubeMaterial.thickness= 4.5
- cubeMaterial.envMap = environmentMap;
- cubeMaterial.envMapIntensity = 1.2;
- cubeMaterial.clearcoat = 2;
- cubeMaterial.clearcoatMap= environmentMap;
-gui.add(cubeMaterial, 'metalness').min(0).max(1).step(0.0001)
-gui.add(cubeMaterial,'roughness').min(0).max(1).step(0.001)
-gui.add(cubeMaterial,'ior').min(1).max(2).step(0.001)
-gui.add(cubeMaterial,'transmission').min(0).max(1).step(0.001)
-gui.add(cubeMaterial,'opacity').min(0).max(1).step(0.001)
-gui.add(cubeMaterial,'thickness').min(0).max(5).step(0.001)
-gui.add(cubeMaterial,'reflectivity').min(0).max(1).step(0.001)
-gui.add(cubeMaterial,'emissiveIntensity').min(0).max(1).step(0.001)
-
-/**
- * Models
- */
- const dracoLoader = new DRACOLoader()
- dracoLoader.setDecoderPath('/draco/')
- 
- const gltfLoader = new GLTFLoader()
- gltfLoader.setDRACOLoader(dracoLoader)
- 
-//  let mixer = null
-
-let beveledCube =null;
-
- 
- gltfLoader.load(
-     '/models/bevelCube2.gltf',
-     (gltf) =>
-     {
-        beveledCube = gltf.scene.children[0];
-         const scale =0.3 
-         gltf.scene.scale.set(scale, scale, scale) 
-         // temperaly display background
-        //  scene.add(gltf.scene)
-         beveledCube.material = cubeMaterial
-        gltf.scene.position.set(0,0.15,0.22)
-        updateAllMaterials();
-     }
- )
 
  /**
   * New Cube Plane
