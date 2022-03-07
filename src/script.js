@@ -21,7 +21,7 @@ import cubeFragmentShader from './shaders/water/cubefragment.glsl'
 // Debug
 const gui = new dat.GUI({ width: 220 })
 const debugObject = {}
-gui.hide()
+// gui.hide()
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -218,18 +218,29 @@ let beveledCube =null;
   * New Cube Plane
   */
 
- //Geometry
- const cubePlaneGeometry = new THREE.PlaneGeometry(0.5,0.5,64,64)
- const cubePlaneMaterial = new THREE.ShaderMaterial(
-     {
-         vertexShader: cubeVertexShader,
-         fragmentShader: cubeFragmentShader,
-         unifroms:
-         {
-            iGlobalTime:{value:0}
-         }
-     }
- )
+    //Geometry
+    var tuniform = {
+            iGlobalTime:{type:'f',value:0.01},
+            iChannel0: { value: environmentMap}
+    };
+    const cubePlaneGeometry = new THREE.PlaneGeometry(0.15,0.15,64,64)
+    const cubePlaneMaterial = new THREE.ShaderMaterial(
+        {
+            vertexShader: cubeVertexShader,
+            fragmentShader: cubeFragmentShader,
+            side:THREE.DoubleSide,
+            uniforms:tuniform
+        }
+    )
+    cubePlaneMaterial.transparent = true
+    // cubePlaneMaterial.opacity = 0.2
+    cubePlaneMaterial.blending = THREE.AdditiveBlending
+    // Mesh
+    const cubePlane = new THREE.Mesh(cubePlaneGeometry, cubePlaneMaterial)
+    cubePlane.rotation.x = - Math.PI * 0.5
+    cubePlane.position.y = 0.1
+    cubePlane.position.z = 0.19
+    scene.add(cubePlane)
 
 /**
  * Water
@@ -327,15 +338,13 @@ scene.add(camera)
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
+controls.enableZoom = false
 controls.enablePan = false
+controls.enableRotate = false
 controls.maxAzimuthAngle =0 
 controls.minAzimuthAngle =0
-// controls.maxPolarAngle = 0
-// controls.minPolarAngle = 0
 camera.position.set(0, 0.462, 0.244)
-// controls.enableRotate = false
 
-controls.enableZoom = false
 
 /**
  * Renderer
@@ -416,6 +425,7 @@ const tick = () =>
 
     // Render
     renderer.render(scene, camera)
+    tuniform.iGlobalTime.value  = elapsedTime
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)

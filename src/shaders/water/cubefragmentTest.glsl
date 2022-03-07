@@ -1,13 +1,15 @@
-#define MAX_BOUNCES 2
-#define ABSORB		vec3(0, 0, 0)
-#define GAMMA
-
 uniform float iGlobalTime;
-uniform samplerCube iChannel0;
 
 varying vec2 vUv;
 
 
+void main(void)
+{
+    
+
+	gl_FragColor  = vec4( 2.0,1.0,0.0,1.0);
+}
+/*
 
 float capIntersect( in vec3 ro, in vec3 rd, in vec3 pa, in vec3 pb, in float r )
 {
@@ -45,7 +47,6 @@ float capIntersect( in vec3 ro, in vec3 rd, in vec3 pa, in vec3 pb, in float r )
     }
     return -1.;
 }
-
 
 // intersect a ray with a rounded box
 // http://iquilezles.org/www/articles/intersectors/intersectors.htm
@@ -197,22 +198,24 @@ bool intersectSceneFromInside( in vec3 ro, in vec3 rd, float tmax, out float oDi
 
 vec3 getSkyColor(vec3 rd)
 {
-    vec3 col = textureCube(iChannel0, rd).rgb;
-    // #if GAMMA
+    vec3 col = texture(iChannel0, rd).rgb;
+    #if GAMMA
     	col = pow(col, vec3(2.2));
-    // #endif
+    #endif
     return col;
 }
 
 
 
+#define MAX_BOUNCES 3
+#define ABSORB		vec3(0, 0, 0)
 
 vec4 Render(in vec3 ro, in vec3 rd, in float dist, float cref, in objDec inner, in objDec outter)
 {
     float sgn = 1.;
     vec3  col = vec3(0);
     vec3  rel = vec3(1);
-    float transp = 1.;
+    float transp = 0.99;
     vec3  absorb = ABSORB;
     for(int i = 0; i < MAX_BOUNCES; i++)
     {
@@ -294,17 +297,10 @@ vec3 desaturate(in vec3 c, in float a)
 }
 */
 
+
+
 /*
-void main(void)
-{
-    
-
-	gl_FragColor  = vec4( 2.0,1.0,0.0,1.0);
-}
-
-*/
-
-void main( void)
+void main( )
 {
     
     float tt = iGlobalTime * 0.95;
@@ -353,9 +349,12 @@ void main( void)
             
  //   tot = desaturate(tot, -0.4);
 //    tot = vignette(tot, fragCoord / iResolution.xy, 1.2);
-    // #if GAMMA
+    #if GAMMA
     	tot = pow(tot, vec3(1. / 2.2));
-    // #endif
+    #endif
 
 	gl_FragColor  = vec4( tot, alpha );
 }
+
+*/
+
