@@ -6,9 +6,7 @@
 #else
 #define AA
 #endif
-
 #define GAMMA 0
-
 
 // my modified round intersection from https://www.shadertoy.com/view/wsyyWw
 
@@ -129,6 +127,12 @@ struct objDec
     
 const float offset = 4.;
 
+float remap2(float value, float low1, float high1, float low2,float  high2)
+{
+   float remapvalue = 0.0;
+   remapvalue = low2 + (value - low1) * (high2 - low2) / (high1 - low1);
+   return remapvalue;
+}
         
 bool intersectObjFromInside( in vec3 ro, in vec3 rd, float tmax, out float oDis, out vec3 oNor, in objDec o)
 {
@@ -206,7 +210,7 @@ vec3 getSkyColor(vec3 rd)
 #define MAX_BOUNCES 3
 #define ABSORB		vec3(0, 0, 0)
 
-vec3 Render(in vec3 ro, in vec3 rd, in float dist, float cref, in objDec inner, in objDec outter)
+vec4 Render(in vec3 ro, in vec3 rd, in float dist, float cref, in objDec inner, in objDec outter)
 {
     float sgn = 1.;
     vec3  col = vec3(0);
@@ -229,8 +233,9 @@ vec3 Render(in vec3 ro, in vec3 rd, in float dist, float cref, in objDec inner, 
         
         if(!inter)
         {
-            col += rel * getSkyColor(rd);
-            return col;
+        // add and remove background here
+            //col += rel * getSkyColor(rd);
+            return  vec4( col,0. );
         }
         vec3 rabs = mix(absorb, vec3(0), (sgn + 1.) / 2.);
         vec3 beerlamb = exp(-rabs * d);
@@ -259,7 +264,12 @@ vec3 Render(in vec3 ro, in vec3 rd, in float dist, float cref, in objDec inner, 
         }        
     }
     col += rel * getSkyColor(rd);
-    return col;
+    //col += rel;
+    return vec4( col, 1.0 );
+}
+
+float map2(float value, float min1, float max1, float min2, float max2) {
+  return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
 }
 
 mat3 setCamera( in vec3 ro, in vec3 ta )
@@ -290,48 +300,38 @@ vec3 desaturate(in vec3 c, in float a)
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     
-  //  float t = iTime * 0.95;
-    float t =3.14;
-    float v = (cos(t) + 1.) * 0.5;
+    float tt = iTime * 0.95;
+    float t = 3.14;
+    float v = map2(cos(tt),-1.,1.,0.,0.3);
+    float v2 = map2(cos(tt*1.68),-1.,1.,0.,1.);
     
     objDec inner, outter;
     outter.r = v * 0.75 + 0.1;
     outter.s   = (1.-v) * 0.75;
     outter.m = fromEuler(vec3(t * 0.9 + 0.2,  t * 0.6 + 1.2, t * 0.5 + 0.9));
-    inner.r  = (1.-v) * 0.35 + 0.1;
-    inner.s	   = v * 0.35;
+    inner.r  = (1.-v2) * 0.35 + 0.1;
+    inner.s	   = v2 * 0.35;
     inner.m = fromEuler(vec3(t * 0.8 + 1.5,  t * 0.4 + 0.7, t * 0.7 + 2.3));
 
   
 	vec3 tot = vec3(0.0);   
-/* remove aa
-#ifdef AA
-	vec2 rook[4];
-    rook[0] = vec2( 1./8., 3./8.);
-    rook[1] = vec2( 3./8.,-1./8.);
-    rook[2] = vec2(-1./8.,-3./8.);
-    rook[3] = vec2(-3./8., 1./8.);
-    for( int n=0; n<4; ++n )
-    {
-        // pixel coordinates
-        vec2 o = rook[n];
-        vec2 p = (-iResolution.xy + 2.0*(fragCoord+o))/iResolution.y;
-#else //AA
-*/
-        vec2 p = (-iResolution.xy + 2.0*fragCoord)/iResolution.y;
+
+    vec2 p = (-iResolution.xy + 2.0*fragCoord)/iResolution.y;
         
-//#endif //AA
  
         // camera
         
-        float theta	= radians(360.)*(iMouse.x/iResolution.x-0.5) + radians(180.);
-        float phi	= radians(90.)*(iMouse.y/iResolution.y-0.5) + radians(90.);
-        vec3 ro = 2. * vec3( sin(phi)*cos(theta),cos(phi),sin(phi)*sin(theta));
+        //float theta	= radians(360.)*(iMouse.x/iResolution.x-0.5) + radians(180.);
+        float theta	= tt*0.5;
+        //float phi	= radians(90.)*(iMouse.y/iResolution.y-0.5) + radians(90.);
+        float phi = 5.0;
+        vec3 ro = 3. * vec3( sin(phi)*cos(theta),cos(phi),sin(phi)*sin(theta));
         //vec3 ro = vec3(0.0,.2,4.0);
         vec3 ta = vec3( 0 );
         // camera-to-world transformation
         mat3 ca = setCamera( ro, ta );
         //vec3 cd = ca[2];    
+        float alpha = 0.0;
         
         vec3 rd =  ca*normalize(vec3(p,1.5));        
         
@@ -339,16 +339,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         col.r = Render(ro, rd, 12.,0.67, inner, outter).r;
         col.g = Render(ro, rd, 12.,0.7, inner, outter).g;
         col.b = Render(ro, rd, 12.,0.73, inner, outter).b;
+        alpha = Render(ro, rd, 12.,0.7, inner, outter).a;
         
       	tot += col;
             
-/*
-#ifdef AA
-    }
-    tot /= 4.;
-    
-#endif
-*/
     
  //   tot = desaturate(tot, -0.4);
 //    tot = vignette(tot, fragCoord / iResolution.xy, 1.2);
@@ -356,5 +350,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     	tot = pow(tot, vec3(1. / 2.2));
     #endif
 
-	fragColor = vec4( tot, 1.0 );
+	fragColor = vec4( tot, alpha );
 }
