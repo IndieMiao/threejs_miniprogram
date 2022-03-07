@@ -11,14 +11,10 @@ uniform sampler2D iChannel0;
 uniform sampler2D iChannel1;
 
 varying vec2 vUv;
-// Created by David Gallardo - xjorma/2020
-// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0
-
-
 
 // my modified round intersection from https://www.shadertoy.com/view/wsyyWw
-
 // intersect capsule : http://www.iquilezles.org/www/articles/intersectors/intersectors.htm
+
 float capIntersect( in vec3 ro, in vec3 rd, in vec3 pa, in vec3 pb, in float r )
 {
     vec3  ba = pb - pa;
@@ -305,7 +301,7 @@ vec3 desaturate(in vec3 c, in float a)
 }
 */
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
+void main( out vec4 fragColor, in vec2 fragCoord )
 {
     
     float tt = iGlobalTime * 0.95;
