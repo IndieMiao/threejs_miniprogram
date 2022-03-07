@@ -47,16 +47,6 @@ const environmentMap = cubeTextureLoader.load(
 )
 scene.background = environmentMap
 
-const updateAllMaterials = () =>
-{
-    scene.traverse((child) =>
-    {
-        console.log(child)
-    }
-    )
-}
-
-
 /**
  * 3d Font
  */
@@ -302,17 +292,8 @@ const tick = () =>
 
     // Update controls
     controls.update()
-    
-    //cube animation 
-    if(beveledCube!=null)
-    {
-        beveledCube.rotation.x += rotationSpeed
-        beveledCube.rotation.y += rotationSpeed
-        beveledCube.rotation.z += rotationSpeed
-    }
 
     //text animation
-
     for(var i=0;i<textList.length;i++)
     {
         var t = textList[i] ;
