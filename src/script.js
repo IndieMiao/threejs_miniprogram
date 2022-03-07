@@ -144,7 +144,34 @@ function getRandomTextSize()
     cubePlane.rotation.x = - Math.PI * 0.5
     cubePlane.position.y = 0.1
     cubePlane.position.z = 0.19
-    scene.add(cubePlane)
+    // scene.add(cubePlane)
+
+/**
+  * New Cube Plane 2
+  */
+
+    //Geometry
+    var tuniform2 = {
+        iGlobalTime:{type:'f',value:0.01},
+};
+const cubePlane2Geometry = new THREE.PlaneGeometry(0.1,0.1,2,2)
+const cubePlane2Material = new THREE.ShaderMaterial(
+    {
+        vertexShader: cube2VertexShader,
+        fragmentShader: cube2FragmentShader,
+        side:THREE.DoubleSide,
+        uniforms:tuniform2
+    }
+)
+cubePlane2Material.transparent = true
+// cubePlaneMaterial.opacity = 0.2
+cubePlane2Material.blending = THREE.AdditiveBlending
+// Mesh
+const cubePlane2 = new THREE.Mesh(cubePlane2Geometry, cubePlane2Material)
+cubePlane2.rotation.x = - Math.PI * 0.5
+cubePlane2.position.y = 0.1
+cubePlane2.position.z = 0.19
+scene.add(cubePlane2)
 
 /**
  * Water
@@ -313,6 +340,8 @@ const tick = () =>
     // var waterColorOffset = (Math.sin(elapsedTime * watercoloroffsetSpeed)+0.7)*0.1;
     // waterMaterial.uniforms.uColorOffset.value = waterColorOffset
 
+    tuniform.iGlobalTime.value  = elapsedTime
+    tuniform2.iGlobalTime.value  = elapsedTime
 
     //log camera position and camera angle
     // console.log(camera.position)
@@ -320,7 +349,6 @@ const tick = () =>
 
     // Render
     renderer.render(scene, camera)
-    tuniform.iGlobalTime.value  = elapsedTime
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
