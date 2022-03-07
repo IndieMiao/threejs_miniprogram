@@ -11,6 +11,8 @@ import typefaceFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { floorPowerOfTwo } from 'three/src/math/mathutils'
+import cubeVertexShader from './shaders/water/cubevertex.glsl'
+import cubeFragmentShader from './shaders/water/cubefragment.glsl'
 
 
 /**
@@ -90,7 +92,6 @@ const textMaterialIns = new THREE.MeshBasicMaterial()
      '/fonts/helvetiker_regular.typeface.json',
      (font) =>
      {
-
          // Material
          for(var i=0;i<texts.length;i++)
          {
@@ -210,6 +211,23 @@ let beveledCube =null;
          beveledCube.material = cubeMaterial
         gltf.scene.position.set(0,0.15,0.22)
         updateAllMaterials();
+     }
+ )
+
+ /**
+  * New Cube Plane
+  */
+
+ //Geometry
+ const cubePlaneGeometry = new THREE.PlaneGeometry(0.5,0.5,64,64)
+ const cubePlaneMaterial = new THREE.ShaderMaterial(
+     {
+         vertexShader: cubeVertexShader,
+         fragmentShader: cubeFragmentShader,
+         unifroms:
+         {
+            iGlobalTime:{value:0}
+         }
      }
  )
 
