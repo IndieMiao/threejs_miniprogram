@@ -87,34 +87,6 @@ directionalLight.position.set(1, 1, 1).normalize();
 textPlaneMaterial.blending = THREE.AdditiveBlending;
 scene.add(directionalLight);
 
- /**
-  * New Cube Plane
-  */
-
-    //Geometry
-    var tuniform = {
-            iGlobalTime:{type:'f',value:0.01},
-            iChannel0: { value: environmentMap}
-    };
-    const cubePlaneGeometry = new THREE.PlaneGeometry(0.15,0.15,64,64)
-    const cubePlaneMaterial = new THREE.ShaderMaterial(
-        {
-            vertexShader: cubeVertexShader,
-            fragmentShader: cubeFragmentShader,
-            side:THREE.DoubleSide,
-            uniforms:tuniform
-        }
-    )
-    cubePlaneMaterial.transparent = true
-    // cubePlaneMaterial.opacity = 0.2
-    cubePlaneMaterial.blending = THREE.AdditiveBlending
-    // Mesh
-    const cubePlane = new THREE.Mesh(cubePlaneGeometry, cubePlaneMaterial)
-    cubePlane.rotation.x = - Math.PI * 0.5
-    cubePlane.position.y = 0.1
-    cubePlane.position.z = 0.19
-    // scene.add(cubePlane)
-
 /**
   * New Cube Plane 2
   */
