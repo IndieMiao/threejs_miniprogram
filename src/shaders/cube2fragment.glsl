@@ -109,6 +109,6 @@ void main(void)
      ct*=ot;if(ct<=0.||cd>128.)break;//update trasmission and break if needed
   }
   fc -= GLOFFSET;
-  fc = max(vec3(0),fc);
+  fc = max(vec3(0),fc)*1.2;
   gl_FragColor = vec4(fc,1);//output colour
 }

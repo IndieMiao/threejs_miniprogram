@@ -154,7 +154,7 @@ function getRandomTextSize()
     var tuniform2 = {
         iGlobalTime:{type:'f',value:0.01},
 };
-const cubePlane2Geometry = new THREE.PlaneGeometry(0.1,0.1,2,2)
+const cubePlane2Geometry = new THREE.PlaneGeometry(0.08,0.08,2,2)
 const cubePlane2Material = new THREE.ShaderMaterial(
     {
         vertexShader: cube2VertexShader,

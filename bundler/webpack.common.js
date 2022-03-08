@@ -60,7 +60,7 @@ module.exports = {
 
             // Images
             {
-                test: /\.(jpg|png|gif|svg)$/,
+                test: /\.(jpg|png|gif|svg|mp4)$/,
                 type: 'asset/resource',
                 generator:
                 {
@@ -75,6 +75,7 @@ module.exports = {
             //         }
             //     ]
             // },
+
             // Fonts
             {
                 test: /\.(ttf|eot|woff|woff2)$/,
