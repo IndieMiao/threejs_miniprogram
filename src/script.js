@@ -48,75 +48,10 @@ const environmentMap = cubeTextureLoader.load(
 scene.background = environmentMap
 
 /**
- * 3d Font
+ * Text intro
  */
 
- const fontLoader = new FontLoader()
 
-
-var textsize =0.02
-var texts = ["testtext01","testtext02","testtext03","testtext04","testtext05","testtext06","testtext07",
-"testtext08",
-"testtext08",
-"testtext08",
-"testtext08",
-] ;
-var textList =[];
-
-const textMaterialIns = new THREE.MeshBasicMaterial()
- fontLoader.load(
-     '/fonts/helvetiker_regular.typeface.json',
-     (font) =>
-     {
-         // Material
-         for(var i=0;i<texts.length;i++)
-         {
-             var text = new THREE.Mesh()
-             textsize = getRandomTextSize() ;
-             var textGeometry = new TextGeometry(
-                 texts[i],
-                 {
-                     font:font,
-                     size: textsize,
-                     height: 0.000001,
-                     curveSegments: 5,
-                     bevelEnabled: true,
-                     bevelThickness: 0.000001,
-                     bevelSize: 0.000001,
-                     bevelOffset: 0,
-                     bevelSegments: 5
-                 }
-             )
-             textGeometry.center()
-             textGeometry.rotateX(-Math.PI/2)
-             var px = getRandomPX();
-             var pz =  Math.round(Math.random()*10)/10 - 0.6 ;
-             textGeometry.translate(px,0.1,pz) ;
-             text.material = textMaterialIns ;
-             text.geometry = textGeometry ;
-            // temperaly display background
-            //  scene.add(text) ;
-             textList[i] = text ;
-         }
-         //生成文本移动速度
-         generateRandomSpeeds() ;
-     }
- )
-//  textMaterialIns.transparent = true;
- textMaterialIns.opacity = 0.3
-
-function getRandomPX()
-{
-    var px = Math.round(Math.random()*3)/10 - 0.15 ;
-    return px ;
-}
-
-function getRandomTextSize()
-{
-    const minsize =0.013
-    var textSize =  Math.random()*minsize +minsize;
-    return textSize ;
-}
 
  /**
   * New Cube Plane
@@ -290,24 +225,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
  * Animate
  */
 const clock = new THREE.Clock()
-const rotationSpeed = 0.005
-const maxtextSpeed = 0.008
-const mintextSpeed = maxtextSpeed*0.1
 const watercoloroffsetSpeed = 0.01;
-
-var upPz = -0.6 ;
-var downPz = 1 ;
-var textSpeeds = []
-function generateRandomSpeeds()
-{
-    for(var i=0 ;i<textList.length;i++)
-    {
-        var speed = Math.random()*mintextSpeed+mintextSpeed ;
-        speed = Math.max(speed,mintextSpeed)
-        speed = Math.min(speed,maxtextSpeed)
-        textSpeeds[i] = speed ;
-    }
-}
 
 
 const tick = () =>
@@ -319,21 +237,6 @@ const tick = () =>
 
     // Update controls
     controls.update()
-
-    //text animation
-    for(var i=0;i<textList.length;i++)
-    {
-        var t = textList[i] ;
-        var pz = t.position.z ;
-        pz += textSpeeds[i] ;
-        if(pz > downPz)
-        {
-            pz = upPz ;
-            t.position.x = getRandomTextSize() ;
-            t.geometry.size = getRandomTextSize() ;
-        }
-        t.position.z = pz ;
-    }
 
     //Water Color offset
 
