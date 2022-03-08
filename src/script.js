@@ -15,6 +15,7 @@ import cubeVertexShader from './shaders/water/cubevertex.glsl'
 import cubeFragmentShader from './shaders/water/cubefragment.glsl'
 import cube2VertexShader from './shaders/cube2vertex.glsl'
 import cube2FragmentShader from './shaders/cube2fragment.glsl'
+import textplanefragment from './shaders/textplanefragment.glsl'
 
 
 
@@ -45,7 +46,7 @@ const environmentMap = cubeTextureLoader.load(
         '/envmap/hdr2/nz.png'
     ]
 )
-scene.background = environmentMap
+// scene.background = environmentMap
 
 /**
  * Text intro test
@@ -55,34 +56,68 @@ scene.background = environmentMap
 const textureVid = document.createElement("video")
 textureVid.src = '/video/Title3.mp4' ; // transform gif to mp4
 textureVid.loop = true;
-textureVid.play();
 
+textureVid.play();
 
 // Load video texture
 const videoTexture = new THREE.VideoTexture(textureVid);
-videoTexture.format = THREE.RGBFormat;
+videoTexture.format = THREE.RGBAFormat;
 videoTexture.minFilter = THREE.NearestFilter;
 videoTexture.maxFilter = THREE.NearestFilter;
 videoTexture.generateMipmaps = false;
 
+
 // Create mesh
 const textPlaneGeo = new THREE.PlaneGeometry( 0.2,0.4,32,32);
 
-const textPlaneMaterial = new THREE.MeshBasicMaterial({map: videoTexture} );
+const textPlaneMaterial = new THREE.ShaderMaterial(
+    {
+        vertexShader: cube2VertexShader,
+        fragmentShader: textplanefragment,
+        side:THREE.DoubleSide,
+        uniforms:{map:{value:videoTexture}}
+    }
+)
+// const textPlaneMaterial = new THREE.MeshBasicMaterial({map: videoTexture} );
 const textPlanemesh= new THREE.Mesh( textPlaneGeo, textPlaneMaterial );
 
-textPlanemesh.rotation.x = - Math.PI * 0.5
+// textPlanemesh.rotation.x = - Math.PI * 0.5
 textPlanemesh.position.y = 0.2
 
-textPlaneMaterial.emissiveMap = videoTexture;
-
-textPlaneMaterial.emissiveIntensity = 20;
 textPlaneMaterial.side= THREE.DoubleSide;
-
-var directionalLight = new THREE.DirectionalLight(0xffffff);
-directionalLight.position.set(1, 1, 1).normalize();
+textPlaneMaterial.transparent= true;
 textPlaneMaterial.blending = THREE.AdditiveBlending;
-scene.add(directionalLight);
+textPlaneMaterial.update = true;
+
+scene.add(textPlanemesh);
+
+ /**
+  * New Cube Plane
+  */
+
+    //Geometry
+    var tuniform = {
+            iGlobalTime:{type:'f',value:0.01},
+            iChannel0: { value: environmentMap}
+    };
+    const cubePlaneGeometry = new THREE.PlaneGeometry(0.15,0.15,64,64)
+    const cubePlaneMaterial = new THREE.ShaderMaterial(
+        {
+            vertexShader: cubeVertexShader,
+            fragmentShader: cubeFragmentShader,
+            side:THREE.DoubleSide,
+            uniforms:tuniform
+        }
+    )
+    cubePlaneMaterial.transparent = true
+    // cubePlaneMaterial.opacity = 0.2
+    cubePlaneMaterial.blending = THREE.AdditiveBlending
+    // Mesh
+    const cubePlane = new THREE.Mesh(cubePlaneGeometry, cubePlaneMaterial)
+    cubePlane.rotation.x = - Math.PI * 0.5
+    cubePlane.position.y = 0.1
+    cubePlane.position.z = 0.19
+    scene.add(cubePlane)
 
 /**
   * New Cube Plane 2
@@ -109,7 +144,7 @@ const cubePlane2 = new THREE.Mesh(cubePlane2Geometry, cubePlane2Material)
 cubePlane2.rotation.x = - Math.PI * 0.5
 cubePlane2.position.y = 0.1
 cubePlane2.position.z = 0.19
-scene.add(cubePlane2)
+// scene.add(cubePlane2)
 
 /**
  * Water
@@ -209,11 +244,11 @@ const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
 camera.position.set(0, 0.462, 0.244)
 //LockControls
-controls.enableZoom = false
-controls.enablePan = false
-controls.enableRotate = false
-controls.maxAzimuthAngle =0 
-controls.minAzimuthAngle =0
+// controls.enableZoom = false
+// controls.enablePan = false
+// controls.enableRotate = false
+// controls.maxAzimuthAngle =0 
+// controls.minAzimuthAngle =0
 
 
 /**
@@ -232,6 +267,12 @@ const clock = new THREE.Clock()
 const watercoloroffsetSpeed = 0.01;
 
 
+// var sss =camera.localToWorld(new Vector3(0,0,-0.1))
+textPlanemesh.parent = camera;
+
+textPlanemesh.position.set(0,0,-0.3 );
+
+
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
@@ -247,14 +288,17 @@ const tick = () =>
     // var waterColorOffset = (Math.sin(elapsedTime * watercoloroffsetSpeed)+0.7)*0.1;
     // waterMaterial.uniforms.uColorOffset.value = waterColorOffset
 
-    // tuniform.iGlobalTime.value  = elapsedTime
-    tuniform2.iGlobalTime.value  = elapsedTime
+    tuniform.iGlobalTime.value  = elapsedTime
+    // tuniform2.iGlobalTime.value  = elapsedTime
 
     //log camera position and camera angle
     // console.log(camera.position)
     // console.log(camera.rotation)
+    // console.log(textPlanemesh.position);
+    
 
-textPlaneMaterial.emissiveMap.needsUpdate = true;
+
+// textPlaneMaterial.emissiveMap.needsUpdate = true;
 
     // Render
     renderer.render(scene, camera)
