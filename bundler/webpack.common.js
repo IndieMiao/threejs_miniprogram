@@ -60,23 +60,23 @@ module.exports = {
 
             // Images
             {
-                test: /\.(jpg|png|gif|svg|mp4)$/,
+                test: /\.(jpg|png|gif|svg)$/,
                 type: 'asset/resource',
                 generator:
                 {
                     filename: 'assets/images/[hash][ext]'
                 }
             },
-            // {
-            //     test: /\.mp4$/,
-            //     use: [
-            //         {
-            //             loader: "file-loader",
-            //         }
-            //     ]
-            // },
-
-            // Fonts
+            // Mp4 
+            {
+                test: /\.(mp4)$/,
+                type: 'asset/resource',
+                generator:
+                {
+                    filename: 'assets/video/[hash][ext]'
+                }
+            },
+              // Fonts
             {
                 test: /\.(ttf|eot|woff|woff2)$/,
                 type: 'asset/resource',

@@ -48,10 +48,44 @@ const environmentMap = cubeTextureLoader.load(
 scene.background = environmentMap
 
 /**
- * Text intro
+ * Text intro test
  */
 
+// Create video and play
+const textureVid = document.createElement("video")
+textureVid.src = '/video/Title3.mp4' ; // transform gif to mp4
+// textureVid.src =  '/textures/Text1.gif'; // transform gif to mp4
+textureVid.loop = true;
+textureVid.play();
 
+
+// Load video texture
+const videoTexture = new THREE.VideoTexture(textureVid);
+videoTexture.format = THREE.RGBFormat;
+videoTexture.minFilter = THREE.NearestFilter;
+videoTexture.maxFilter = THREE.NearestFilter;
+videoTexture.generateMipmaps = false;
+
+// Create mesh
+const textPlaneGeo = new THREE.PlaneGeometry( 0.2,0.4,32,32);
+
+const textPlaneMaterial = new THREE.MeshBasicMaterial({map: videoTexture} );
+// const textPlaneMaterial = new THREE.MeshPhysicalMaterial({map: textTextureLoader} );
+const textPlanemesh= new THREE.Mesh( textPlaneGeo, textPlaneMaterial );
+scene.add(textPlanemesh);
+
+textPlanemesh.rotation.x = - Math.PI * 0.5
+textPlanemesh.position.y = 0.2
+
+textPlaneMaterial.emissiveMap = videoTexture;
+
+textPlaneMaterial.emissiveIntensity = 20;
+textPlaneMaterial.side= THREE.DoubleSide;
+
+var directionalLight = new THREE.DirectionalLight(0xffffff);
+directionalLight.position.set(1, 1, 1).normalize();
+textPlaneMaterial.blending = THREE.AdditiveBlending;
+scene.add(directionalLight);
 
  /**
   * New Cube Plane
@@ -204,12 +238,13 @@ scene.add(camera)
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
+camera.position.set(0, 0.462, 0.244)
+//LockControls
 controls.enableZoom = false
 controls.enablePan = false
 controls.enableRotate = false
 controls.maxAzimuthAngle =0 
 controls.minAzimuthAngle =0
-camera.position.set(0, 0.462, 0.244)
 
 
 /**
@@ -249,6 +284,8 @@ const tick = () =>
     //log camera position and camera angle
     // console.log(camera.position)
     // console.log(camera.rotation)
+
+textPlaneMaterial.emissiveMap.needsUpdate = true;
 
     // Render
     renderer.render(scene, camera)
