@@ -24,7 +24,7 @@ import cube2FragmentShader from './shaders/cube2fragment.glsl'
 // Debug
 const gui = new dat.GUI({ width: 220 })
 const debugObject = {}
-// gui.hide()
+gui.hide()
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')

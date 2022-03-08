@@ -67,7 +67,14 @@ module.exports = {
                     filename: 'assets/images/[hash][ext]'
                 }
             },
-
+            // {
+            //     test: /\.mp4$/,
+            //     use: [
+            //         {
+            //             loader: "file-loader",
+            //         }
+            //     ]
+            // },
             // Fonts
             {
                 test: /\.(ttf|eot|woff|woff2)$/,
