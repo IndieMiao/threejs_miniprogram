@@ -54,7 +54,6 @@ scene.background = environmentMap
 // Create video and play
 const textureVid = document.createElement("video")
 textureVid.src = '/video/Title3.mp4' ; // transform gif to mp4
-// textureVid.src =  '/textures/Text1.gif'; // transform gif to mp4
 textureVid.loop = true;
 textureVid.play();
 
@@ -70,9 +69,7 @@ videoTexture.generateMipmaps = false;
 const textPlaneGeo = new THREE.PlaneGeometry( 0.2,0.4,32,32);
 
 const textPlaneMaterial = new THREE.MeshBasicMaterial({map: videoTexture} );
-// const textPlaneMaterial = new THREE.MeshPhysicalMaterial({map: textTextureLoader} );
 const textPlanemesh= new THREE.Mesh( textPlaneGeo, textPlaneMaterial );
-scene.add(textPlanemesh);
 
 textPlanemesh.rotation.x = - Math.PI * 0.5
 textPlanemesh.position.y = 0.2
@@ -250,7 +247,7 @@ const tick = () =>
     // var waterColorOffset = (Math.sin(elapsedTime * watercoloroffsetSpeed)+0.7)*0.1;
     // waterMaterial.uniforms.uColorOffset.value = waterColorOffset
 
-    tuniform.iGlobalTime.value  = elapsedTime
+    // tuniform.iGlobalTime.value  = elapsedTime
     tuniform2.iGlobalTime.value  = elapsedTime
 
     //log camera position and camera angle
