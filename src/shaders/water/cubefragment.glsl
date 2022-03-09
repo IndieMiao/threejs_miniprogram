@@ -307,9 +307,10 @@ void main(void)
 void main( void)
 {
     
-    float tt = iGlobalTime * 0.95;
+    float tt = iGlobalTime * 0.8;
+    // float tt = 3.14;
     float t = 3.14;
-    float v = map2(cos(tt),-1.,1.,0.,0.3);
+    float v = map2(cos(tt),-1.,1.,0.02,0.05);
     float v2 = map2(cos(tt*1.68),-1.,1.,0.,1.);
     
     objDec inner, outter;
@@ -317,7 +318,7 @@ void main( void)
     outter.s   = (1.-v) * 0.75;
     outter.m = fromEuler(vec3(t * 0.9 + 0.2,  t * 0.6 + 1.2, t * 0.5 + 0.9));
     inner.r  = (1.-v2) * 0.35 + 0.1;
-    inner.s	   = v2 * 0.35;
+    inner.s	  = v2 * 0.35;
     inner.m = fromEuler(vec3(t * 0.8 + 1.5,  t * 0.4 + 0.7, t * 0.7 + 2.3));
 
   

@@ -33,6 +33,15 @@ const canvas = document.querySelector('canvas.webgl')
 //Scene
 const scene = new THREE.Scene()
 
+/**
+ * Renderer
+ */
+const renderer = new THREE.WebGLRenderer({
+    canvas: canvas
+})
+renderer.setSize(sizes.width, sizes.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
 // cubemap
 const cubeTextureLoader = new THREE.CubeTextureLoader()
 
@@ -54,10 +63,23 @@ const environmentMap = cubeTextureLoader.load(
 
 // Create video and play
 const textureVid = document.createElement("video")
-textureVid.src = '/video/Title3.mp4' ; // transform gif to mp4
+textureVid.src = '/video/Title3.mp4' ; 
+// textureVid.src = '/textures/Text1.gif' ; 
 textureVid.loop = true;
+textureVid.playsInline = true;
+textureVid.muted = true;
 
 textureVid.play();
+
+
+// const textureVid = document.getElementById( 'video' );
+// textureVid.play();
+// textureVid.addEventListener( 'play', function () {
+
+//     this.currentTime = 3;
+
+// } );
+
 
 // Load video texture
 const videoTexture = new THREE.VideoTexture(textureVid);
@@ -81,7 +103,6 @@ const textPlaneMaterial = new THREE.ShaderMaterial(
 // const textPlaneMaterial = new THREE.MeshBasicMaterial({map: videoTexture} );
 const textPlanemesh= new THREE.Mesh( textPlaneGeo, textPlaneMaterial );
 
-// textPlanemesh.rotation.x = - Math.PI * 0.5
 textPlanemesh.position.y = 0.2
 
 textPlaneMaterial.side= THREE.DoubleSide;
@@ -100,6 +121,7 @@ scene.add(textPlanemesh);
             iGlobalTime:{type:'f',value:0.01},
             iChannel0: { value: environmentMap}
     };
+    // const cubePlaneGeometry = new THREE.PlaneGeometry(0.3,0.3,64,64)
     const cubePlaneGeometry = new THREE.PlaneGeometry(0.15,0.15,64,64)
     const cubePlaneMaterial = new THREE.ShaderMaterial(
         {
@@ -241,30 +263,21 @@ scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+// controls.enableDamping = true
 camera.position.set(0, 0.462, 0.244)
 //LockControls
-// controls.enableZoom = false
-// controls.enablePan = false
-// controls.enableRotate = false
-// controls.maxAzimuthAngle =0 
-// controls.minAzimuthAngle =0
+controls.enableZoom = false
+controls.enablePan = false
+controls.enableRotate = false
+controls.maxAzimuthAngle =0 
+controls.minAzimuthAngle =0
 
 
-/**
- * Renderer
- */
-const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
-})
-renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 /**
  * Animate
  */
 const clock = new THREE.Clock()
-const watercoloroffsetSpeed = 0.01;
 
 
 // var sss =camera.localToWorld(new Vector3(0,0,-0.1))
