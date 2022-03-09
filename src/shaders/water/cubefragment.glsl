@@ -6,8 +6,14 @@ uniform float iGlobalTime;
 uniform samplerCube iChannel0;
 
 varying vec2 vUv;
+// varying float distToCamera;
 
 
+float linearize_depth(float d,float zNear,float zFar)
+{
+    float z_n = 2.0 * d - 1.0;
+    return 2.0 * zNear * zFar / (zFar + zNear - z_n * (zFar - zNear));
+}
 
 float capIntersect( in vec3 ro, in vec3 rd, in vec3 pa, in vec3 pb, in float r )
 {
@@ -310,7 +316,7 @@ void main( void)
     float tt = iGlobalTime * 0.8;
     // float tt = 3.14;
     float t = 3.14;
-    float v = map2(cos(tt),-1.,1.,0.02,0.05);
+    float v = map2(cos(tt),-1.,1.,0.02,0.08);
     float v2 = map2(cos(tt*1.68),-1.,1.,0.,1.);
     
     objDec inner, outter;
@@ -351,6 +357,8 @@ void main( void)
         alpha = Render(ro, rd, 12.,0.7, inner, outter).a;
         
       	tot += col;
+        
+        
             
  //   tot = desaturate(tot, -0.4);
 //    tot = vignette(tot, fragCoord / iResolution.xy, 1.2);
@@ -359,4 +367,6 @@ void main( void)
     // #endif
 
 	gl_FragColor  = vec4( tot, alpha );
+    // gl_FragColor = vec4(gl_FragColor.z);
+    
 }

@@ -25,13 +25,20 @@ import textplanefragment from './shaders/textplanefragment.glsl'
 // Debug
 const gui = new dat.GUI({ width: 220 })
 const debugObject = {}
-gui.hide()
+// gui.hide()
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
 //Scene
 const scene = new THREE.Scene()
+/**
+ * Sizes
+ */
+const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight
+}
 
 /**
  * Renderer
@@ -39,6 +46,7 @@ const scene = new THREE.Scene()
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
+
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
@@ -55,7 +63,7 @@ const environmentMap = cubeTextureLoader.load(
         '/envmap/hdr2/nz.png'
     ]
 )
-// scene.background = environmentMap
+scene.background = new THREE.Color(1,1,1,1);
 
 /**
  * Text intro test
@@ -122,7 +130,7 @@ scene.add(textPlanemesh);
             iChannel0: { value: environmentMap}
     };
     // const cubePlaneGeometry = new THREE.PlaneGeometry(0.3,0.3,64,64)
-    const cubePlaneGeometry = new THREE.PlaneGeometry(0.15,0.15,64,64)
+    const cubePlaneGeometry = new THREE.PlaneGeometry(0.07,0.07,16,16)
     const cubePlaneMaterial = new THREE.ShaderMaterial(
         {
             vertexShader: cubeVertexShader,
@@ -136,9 +144,9 @@ scene.add(textPlanemesh);
     cubePlaneMaterial.blending = THREE.AdditiveBlending
     // Mesh
     const cubePlane = new THREE.Mesh(cubePlaneGeometry, cubePlaneMaterial)
-    cubePlane.rotation.x = - Math.PI * 0.5
-    cubePlane.position.y = 0.1
-    cubePlane.position.z = 0.19
+    // cubePlane.rotation.x = - Math.PI * 0.5
+    // cubePlane.position.y = 0.1
+    // cubePlane.position.z = 0.19
     scene.add(cubePlane)
 
 /**
@@ -172,13 +180,15 @@ cubePlane2.position.z = 0.19
  * Water
  */
 // Geometry
-const waterGeometry = new THREE.PlaneGeometry(2, 2, 1024, 1024)
+const waterGeometry = new THREE.PlaneGeometry(2, 2, 2048, 2048)
 
 // Colors
 debugObject.JiduColorTest1 = '#1052bc'
 debugObject.JiduColorTest2 = '#bf00e6'
+debugObject.JiduColorTest3 = '#e4e4e4'
 gui.addColor(debugObject, 'JiduColorTest1').onChange(() => { waterMaterial.uniforms.uDepthColor.value.set(debugObject.JiduColorTest1) })
 gui.addColor(debugObject, 'JiduColorTest2').onChange(() => { waterMaterial.uniforms.uSurfaceColor.value.set(debugObject.JiduColorTest2) })
+gui.addColor(debugObject, 'JiduColorTest3').onChange(() => { waterMaterial.uniforms.uFarColor.value.set(debugObject.JiduColorTest3) })
 
 // Water Material
 const waterMaterial = new THREE.ShaderMaterial({
@@ -188,23 +198,26 @@ const waterMaterial = new THREE.ShaderMaterial({
     {
         uTime: { value: 0 },
         
-        uBigWavesElevation: { value: 0.074 },
-        uBigWavesFrequency: { value: new THREE.Vector2(10,10) },
-        uBigWavesSpeed: { value: 0.03 },
+        uBigWavesElevation: { value: 0.25 },
+        uBigWavesFrequency: { value: new THREE.Vector2(6,8) },
+        uBigWavesSpeed: { value: 0.01 },
+        uColorMiddeloffset: { value: 0.1 },
 
-        uSmallWavesElevation: { value: 0.152 },
-        uSmallWavesFrequency: { value: 5.013 },
-        uSmallWavesSpeed: { value: 0.15 },
-        uSmallIterations: { value: 1 },
+        uSmallWavesElevation: { value: 0.252 },
+        uSmallWavesFrequency: { value: 4.013 },
+        uSmallWavesSpeed: { value: 0.02 },
+        uSmallIterations: { value: 3 },
 
         uDepthColor: { value: new THREE.Color(debugObject.JiduColorTest1) },
         uSurfaceColor: { value: new THREE.Color(debugObject.JiduColorTest2) },
+        uFarColor: { value: new THREE.Color(debugObject.JiduColorTest3) },
         uColorOffset: { value: 0.13 },
         uColorMultiplier: { value: 5 }
     }
 })
 
 
+gui.add(waterMaterial.uniforms.uColorMiddeloffset, 'value').min(0).max(1).step(0.001).name('uColorMiddeloffset')
 gui.add(waterMaterial.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001).name('uBigWavesElevation')
 gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uBigWavesFrequencyX')
 gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uBigWavesFrequencyY')
@@ -224,13 +237,7 @@ const water = new THREE.Mesh(waterGeometry, waterMaterial)
 water.rotation.x = - Math.PI * 0.5
 scene.add(water)
 
-/**
- * Sizes
- */
-const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
-}
+
 
 window.addEventListener('resize', () =>
 {
@@ -251,26 +258,23 @@ window.addEventListener('resize', () =>
  * helper
  */
  const axesHelper = new THREE.AxesHelper( 5 );
-//  scene.add( axesHelper );
 
 /**
  * Camera
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-// camera.rotation.set(-2.0527,0.3930,2.50948)
 scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
-// controls.enableDamping = true
-camera.position.set(0, 0.462, 0.244)
+camera.position.set(0, 0.403, 0.330)
 //LockControls
-controls.enableZoom = false
-controls.enablePan = false
-controls.enableRotate = false
-controls.maxAzimuthAngle =0 
-controls.minAzimuthAngle =0
+// controls.enableZoom = false
+// controls.enablePan = false
+// controls.enableRotate = false
+// controls.maxAzimuthAngle =0 
+// controls.minAzimuthAngle =0
 
 
 
@@ -284,6 +288,10 @@ const clock = new THREE.Clock()
 textPlanemesh.parent = camera;
 
 textPlanemesh.position.set(0,0,-0.3 );
+
+cubePlane.parent = camera;
+
+cubePlane.position.set(0,-0.1,-0.2);
 
 
 const tick = () =>
