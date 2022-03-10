@@ -98,7 +98,7 @@ videoTexture.generateMipmaps = false;
 
 
 // Create mesh
-const textPlaneGeo = new THREE.PlaneGeometry( 0.2,0.4,32,32);
+const textPlaneGeo = new THREE.PlaneGeometry( 0.12,0.25,32,32);
 
 const textPlaneMaterial = new THREE.ShaderMaterial(
     {
@@ -118,7 +118,7 @@ textPlaneMaterial.transparent= true;
 textPlaneMaterial.blending = THREE.AdditiveBlending;
 textPlaneMaterial.update = true;
 
-scene.add(textPlanemesh);
+// scene.add(textPlanemesh);
 
  /**
   * New Cube Plane
@@ -130,7 +130,7 @@ scene.add(textPlanemesh);
             iChannel0: { value: environmentMap}
     };
     // const cubePlaneGeometry = new THREE.PlaneGeometry(0.3,0.3,64,64)
-    const cubePlaneGeometry = new THREE.PlaneGeometry(0.07,0.07,16,16)
+    const cubePlaneGeometry = new THREE.PlaneGeometry(0.08,0.08,2,2)
     const cubePlaneMaterial = new THREE.ShaderMaterial(
         {
             vertexShader: cubeVertexShader,
@@ -180,15 +180,17 @@ cubePlane2.position.z = 0.19
  * Water
  */
 // Geometry
-const waterGeometry = new THREE.PlaneGeometry(2, 2, 2048, 2048)
+const waterGeometry = new THREE.PlaneGeometry(2.1, 2.1, 2048, 2048)
 
 // Colors
-debugObject.JiduColorTest1 = '#1052bc'
-debugObject.JiduColorTest2 = '#bf00e6'
-debugObject.JiduColorTest3 = '#e4e4e4'
-gui.addColor(debugObject, 'JiduColorTest1').onChange(() => { waterMaterial.uniforms.uDepthColor.value.set(debugObject.JiduColorTest1) })
-gui.addColor(debugObject, 'JiduColorTest2').onChange(() => { waterMaterial.uniforms.uSurfaceColor.value.set(debugObject.JiduColorTest2) })
-gui.addColor(debugObject, 'JiduColorTest3').onChange(() => { waterMaterial.uniforms.uFarColor.value.set(debugObject.JiduColorTest3) })
+debugObject.uColor1 = '#1052bc'
+debugObject.uColor2 = '#9407b0'
+debugObject.uColor3 = '#d39296'
+debugObject.uColor4 = '#c1b9b9'
+gui.addColor(debugObject, 'uColor1').onChange(() => { waterMaterial.uniforms.uColor1.value.set(debugObject.uColor1) })
+gui.addColor(debugObject, 'uColor2').onChange(() => { waterMaterial.uniforms.uColor2.value.set(debugObject.uColor2) })
+gui.addColor(debugObject, 'uColor3').onChange(() => { waterMaterial.uniforms.uColor3.value.set(debugObject.uColor3) })
+gui.addColor(debugObject, 'uColor4').onChange(() => { waterMaterial.uniforms.uColor4.value.set(debugObject.uColor4) })
 
 // Water Material
 const waterMaterial = new THREE.ShaderMaterial({
@@ -199,42 +201,48 @@ const waterMaterial = new THREE.ShaderMaterial({
         uTime: { value: 0 },
         
         uBigWavesElevation: { value: 0.25 },
-        uBigWavesFrequency: { value: new THREE.Vector2(6,8) },
+        uBigWavesFrequency: { value: new THREE.Vector2(12,12) },
         uBigWavesSpeed: { value: 0.01 },
-        uColorMiddeloffset: { value: 0.1 },
+        uColorMiddeloffset: { value: 0.8 },
 
-        uSmallWavesElevation: { value: 0.252 },
+        uSmallWavesElevation: { value: 0.552 },
         uSmallWavesFrequency: { value: 4.013 },
         uSmallWavesSpeed: { value: 0.02 },
         uSmallIterations: { value: 3 },
 
-        uDepthColor: { value: new THREE.Color(debugObject.JiduColorTest1) },
-        uSurfaceColor: { value: new THREE.Color(debugObject.JiduColorTest2) },
-        uFarColor: { value: new THREE.Color(debugObject.JiduColorTest3) },
-        uColorOffset: { value: 0.13 },
-        uColorMultiplier: { value: 5 }
+        uColor1: { value: new THREE.Color(debugObject.uColor1) },
+        uColor2: { value: new THREE.Color(debugObject.uColor2) },
+        uColor3: { value: new THREE.Color(debugObject.uColor3) },
+        uColor4: { value: new THREE.Color(debugObject.uColor4) },
+        uColorOffset: { value: 1. },
+        uColorMultiplier: { value: 5 },
+        uFar:{value:0.58},
+        uNear:{value:0.015}
     }
 })
 
 
-gui.add(waterMaterial.uniforms.uColorMiddeloffset, 'value').min(0).max(1).step(0.001).name('uColorMiddeloffset')
-gui.add(waterMaterial.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001).name('uBigWavesElevation')
-gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uBigWavesFrequencyX')
-gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uBigWavesFrequencyY')
+// gui.add(waterMaterial.uniforms.uColorMiddeloffset, 'value').min(0.0001).max(5).step(0.01).name('uColorMiddeloffset')
+gui.add(waterMaterial.uniforms.uFar, 'value').min(0.0001).max(2).step(0.001).name('uFar')
+gui.add(waterMaterial.uniforms.uNear, 'value').min(0.0001).max(0.1).step(0.001).name('uNear')
+// gui.add(waterMaterial.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001).name('uBigWavesElevation')
+// gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uBigWavesFrequencyX')
+// gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uBigWavesFrequencyY')
 gui.add(waterMaterial.uniforms.uBigWavesSpeed, 'value').min(0).max(4).step(0.001).name('uBigWavesSpeed')
 
 
-gui.add(waterMaterial.uniforms.uSmallWavesElevation, 'value').min(0).max(1).step(0.001).name('uSmallWavesElevation')
-gui.add(waterMaterial.uniforms.uSmallWavesFrequency, 'value').min(0).max(30).step(0.001).name('uSmallWavesFrequency')
-gui.add(waterMaterial.uniforms.uSmallWavesSpeed, 'value').min(0).max(4).step(0.001).name('uSmallWavesSpeed')
-gui.add(waterMaterial.uniforms.uSmallIterations, 'value').min(0).max(5).step(1).name('uSmallIterations')
+// gui.add(waterMaterial.uniforms.uSmallWavesElevation, 'value').min(0).max(1).step(0.001).name('uSmallWavesElevation')
+// gui.add(waterMaterial.uniforms.uSmallWavesFrequency, 'value').min(0).max(30).step(0.001).name('uSmallWavesFrequency')
+// gui.add(waterMaterial.uniforms.uSmallWavesSpeed, 'value').min(0).max(4).step(0.001).name('uSmallWavesSpeed')
+// gui.add(waterMaterial.uniforms.uSmallIterations, 'value').min(0).max(5).step(1).name('uSmallIterations')
 
-gui.add(waterMaterial.uniforms.uColorOffset, 'value').min(0).max(1).step(0.001).name('uColorOffset')
-gui.add(waterMaterial.uniforms.uColorMultiplier, 'value').min(0).max(10).step(0.001).name('uColorMultiplier')
+// gui.add(waterMaterial.uniforms.uColorOffset, 'value').min(0).max(1).step(0.001).name('uColorOffset')
+// gui.add(waterMaterial.uniforms.uColorMultiplier, 'value').min(0).max(10).step(0.001).name('uColorMultiplier')
 
 // Mesh
 const water = new THREE.Mesh(waterGeometry, waterMaterial)
 water.rotation.x = - Math.PI * 0.5
+water.position.set(0.,0.,-0.8)
 scene.add(water)
 
 
@@ -263,18 +271,19 @@ window.addEventListener('resize', () =>
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+const camera = new THREE.PerspectiveCamera(55, sizes.width / sizes.height, 0.1, 100)
 scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
-camera.position.set(0, 0.403, 0.330)
+camera.position.set(0., 0.32, 0.296)
+// camera.position.set(0, 0.403, 0.330)
 //LockControls
-// controls.enableZoom = false
-// controls.enablePan = false
-// controls.enableRotate = false
-// controls.maxAzimuthAngle =0 
-// controls.minAzimuthAngle =0
+controls.enableZoom = false
+controls.enablePan = false
+controls.enableRotate = false
+controls.maxAzimuthAngle =0 
+controls.minAzimuthAngle =0
 
 
 
@@ -291,7 +300,7 @@ textPlanemesh.position.set(0,0,-0.3 );
 
 cubePlane.parent = camera;
 
-cubePlane.position.set(0,-0.1,-0.2);
+cubePlane.position.set(0,-0.1,-0.3);
 
 
 const tick = () =>
@@ -327,6 +336,5 @@ const tick = () =>
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
 }
-
 
 tick()
