@@ -16,6 +16,7 @@ import cubeFragmentShader from './shaders/water/cubefragment.glsl'
 import cube2VertexShader from './shaders/cube2vertex.glsl'
 import cube2FragmentShader from './shaders/cube2fragment.glsl'
 import textplanefragment from './shaders/textplanefragment.glsl'
+import Stats from 'stats.js'
 
 
 
@@ -30,6 +31,9 @@ const debugObject = {}
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
+const stats = new Stats()
+document.body.appendChild(stats.dom)
+
 //Scene
 const scene = new THREE.Scene()
 /**
@@ -43,6 +47,7 @@ const sizes = {
 /**
  * Renderer
  */
+
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
@@ -180,7 +185,7 @@ cubePlane2.position.z = 0.19
  * Water
  */
 // Geometry
-const waterGeometry = new THREE.PlaneGeometry(2.1, 2.1, 2048, 2048)
+const waterGeometry = new THREE.PlaneGeometry(2.1, 2.1, 128,128) 
 
 // Colors
 debugObject.uColor1 = '#1052bc'
@@ -202,12 +207,12 @@ const waterMaterial = new THREE.ShaderMaterial({
         
         uBigWavesElevation: { value: 0.25 },
         uBigWavesFrequency: { value: new THREE.Vector2(12,12) },
-        uBigWavesSpeed: { value: 0.01 },
+        uBigWavesSpeed: { value: 0.001 },
         uColorMiddeloffset: { value: 0.8 },
 
         uSmallWavesElevation: { value: 0.552 },
         uSmallWavesFrequency: { value: 4.013 },
-        uSmallWavesSpeed: { value: 0.02 },
+        uSmallWavesSpeed: { value: 0.01 },
         uSmallIterations: { value: 3 },
 
         uColor1: { value: new THREE.Color(debugObject.uColor1) },
@@ -290,6 +295,7 @@ controls.minAzimuthAngle =0
 /**
  * Animate
  */
+
 const clock = new THREE.Clock()
 
 
@@ -305,6 +311,7 @@ cubePlane.position.set(0,-0.1,-0.3);
 
 const tick = () =>
 {
+    stats.begin()
     const elapsedTime = clock.getElapsedTime()
 
     // Water
@@ -335,6 +342,7 @@ const tick = () =>
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
+    stats.end()
 }
 
 tick()

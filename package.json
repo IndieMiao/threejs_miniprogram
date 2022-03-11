@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "file-loader": "^6.2.0",
+    "stats.js": "^0.17.0",
     "three": "^0.138.3"
   }
 }
