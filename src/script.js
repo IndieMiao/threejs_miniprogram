@@ -20,19 +20,21 @@ import Stats from 'stats.js'
 
 
 
+
+
 /**
  * Base
  */
 // Debug
 const gui = new dat.GUI({ width: 220 })
 const debugObject = {}
-// gui.hide()
+// const stats = new Stats()
+// document.body.appendChild(stats.dom)
+gui.hide()
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
-const stats = new Stats()
-document.body.appendChild(stats.dom)
 
 //Scene
 const scene = new THREE.Scene()
@@ -68,7 +70,6 @@ const environmentMap = cubeTextureLoader.load(
         '/envmap/hdr2/nz.png'
     ]
 )
-scene.background = new THREE.Color(1,1,1,1);
 
 /**
  * Text intro test
@@ -135,7 +136,7 @@ textPlaneMaterial.update = true;
             iChannel0: { value: environmentMap}
     };
     // const cubePlaneGeometry = new THREE.PlaneGeometry(0.3,0.3,64,64)
-    const cubePlaneGeometry = new THREE.PlaneGeometry(0.08,0.08,2,2)
+    const cubePlaneGeometry = new THREE.PlaneGeometry(0.065,0.065,2,2)
     const cubePlaneMaterial = new THREE.ShaderMaterial(
         {
             vertexShader: cubeVertexShader,
@@ -185,17 +186,54 @@ cubePlane2.position.z = 0.19
  * Water
  */
 // Geometry
-const waterGeometry = new THREE.PlaneGeometry(2.1, 2.1, 128,128) 
+const waterGeometry = new THREE.PlaneGeometry(2.1, 2.1, 256,256) 
 
-// Colors
-debugObject.uColor1 = '#1052bc'
-debugObject.uColor2 = '#9407b0'
-debugObject.uColor3 = '#d39296'
+// // ColorPat 1
+// debugObject.uColor1 = '#1052bc'
+// debugObject.uColor2 = '#9407b0'
+// debugObject.uColor3 = '#d39296'
+// debugObject.uColor4 = '#c1b9b9'
+// debugObject.uColorBG = '#d39296'
+
+// //ColorPat 2
+// debugObject.uColor1 = '#090e58'
+// debugObject.uColor2 = '#093a53'
+// debugObject.uColor3 = '#c5f1ea'
+// debugObject.uColor4 = '#e4d8d8'
+// debugObject.uColorBG = '#f0e6e6'
+
+// // //ColorPat 3
+// debugObject.uColor1 = '#7900ff'
+// debugObject.uColor2 = '#548cff'
+// debugObject.uColor3 = '#cfffdc'
+// debugObject.uColor4 = '#b43c3c'
+// debugObject.uColorBG = '#93ffd8'
+
+// // //ColorPat 4
+// debugObject.uColor1 = '#000b49'
+// debugObject.uColor2 = '#2666cf'
+// debugObject.uColor3 = '#ebe645'
+// debugObject.uColor4 = '#b43c3c'
+// debugObject.uColorBG = '#93ffd8'
+
+
+// //ColorPat 4
+debugObject.uColor1 = '#012dbc'
+debugObject.uColor2 = '#3eafcc'
+debugObject.uColor3 = '#ffffff'
 debugObject.uColor4 = '#c1b9b9'
+debugObject.uColorBG = '#5ee6eb'
+
+
+
+
+scene.background = new THREE.Color(debugObject.uColorBG)
 gui.addColor(debugObject, 'uColor1').onChange(() => { waterMaterial.uniforms.uColor1.value.set(debugObject.uColor1) })
 gui.addColor(debugObject, 'uColor2').onChange(() => { waterMaterial.uniforms.uColor2.value.set(debugObject.uColor2) })
 gui.addColor(debugObject, 'uColor3').onChange(() => { waterMaterial.uniforms.uColor3.value.set(debugObject.uColor3) })
 gui.addColor(debugObject, 'uColor4').onChange(() => { waterMaterial.uniforms.uColor4.value.set(debugObject.uColor4) })
+gui.addColor(debugObject, 'uColorBG').onChange(() => { scene.background = new THREE.Color(debugObject.uColorBG)})
+
 
 // Water Material
 const waterMaterial = new THREE.ShaderMaterial({
@@ -214,6 +252,9 @@ const waterMaterial = new THREE.ShaderMaterial({
         uSmallWavesFrequency: { value: 4.013 },
         uSmallWavesSpeed: { value: 0.01 },
         uSmallIterations: { value: 3 },
+
+        uSinFreq: { value: 210. },
+        uSinElevation: { value: 0.15 },
 
         uColor1: { value: new THREE.Color(debugObject.uColor1) },
         uColor2: { value: new THREE.Color(debugObject.uColor2) },
@@ -281,15 +322,18 @@ scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
-camera.position.set(0., 0.32, 0.296)
+camera.position.set(0., 0.32, 0.31)
+// camera.position.set(0., 0.28, 0.356)
 // camera.position.set(0, 0.403, 0.330)
-//LockControls
+// LockControls
 controls.enableZoom = false
 controls.enablePan = false
 controls.enableRotate = false
 controls.maxAzimuthAngle =0 
 controls.minAzimuthAngle =0
 
+
+// scene.background = new THREE.Color(1,1,1,1);
 
 
 /**
@@ -311,7 +355,7 @@ cubePlane.position.set(0,-0.1,-0.3);
 
 const tick = () =>
 {
-    stats.begin()
+    // stats.begin()
     const elapsedTime = clock.getElapsedTime()
 
     // Water
@@ -342,7 +386,7 @@ const tick = () =>
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
-    stats.end()
+    // stats.end()
 }
 
 tick()

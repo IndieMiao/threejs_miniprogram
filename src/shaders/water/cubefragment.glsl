@@ -237,7 +237,7 @@ vec4 Render(in vec3 ro, in vec3 rd, in float dist, float cref, in objDec inner, 
         if(!inter)
         {
         // add and remove background here
-            //col += rel * getSkyColor(rd);
+            col += rel * getSkyColor(rd);
             return  vec4( col,0. );
         }
         vec3 rabs = mix(absorb, vec3(0), (sgn + 1.) / 2.);
@@ -292,13 +292,11 @@ vec3 vignette(vec3 color, vec2 q, float v)
 }
 */
 
-/*
 vec3 desaturate(in vec3 c, in float a)
 {
     float l = dot(c, vec3(1. / 3.));
     return mix(c, vec3(l), a);
 }
-*/
 
 /*
 void main(void)
@@ -360,10 +358,10 @@ void main( void)
         
         
             
- //   tot = desaturate(tot, -0.4);
+   tot = desaturate(tot, -0.4);
 //    tot = vignette(tot, fragCoord / iResolution.xy, 1.2);
     // #if GAMMA
-    	tot = pow(tot, vec3(1. / 2.2));
+    	// tot = pow(tot, vec3(1. / 2.));
     // #endif
 
 	gl_FragColor  = vec4( tot, alpha );
