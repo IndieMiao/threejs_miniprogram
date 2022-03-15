@@ -11,20 +11,21 @@ import typefaceFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { floorPowerOfTwo } from 'three/src/math/mathutils'
-import cubeVertexShader from './shaders/water/cubevertex.glsl'
-import cubeFragmentShader from './shaders/water/cubefragment.glsl'
-import cube2VertexShader from './shaders/cube2vertex.glsl'
-import cube2FragmentShader from './shaders/cube2fragment.glsl'
+import cubeVertexShader from './shaders/cube/cubevertex.glsl'
+import cubeFragmentShader from './shaders/cube/cubefragment.glsl'
+import fractureCubeVertex from './shaders/fracturecubevertex.glsl'
+import fractureCubeFragment from './shaders/fracturecubefragment.glsl'
 import textplanefragment from './shaders/textplanefragment.glsl'
 import Stats from 'stats.js'
-
-
 
 
 
 /***
  * Gloabal viable
  */
+
+let DEBUGMODE = false;
+let LOCKCAM = false;
 
 let gui, debugObject
 
@@ -105,7 +106,6 @@ function initTextPlan()
     // textureVid.addEventListener( 'play', function () {
 
     //     this.currentTime = 3;
-
     // } );
 
 
@@ -122,7 +122,7 @@ function initTextPlan()
 
     textPlaneMaterial = new THREE.ShaderMaterial(
         {
-            vertexShader: cube2VertexShader,
+            vertexShader: fractureCubeVertex,
             fragmentShader: textplanefragment,
             side:THREE.DoubleSide,
             uniforms:{map:{value:videoTexture}}
@@ -182,8 +182,8 @@ function initCubePlane2()
     const cubePlane2Geometry = new THREE.PlaneGeometry(0.08,0.08,2,2)
     cubePlane2Material = new THREE.ShaderMaterial(
         {
-            vertexShader: cube2VertexShader,
-            fragmentShader: cube2FragmentShader,
+            vertexShader: fractureCubeVertex,
+            fragmentShader: fractureCubeFragment,
             side:THREE.DoubleSide,
             uniforms:cubePlane2Uniform
         }
@@ -316,7 +316,7 @@ function initHelper()
     axesHelper = new THREE.AxesHelper( 5 );
 }
 
-function initCameraControl(lockCam = false)
+function initCameraControl()
 {
     // Base camera
     camera = new THREE.PerspectiveCamera(55, sizes.width / sizes.height, 0.1, 100)
@@ -328,7 +328,7 @@ function initCameraControl(lockCam = false)
     // camera.position.set(0, 0.403, 0.330)
 
     // LockControls
-    if(lockCam)
+    if(LOCKCAM)
     {
         controls.enableZoom = false
         controls.enablePan = false
@@ -383,10 +383,12 @@ function initTick()
 
 function debugTick()
 {
-    //log camera position and camera angle
-    // console.log(camera.position)
-    // console.log(camera.rotation)
-    // console.log(textPlanemesh.position);
+    if(DEBUGMODE)
+    {
+        //log camera position and camera angle
+        console.log(camera.position)
+        // console.log(camera.rotation)
+    }
 }
 
 
@@ -431,8 +433,6 @@ const tick = () =>
     // tuniform2.iGlobalTime.value  = elapsedTime
 
     debugTick()
-
-// textPlaneMaterial.emissiveMap.needsUpdate = true;
 
     // Render
     renderer.render(scene, camera)
