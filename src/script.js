@@ -50,6 +50,7 @@ let cubePlaneMesh3, cubePlane3Material, cubePlane3Uniform
 
 let cubeModel = null, cubeMaterial,cubeLoad
 let cubeModel2 = null, cubeMaterial2,cubeLoad2
+let cubeGroup
 
 let waterMesh,waterMaterial
 
@@ -72,6 +73,9 @@ function initScene()
     })
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+
+    cubeGroup = new THREE.Group()
 }
 function initLight()
 {
@@ -99,7 +103,7 @@ function initDebug()
     debugObject = {}
     // const stats = new Stats()
     // document.body.appendChild(stats.dom)
-    gui.hide()
+    // gui.hide()
 }
 
 function initCubeModel()
@@ -151,18 +155,34 @@ function initCubeModel()
 
 function initCubeModel2()
 {
-    const size =.04*1.03;
-    //mat
-        // Water Material
+    const size =.035;
+    const sptuniform = {
+        iGlobalTime:{type:'f',value:0.01},
+        _IOR:{type:'f',value:1.5},
+        _IOROffset:{type:'f',value:0.005},
+        _FresnelPower:{type:'f',value:1},
+        _FresnelAlpha:{type:'f',value:0.5},
+        _ReflRefrMix:{type:'f',value:0.5},
+        _ReflOffset:{type:'f',value:0.02},
+        _Ke:{type:'f',value:10.3},
+        _Opacity:{type:'f',value:0.6},
+        // uColor:{value:new THREE.Color('gray')},
+        // uColorOverLay:{value:new THREE.Color('white')},
+        uColorOverLay:{value:new THREE.Color('#ffb8ff')},
+    };
         cubeMaterial2 = new THREE.ShaderMaterial({
-            vertexShader: sptfragment,
-            fragmentShader: sptvertex,
+            vertexShader: sptvertex,
+            fragmentShader: sptfragment,
             side:THREE.DoubleSide,
-            uniforms:{}
+            uniforms:sptuniform
         })
-    // cubeMaterial2.transparent = true
-    // cubeMaterial2.side = THREE.DoubleSide
+    cubeMaterial2.transparent = true
+    cubeMaterial2.side = THREE.DoubleSide
     // cubeMaterial2.blending = THREE.AdditiveBlending
+
+    debugObject.uColorOverLay= '#012dbc'
+    
+    gui.addColor(debugObject, 'uColorOverLay').onChange(() => { cubeMaterial2.uniforms.uColorOverLay.value.set(debugObject.uColorOverLay) })
 
    cubeLoad2 = false
    gltfLoader2 = new GLTFLoader()
@@ -172,11 +192,35 @@ function initCubeModel2()
 
         cubeModel2.children[0].material = cubeMaterial2
         gltf2.scene.scale.set(size, size ,size)
+        // gltf2.scene.position.set(0,-0.01,0.15)
         cubeLoad2 = true;
+        cubeGroup.add(cubeModel2)
 
-        scene.add(cubeModel2)
+        // scene.add(cubeModel2)
     });
+
+
+    let cubeModel3
+    const gltfLoader3 = new GLTFLoader()
+    gltfLoader3.load('/models/jiduCube_line.gltf', (gltf2) =>
+     {
+        cubeModel3 = gltf2.scene;
+ 
+        cubeModel3.children[0].material = cubeMaterial2
+         gltf2.scene.scale.set(size, size ,size)
+        //  gltf2.scene.position.set(0,-0.01,0.15)
+ 
+        cubeGroup.add(cubeModel3)
+        //  scene.add(cubeModel3)
+     });
+     cubeGroup.position.set(0,-0.01,0.15)
+
+     scene.add(cubeGroup)
+
+
+gui.add(cubeMaterial2.uniforms._IOROffset, 'value').min(0).max(1).step(0.001).name('_IOROffset')
 }
+
 
 
 function initEnvMap()
@@ -496,7 +540,7 @@ function init()
     initCameraControl()
     initCubeModel()
     initCubeModel2()
-    // initWater()
+    initWater()
 
     initCubePlane()
     initCubePlane3()
@@ -524,7 +568,10 @@ const tick = () =>
     if(cubeModel != null & cubeModel2 !=null )
     {
         cubeModel.rotation.y += 0.001
-        cubeModel2.rotation.y += 0.001
+        // cubeModel2.rotation.y += 0.001
+        cubeGroup.rotation.y +=0.001
+        cubeGroup.rotation.x +=0.001
+        cubeGroup.rotation.z +=0.001
     }
     // Update controls
     controls.update()
@@ -534,7 +581,7 @@ const tick = () =>
     // var waterColorOffset = (Math.sin(elapsedTime * watercoloroffsetSpeed)+0.7)*0.1;
     // waterMaterial.uniforms.uColorOffset.value = waterColorOffset
 
-    cubePlaneUniform.iGlobalTime.value  = elapsedTime
+    cubePlaneUniform.iGlobalTime.value  = elapsedTime*0.3
     cubePlane3Uniform.iGlobalTime.value  = elapsedTime*0.3
     // tuniform2.iGlobalTime.value  = elapsedTime
 
