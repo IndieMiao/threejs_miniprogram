@@ -18,6 +18,9 @@ import fractureCubeFragment from './shaders//cubeFracture/fracturecubefragment.g
 import textplanefragment from './shaders/textShader/textplanefragment.glsl'
 
 import distordfragment from './shaders/distordVolume/distordfragment.glsl'
+
+import sptfragment from './shaders/spt/sptfragment.glsl'
+import sptvertex from './shaders/spt/sptvertex.glsl'
 import Stats from 'stats.js'
 
 
@@ -96,7 +99,7 @@ function initDebug()
     debugObject = {}
     // const stats = new Stats()
     // document.body.appendChild(stats.dom)
-    // gui.hide()
+    gui.hide()
 }
 
 function initCubeModel()
@@ -142,7 +145,7 @@ function initCubeModel()
         cubeModel.children[0].material = cubeMaterial
         gltf.scene.scale.set(size, size ,size)
         cubeLoad = true;
-        scene.add(cubeModel)
+        // scene.add(cubeModel)
     });
 }
 
@@ -150,32 +153,20 @@ function initCubeModel2()
 {
     const size =.04*1.03;
     //mat
-    cubeMaterial2 = new THREE.MeshPhysicalMaterial( )
-    cubeMaterial2.transparent = true
-    cubeMaterial2.side = THREE.DoubleSide
-    cubeMaterial2.blending = THREE.AdditiveBlending
-    
-    cubeMaterial2.color.set('#ffb9df')
-    cubeMaterial2.transmission = 0.1
-    cubeMaterial2.opacity= 0.08
-    cubeMaterial2.ior= 1.2
-    // cubeMaterial.emissive.set('#ffb9df')
-    // cubeMaterial.emissive.set('#ffb9bc')
-    cubeMaterial2.emissiveIntensity = 0.00
-   
-    cubeMaterial2.roughness= 0.026
-    cubeMaterial2.metalness= 0.9
-    cubeMaterial2.reflectivity = 0.21
-    cubeMaterial2.thickness= 3.8
-    cubeMaterial2.envMap = environmentMap;
-    cubeMaterial2.envMapIntensity = 1.5;
-    cubeMaterial2.clearcoat =0;
-    cubeMaterial2.clearcoatMap= environmentMap;
+        // Water Material
+        cubeMaterial2 = new THREE.ShaderMaterial({
+            vertexShader: sptfragment,
+            fragmentShader: sptvertex,
+            side:THREE.DoubleSide,
+            uniforms:{}
+        })
+    // cubeMaterial2.transparent = true
+    // cubeMaterial2.side = THREE.DoubleSide
+    // cubeMaterial2.blending = THREE.AdditiveBlending
 
-   
    cubeLoad2 = false
    gltfLoader2 = new GLTFLoader()
-   gltfLoader2.load('/models/jiduCube.gltf', (gltf2) =>
+   gltfLoader2.load('/models/jiduCube_in.gltf', (gltf2) =>
     {
         cubeModel2 = gltf2.scene;
 
@@ -206,64 +197,9 @@ function initEnvMap()
 
 function initBackground()
 {
-    scene.background = new THREE.Color(debugObject.uColorBG)
-    gui.addColor(debugObject, 'uColorBG').onChange(() => { scene.background = new THREE.Color(debugObject.uColorBG)})
-}
-
-function initTextPlan()
-{
-
-    // Create video and play
-    const textureVid = document.createElement("video")
-    textureVid.src = '/video/Title3.mp4' ; 
-    // textureVid.src = '/textures/Text1.gif' ; 
-    textureVid.loop = true;
-    textureVid.playsInline = true;
-    textureVid.muted = true;
-
-    textureVid.play();
-
-
-    // const textureVid = document.getElementById( 'video' );
-    // textureVid.play();
-    // textureVid.addEventListener( 'play', function () {
-
-    //     this.currentTime = 3;
-    // } );
-
-
-    // Load video texture
-    const videoTexture = new THREE.VideoTexture(textureVid);
-    videoTexture.format = THREE.RGBAFormat;
-    videoTexture.minFilter = THREE.NearestFilter;
-    videoTexture.maxFilter = THREE.NearestFilter;
-    videoTexture.generateMipmaps = false;
-
-
-    // Create mesh
-    const textPlaneGeo = new THREE.PlaneGeometry( 0.12,0.25,32,32);
-
-    textPlaneMaterial = new THREE.ShaderMaterial(
-        {
-            vertexShader: fractureCubeVertex,
-            fragmentShader: textplanefragment,
-            side:THREE.DoubleSide,
-            uniforms:{map:{value:videoTexture}}
-        }
-    )
-    // const textPlaneMaterial = new THREE.MeshBasicMaterial({map: videoTexture} );
-    textPlanemesh= new THREE.Mesh( textPlaneGeo, textPlaneMaterial );
-
-    textPlanemesh.position.y = 0.2
-
-    textPlaneMaterial.side= THREE.DoubleSide;
-    textPlaneMaterial.transparent= true;
-    textPlaneMaterial.blending = THREE.AdditiveBlending;
-    textPlaneMaterial.update = true;
-
-
-    // scene.add(textPlanemesh);
-    
+    // scene.background = new THREE.Color(debugObject.uColorBG)
+    // scene.background = new THREE.Color(debugObject.uColorBG)
+    // gui.addColor(debugObject, 'uColorBG').onChange(() => { scene.background = new THREE.Color(debugObject.uColorBG)})
 }
 
 function initCubePlane()
@@ -296,7 +232,7 @@ function initCubePlane()
     scene.add(cubePlaneMesh)
 }
 
-function initCubePlane2()
+function initFracturePlane()
 {
     //Geometry
     cubePlane2Uniform = {
@@ -319,7 +255,7 @@ function initCubePlane2()
     cubePlaneMesh2.rotation.x = - Math.PI * 0.5
     cubePlaneMesh2.position.y = 0.1
     cubePlaneMesh2.position.z = 0.19
-    // scene.add(cubePlane2)
+    scene.add(cubePlane2)
 }
 
 
@@ -560,7 +496,7 @@ function init()
     initCameraControl()
     initCubeModel()
     initCubeModel2()
-    initWater()
+    // initWater()
 
     initCubePlane()
     initCubePlane3()
