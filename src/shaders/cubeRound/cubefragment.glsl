@@ -3,6 +3,8 @@
 #define GAMMA
 
 uniform float iGlobalTime;
+uniform float iInnerRotateSpeed;
+uniform float iOutterRotateSpeed;
 uniform samplerCube iChannel0;
 
 varying vec2 vUv;

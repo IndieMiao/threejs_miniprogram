@@ -300,7 +300,7 @@ vec3 desaturate(in vec3 c, in float a)
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     
-    float tt = iTime * 0.95;
+    float tt = iGlobalTime * 0.95;
     float t = 3.14;
     float v = map2(cos(tt),-1.,1.,0.,0.3);
     float v2 = map2(cos(tt*1.68),-1.,1.,0.,1.);

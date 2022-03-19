@@ -15,7 +15,9 @@ import cubeVertexShader from './shaders/cubeRound/cubevertex.glsl'
 import cubeFragmentShader from './shaders/cubeRound/cubefragment.glsl'
 import fractureCubeVertex from './shaders/cubeFracture/fracturecubevertex.glsl'
 import fractureCubeFragment from './shaders//cubeFracture/fracturecubefragment.glsl'
-import textplanefragment from './shaders/textplanefragment.glsl'
+import textplanefragment from './shaders/textShader/textplanefragment.glsl'
+
+import distordfragment from './shaders/distordVolume/distordfragment.glsl'
 import Stats from 'stats.js'
 
 
@@ -26,6 +28,8 @@ import Stats from 'stats.js'
 
 let DEBUGMODE = false;
 let LOCKCAM = false;
+
+let gltfLoader, gltfLoader2
 
 let gui, debugObject
 
@@ -38,6 +42,11 @@ let textPlanemesh, textPlaneMaterial
 let cubePlaneMesh, cubePlaneMaterial, cubePlaneUniform
 
 let cubePlaneMesh2, cubePlane2Material, cubePlane2Uniform
+let cubePlaneMesh3, cubePlane3Material, cubePlane3Uniform
+
+
+let cubeModel = null, cubeMaterial,cubeLoad
+let cubeModel2 = null, cubeMaterial2,cubeLoad2
 
 let waterMesh,waterMaterial
 
@@ -61,17 +70,125 @@ function initScene()
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 }
+function initLight()
+{
+    const intensity = 5;
+        const light1 = new THREE.PointLight()
+        light1.intensity =intensity;
+    light1.position.set (-0.1,0.25,0)
 
+    const light2 = new THREE.PointLight()
+    light2.position.set (0.1,0.05,0.2)
+
+    const light3 = new THREE.PointLight()
+    light3.position.set (-0.1,0.0,0.3)
+
+    light2.intensity =intensity;
+    light3.intensity =intensity;
+
+    scene.add(light1)
+    scene.add(light2)
+    scene.add(light3)
+}
 function initDebug()
 {
     gui = new dat.GUI({ width: 220 })
     debugObject = {}
     // const stats = new Stats()
     // document.body.appendChild(stats.dom)
-    gui.hide()
+    // gui.hide()
 }
 
-function initBackground()
+function initCubeModel()
+{
+    const size =.04;
+    //mat
+    cubeMaterial = new THREE.MeshPhysicalMaterial( )
+    cubeMaterial.transparent = true
+    cubeMaterial.side = THREE.DoubleSide
+    // cubeMaterial.blending = THREE.AdditiveBlending
+    
+    cubeMaterial.color.set('#ffb9df')
+    cubeMaterial.transmission = 0.941
+    cubeMaterial.opacity= 0.145
+    cubeMaterial.ior= 1.15
+    // cubeMaterial.emissive.set('#ffb9df')
+    // cubeMaterial.emissive.set('#ffb9bc')
+    cubeMaterial.emissiveIntensity = 0.01
+   
+    cubeMaterial.roughness= 0.65
+    cubeMaterial.metalness= 0.76 
+    cubeMaterial.reflectivity = 0.08
+    cubeMaterial.thickness= 3.
+    cubeMaterial.envMap = environmentMap;
+    cubeMaterial.envMapIntensity = 0.5;
+    cubeMaterial.clearcoat =0;
+    cubeMaterial.clearcoatMap= environmentMap;
+   gui.add(cubeMaterial, 'metalness').min(0).max(1).step(0.0001)
+   gui.add(cubeMaterial,'roughness').min(0).max(1).step(0.001)
+   gui.add(cubeMaterial,'ior').min(1).max(2).step(0.001)
+   gui.add(cubeMaterial,'transmission').min(0).max(1).step(0.001)
+   gui.add(cubeMaterial,'opacity').min(0).max(1).step(0.001)
+   gui.add(cubeMaterial,'thickness').min(0).max(5).step(0.001)
+   gui.add(cubeMaterial,'reflectivity').min(0).max(1).step(0.001)
+   gui.add(cubeMaterial,'emissiveIntensity').min(0).max(1).step(0.001)
+   
+   cubeLoad = false
+    gltfLoader = new GLTFLoader()
+    gltfLoader.load('/models/jiduCube.gltf', (gltf) =>
+    {
+        cubeModel = gltf.scene;
+
+        cubeModel.children[0].material = cubeMaterial
+        gltf.scene.scale.set(size, size ,size)
+        cubeLoad = true;
+        scene.add(cubeModel)
+    });
+}
+
+function initCubeModel2()
+{
+    const size =.04*1.03;
+    //mat
+    cubeMaterial2 = new THREE.MeshPhysicalMaterial( )
+    cubeMaterial2.transparent = true
+    cubeMaterial2.side = THREE.DoubleSide
+    cubeMaterial2.blending = THREE.AdditiveBlending
+    
+    cubeMaterial2.color.set('#ffb9df')
+    cubeMaterial2.transmission = 0.1
+    cubeMaterial2.opacity= 0.08
+    cubeMaterial2.ior= 1.2
+    // cubeMaterial.emissive.set('#ffb9df')
+    // cubeMaterial.emissive.set('#ffb9bc')
+    cubeMaterial2.emissiveIntensity = 0.00
+   
+    cubeMaterial2.roughness= 0.026
+    cubeMaterial2.metalness= 0.9
+    cubeMaterial2.reflectivity = 0.21
+    cubeMaterial2.thickness= 3.8
+    cubeMaterial2.envMap = environmentMap;
+    cubeMaterial2.envMapIntensity = 1.5;
+    cubeMaterial2.clearcoat =0;
+    cubeMaterial2.clearcoatMap= environmentMap;
+
+   
+   cubeLoad2 = false
+   gltfLoader2 = new GLTFLoader()
+   gltfLoader2.load('/models/jiduCube.gltf', (gltf2) =>
+    {
+        cubeModel2 = gltf2.scene;
+
+        cubeModel2.children[0].material = cubeMaterial2
+        gltf2.scene.scale.set(size, size ,size)
+        cubeLoad2 = true;
+
+        scene.add(cubeModel2)
+    });
+}
+
+
+function initEnvMap()
 {
     const cubeTextureLoader = new THREE.CubeTextureLoader()
 
@@ -85,6 +202,12 @@ function initBackground()
             '/envmap/hdr2/nz.png'
         ]
     )
+}
+
+function initBackground()
+{
+    scene.background = new THREE.Color(debugObject.uColorBG)
+    gui.addColor(debugObject, 'uColorBG').onChange(() => { scene.background = new THREE.Color(debugObject.uColorBG)})
 }
 
 function initTextPlan()
@@ -199,6 +322,33 @@ function initCubePlane2()
     // scene.add(cubePlane2)
 }
 
+
+function initCubePlane3()
+{
+    //Geometry
+    cubePlane3Uniform = {
+        iGlobalTime:{type:'f',value:0.01},
+    };
+    const cubePlane2Geometry = new THREE.PlaneGeometry(0.17,0.17,2,2)
+    cubePlane3Material = new THREE.ShaderMaterial(
+        {
+            vertexShader: fractureCubeVertex,
+            fragmentShader: distordfragment,
+            side:THREE.DoubleSide,
+            uniforms:cubePlane3Uniform
+        }
+    )
+    cubePlane3Material.transparent = true
+    // cubePlaneMaterial.opacity = 0.2
+    // cubePlane3Material.blending = THREE.AdditiveBlending
+    // Mesh
+    cubePlaneMesh3 = new THREE.Mesh(cubePlane2Geometry, cubePlane3Material)
+    // cubePlaneMesh3.rotation.x = - Math.PI * 0.5
+    // cubePlaneMesh3.position.y = 0.1
+    // cubePlaneMesh3.position.z = 0.19
+    scene.add(cubePlaneMesh3)
+}
+
 function initWater()
 {
     
@@ -239,17 +389,15 @@ function initWater()
     debugObject.uColor2 = '#3eafcc'
     debugObject.uColor3 = '#ffffff'
     debugObject.uColor4 = '#c1b9b9'
-    debugObject.uColorBG = '#5ee6eb'
+    debugObject.uColorBG = 'black'
 
 
 
 
-    scene.background = new THREE.Color(debugObject.uColorBG)
-    gui.addColor(debugObject, 'uColor1').onChange(() => { waterMaterial.uniforms.uColor1.value.set(debugObject.uColor1) })
-    gui.addColor(debugObject, 'uColor2').onChange(() => { waterMaterial.uniforms.uColor2.value.set(debugObject.uColor2) })
-    gui.addColor(debugObject, 'uColor3').onChange(() => { waterMaterial.uniforms.uColor3.value.set(debugObject.uColor3) })
-    gui.addColor(debugObject, 'uColor4').onChange(() => { waterMaterial.uniforms.uColor4.value.set(debugObject.uColor4) })
-    gui.addColor(debugObject, 'uColorBG').onChange(() => { scene.background = new THREE.Color(debugObject.uColorBG)})
+    // gui.addColor(debugObject, 'uColor1').onChange(() => { waterMaterial.uniforms.uColor1.value.set(debugObject.uColor1) })
+    // gui.addColor(debugObject, 'uColor2').onChange(() => { waterMaterial.uniforms.uColor2.value.set(debugObject.uColor2) })
+    // gui.addColor(debugObject, 'uColor3').onChange(() => { waterMaterial.uniforms.uColor3.value.set(debugObject.uColor3) })
+    // gui.addColor(debugObject, 'uColor4').onChange(() => { waterMaterial.uniforms.uColor4.value.set(debugObject.uColor4) })
 
 
     // Water Material
@@ -354,6 +502,11 @@ function initHierarchy()
     textPlanemesh.position.set(0,0,-0.3 );
 
     }
+
+    cubePlaneMesh3.parent = camera
+    cubePlaneMesh3.position.set(0,-0.1,-0.3);
+
+
 }
 
 function initEvent()
@@ -397,20 +550,28 @@ function init()
     initScene()
     initTick()
     initEvent()
-    initBackground()
+    initLight()
+
+    initEnvMap()
     initDebug()
     initHelper()
     
 
     initCameraControl()
-
+    initCubeModel()
+    initCubeModel2()
     initWater()
+
+    initCubePlane()
+    initCubePlane3()
+    
+    //depracated
     // initTextPlan()
     // initCubePlane2()
-    initCubePlane()
-
 
     initHierarchy()
+
+    initBackground()
 }
 
 const tick = () =>
@@ -419,8 +580,16 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Water
-    waterMaterial.uniforms.uTime.value = elapsedTime
+    if(waterMaterial)
+    {
+        waterMaterial.uniforms.uTime.value = elapsedTime
+    }
 
+    if(cubeModel != null & cubeModel2 !=null )
+    {
+        cubeModel.rotation.y += 0.001
+        cubeModel2.rotation.y += 0.001
+    }
     // Update controls
     controls.update()
 
@@ -430,6 +599,7 @@ const tick = () =>
     // waterMaterial.uniforms.uColorOffset.value = waterColorOffset
 
     cubePlaneUniform.iGlobalTime.value  = elapsedTime
+    cubePlane3Uniform.iGlobalTime.value  = elapsedTime*0.3
     // tuniform2.iGlobalTime.value  = elapsedTime
 
     debugTick()
