@@ -14,8 +14,8 @@ import { floorPowerOfTwo } from 'three/src/math/mathutils'
 import cubeVertexShader from './shaders/cubeRound/cubevertex.glsl'
 import cubeFragmentShader from './shaders/cubeRound/cubefragment.glsl'
 import fractureCubeVertex from './shaders/cubeFracture/fracturecubevertex.glsl'
-import fractureCubeFragment from './shaders//cubeFracture/fracturecubefragment.glsl'
-import textplanefragment from './shaders/textShader/textplanefragment.glsl'
+// import fractureCubeFragment from './shaders//cubeFracture/fracturecubefragment.glsl'
+// import textplanefragment from './shaders/textShader/textplanefragment.glsl'
 
 import distordfragment from './shaders/distordVolume/distordfragment.glsl'
 
@@ -42,14 +42,13 @@ let environmentMap
 
 let textPlanemesh, textPlaneMaterial
 
-let cubePlaneMesh, cubePlaneMaterial, cubePlaneUniform
+let roundCube_mesh, roundCube_material, roundCube_uniform
 
-let roundCubeMesh, roundCubeMaterial, roundCube_uniform
-let distordFxMesh, distordFxMaterial, diestordFx_uniform
+let distordFxMesh, distordFxMaterial, distordFx_uniform
 
 
 let cubeModel = null, cubeMaterial,cubeLoad
-let cubeModel2 = null, cubeInnerMaterial,cubeLoad2, cubeShellMateral
+let cube_in_model = null, cubeInnerMaterial,cube_in_Load, cubeShellMateral,cube_line_model = null,cube_shell_model = null
 let cubeMeshGroup, cubeFxGroup ,cubeRootGroup
 
 let waterMesh,waterMaterial
@@ -74,15 +73,31 @@ function init()
     
 
     initCameraControl()
-    initCubeMesh()
+    initJiduCubeMesh()
     // initWater()
 
-    initCubePlane()
-    initCubePlane3()
+    initRoundCube()
+    initDistordFx()
 
     initHierarchy()
 
     initBackground()
+}
+function initHierarchy()
+{
+    // cubeRootGroup.rotateX(90)
+    cubeFxGroup.position.set(0.0,0.0,0.38)
+
+    // if(cube_shell_model!=null)
+    // {
+
+    // cubeRootGroup.position.set(0.0,2,-0.12);
+    // cubeRootGroup.rotation.x = - Math.PI * 0.5
+    // // }
+    // cubeMeshGroup.position.set(0,0.2,0.1)
+
+    // scene.add(cubeRootGroup)
+
 }
 
 function initScene()
@@ -103,9 +118,8 @@ function initScene()
     cubeMeshGroup = new THREE.Group()
     cubeFxGroup = new THREE.Group()
     cubeRootGroup = new THREE.Group()
-    cubeMeshGroup.parent = cubeRootGroup
-    cubeFxGroup.parent = cubeRootGroup
-    scene.add(cubeRootGroup)
+    // cubeMeshGroup.parent = cubeRootGroup
+    // cubeFxGroup.parent = cubeRootGroup
 }
 function initLight()
 {
@@ -137,9 +151,9 @@ function initDebug()
 }
 
 
-function initCubeMesh()
+function initJiduCubeMesh()
 {
-    const size =.014;
+    const size =.3;
     const sptuniform = {
         iGlobalTime:{type:'f',value:0.01},
         _IOR:{type:'f',value:1.5},
@@ -150,6 +164,7 @@ function initCubeMesh()
         _ReflOffset:{type:'f',value:0.02},
         _Ke:{type:'f',value:10.3},
         _Opacity:{type:'f',value:0.6},
+        _EnvTex:{value:environmentMap},
         // uColor:{value:new THREE.Color('gray')},
         uColorOverLay:{value:new THREE.Color('#ffb8ff')},
     };
@@ -163,6 +178,7 @@ function initCubeMesh()
         _ReflOffset:{type:'f',value:0.02},
         _Ke:{type:'f',value:10.3},
         _Opacity:{type:'f',value:0.5},
+        _EnvTex:{value:environmentMap},
         // uColor:{value:new THREE.Color('gray')},
         uColorOverLay:{value:new THREE.Color('#ffb8ff')},
         
@@ -196,45 +212,40 @@ function initCubeMesh()
     gui.addColor(debugObject, 'uColorOverLay').onChange(() => { cubeInnerMaterial.uniforms.uColorOverLay.value.set(debugObject.uColorOverLay) })
     gui.addColor(debugObject, 'uShellColorOverLay').onChange(() => { cubeInnerMaterial.uniforms.uColorOverLay.value.set(debugObject.uColorOverLay) })
 
-   cubeLoad2 = false
+   cube_in_Load = false
    gltfLoader2 = new GLTFLoader()
    gltfLoader2.load('/models/jiduCube_in.gltf', (gltf2) =>
     {
-        cubeModel2 = gltf2.scene;
+        cube_in_model = gltf2.scene;
 
-        cubeModel2.children[0].material = cubeInnerMaterial
+        cube_in_model.children[0].material = cubeInnerMaterial
         gltf2.scene.scale.set(size, size ,size)
-        cubeLoad2 = true;
-        cubeMeshGroup.add(cubeModel2)
-
+        cube_in_Load = true;
+        cubeMeshGroup.add(cube_in_model)
     });
 
 
-    let cubeModel3
     const gltfLoader3 = new GLTFLoader()
     gltfLoader3.load('/models/jiduCube_line.gltf', (gltf2) =>
      {
-        cubeModel3 = gltf2.scene;
+        cube_line_model = gltf2.scene;
  
-        cubeModel3.children[0].material = cubeInnerMaterial
+        cube_line_model.children[0].material = cubeInnerMaterial
          gltf2.scene.scale.set(size, size ,size)
  
-        cubeMeshGroup.add(cubeModel3)
+        cubeMeshGroup.add(cube_line_model)
      });
-     cubeMeshGroup.position.set(0,-0.01,0.15)
 
-     let cubeModel4
      const gltfLoader4 = new GLTFLoader()
      gltfLoader4.load('/models/jiduCube_shell.gltf', (gltf3) =>
       {
-        cubeModel4 = gltf3.scene;
+        cube_shell_model = gltf3.scene;
   
-        cubeModel4.children[0].material = cubeShellMateral
+        cube_shell_model.children[0].material = cubeShellMateral
         gltf3.scene.scale.set(size, size ,size)
   
-         cubeMeshGroup.add(cubeModel4)
+         cubeMeshGroup.add(cube_shell_model)
       });
-    //   cubeGroup.position.set(0,-0.01,0.15)
 
      scene.add(cubeMeshGroup)
 
@@ -262,52 +273,54 @@ function initEnvMap()
 
 function initBackground()
 {
-    // scene.background = new THREE.Color(debugObject.uColorBG)
+    scene.background = new THREE.Color('gray')
     // scene.background = new THREE.Color(debugObject.uColorBG)
     // gui.addColor(debugObject, 'uColorBG').onChange(() => { scene.background = new THREE.Color(debugObject.uColorBG)})
 }
 
-function initCubePlane()
+function initRoundCube()
 {
+    const roundcube_size = 0.48
     //Geometry
-    cubePlaneUniform = {
+    roundCube_uniform = {
             iGlobalTime:{type:'f',value:0.01},
             iChannel0: { value: environmentMap}
     };
-    const cubePlaneGeometry = new THREE.PlaneGeometry(0.065,0.065,2,2)
-    cubePlaneMaterial = new THREE.ShaderMaterial(
+    const cubePlaneGeometry = new THREE.PlaneGeometry(roundcube_size,roundcube_size,2,2)
+    roundCube_material = new THREE.ShaderMaterial(
         {
             vertexShader: cubeVertexShader,
             fragmentShader: cubeFragmentShader,
             side:THREE.DoubleSide,
-            uniforms:cubePlaneUniform
+            uniforms:roundCube_uniform
         }
     )
-    cubePlaneMaterial.transparent = true
+    roundCube_material.transparent = true
     // cubePlaneMaterial.opacity = 0.1
-    cubePlaneMaterial.blending = THREE.AdditiveBlending
+    roundCube_material.blending = THREE.AdditiveBlending
 
     // Mesh
-    cubePlaneMesh = new THREE.Mesh(cubePlaneGeometry, cubePlaneMaterial)
+    roundCube_mesh = new THREE.Mesh(cubePlaneGeometry, roundCube_material)
     // cubePlaneMesh.rotation.x = - Math.PI * 0.5
     // cubePlaneMesh.position.y = 0.1
     // cubePlaneMesh.position.z = 0.19
-    cubeMeshGroup.add(cubePlaneMesh)
+    cubeFxGroup.add(roundCube_mesh)
 }
 
-function initCubePlane3()
+function initDistordFx()
 {
+    const distord_size = 0.9
     //Geometry
-    diestordFx_uniform = {
+    distordFx_uniform = {
         iGlobalTime:{type:'f',value:0.01},
     };
-    const cubePlane2Geometry = new THREE.PlaneGeometry(0.17,0.17,2,2)
+    const cubePlane2Geometry = new THREE.PlaneGeometry(distord_size,distord_size,2,2)
     distordFxMaterial = new THREE.ShaderMaterial(
         {
             vertexShader: fractureCubeVertex,
             fragmentShader: distordfragment,
             side:THREE.DoubleSide,
-            uniforms:diestordFx_uniform
+            uniforms:distordFx_uniform
         }
     )
     distordFxMaterial.transparent = true
@@ -315,10 +328,11 @@ function initCubePlane3()
     // cubePlane3Material.blending = THREE.AdditiveBlending
     // Mesh
     distordFxMesh = new THREE.Mesh(cubePlane2Geometry, distordFxMaterial)
-    // cubePlaneMesh3.rotation.x = - Math.PI * 0.5
-    // cubePlaneMesh3.position.y = 0.1
-    // cubePlaneMesh3.position.z = 0.19
-    cubeMeshGroup.add(distordFxMesh)
+    // distordFxMesh.rotation.x = - Math.PI * 0.5
+    // distordFxMesh.position.y = 0.1
+    // distordFxMesh.position.z = 0.19
+    cubeFxGroup.add(distordFxMesh)
+    scene.add(cubeFxGroup)
 }
 
 function initWater()
@@ -441,7 +455,7 @@ function initCameraControl()
 
     // Controls
     controls = new OrbitControls(camera, canvas)
-    camera.position.set(0., 0.32, 0.31)
+    camera.position.set(0., 0., 2)
     // camera.position.set(0., 0.28, 0.356)
     // camera.position.set(0, 0.403, 0.330)
 
@@ -458,27 +472,7 @@ function initCameraControl()
     scene.add(camera)
 }
 
-function initHierarchy()
-{
-    // if(cubePlaneMesh)
-    // {
-    //     cubePlaneMesh.parent = camera
-    //     cubePlaneMesh.position.set(0,-0.1,-0.3);
-    // }
 
-    // if(textPlaneMaterial!=null)
-    // {
-    // textPlanemesh.parent = camera
-    // textPlanemesh.position.set(0,0,-0.3 );
-
-    // }
-
-    // cubePlaneMesh3.parent = camera
-    // cubePlaneMesh3.position.set(0,-0.1,-0.3);
-
-    cubeMeshGroup.parent = camera
-    cubeMeshGroup.position.set(0.0,-0.05,-0.15);
-}
 
 function initEvent()
 {
@@ -529,13 +523,14 @@ const tick = () =>
         waterMaterial.uniforms.uTime.value = elapsedTime
     }
 
-    if(cubeModel != null & cubeModel2 !=null )
+    if( cube_in_model !=null )
     {
+
         // cubeModel.rotation.y += 0.001
         // cubeModel2.rotation.y += 0.001
-        // cubeGroup.rotation.y +=0.001
-        // cubeGroup.rotation.x +=0.001
-        // cubeGroup.rotation.z +=0.001
+        cubeMeshGroup.rotation.y +=0.001
+        cubeMeshGroup.rotation.x +=0.001
+        cubeMeshGroup.rotation.z +=0.001
     }
     // Update controls
     controls.update()
@@ -545,8 +540,8 @@ const tick = () =>
     // var waterColorOffset = (Math.sin(elapsedTime * watercoloroffsetSpeed)+0.7)*0.1;
     // waterMaterial.uniforms.uColorOffset.value = waterColorOffset
 
-    cubePlaneUniform.iGlobalTime.value  = elapsedTime*0.3
-    diestordFx_uniform.iGlobalTime.value  = elapsedTime*0.3
+    roundCube_uniform.iGlobalTime.value  = elapsedTime*0.3
+    distordFx_uniform.iGlobalTime.value  = elapsedTime*0.3
     // tuniform2.iGlobalTime.value  = elapsedTime
 
     debugTick()
