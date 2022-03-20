@@ -8,10 +8,6 @@ uniform float uSmallWavesFrequency;
 uniform float uSmallWavesSpeed;
 uniform float uSmallIterations;
 
-
-uniform float uSinFreq;
-uniform float uSinElevation;
-
 varying float vElevation;
 
 // Classic Perlin 3D Noise 
@@ -99,24 +95,82 @@ float cnoise(vec3 P)
     return 2.2 * n_xyz;
 }
 
+// displacement with normal
+// void main()
+// {
+//     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+//     // vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+//     vec3 fNormal = normal;
+
+//     // Elevation
+//     float elevation = sin(modelPosition.x * uBigWavesFrequency.x + uTime * uBigWavesSpeed) *
+//                       sin(modelPosition.y * uBigWavesFrequency.y + uTime * uBigWavesSpeed) *
+//                       uBigWavesElevation;
+
+//     for(float i = 1.0; i <= uSmallIterations; i++)
+//     {
+//         elevation -= abs(cnoise(vec3(modelPosition.xy * uSmallWavesFrequency * i, uTime * uSmallWavesSpeed)) * uSmallWavesElevation / i);
+//     }
+    
+//     vec3 newPosition = position + normal * elevation;
+    
+//     // modelPosition.z += elevation;
+
+
+//     // vec4 viewPosition = viewMatrix * modelPosition;
+//     // vec4 projectedPosition = projectionMatrix * viewPosition;
+
+//     gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+
+//     vElevation = elevation;
+// }
+
+// y as height
+
+// void main()
+// {
+//     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+//     // vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+
+//     // Elevation
+//     float elevation = sin(modelPosition.x * uBigWavesFrequency.x + uTime * uBigWavesSpeed) *
+//                       sin(modelPosition.z * uBigWavesFrequency.y + uTime * uBigWavesSpeed) *
+//                       uBigWavesElevation;
+
+//     for(float i = 1.0; i <= uSmallIterations; i++)
+//     {
+//         elevation -= abs(cnoise(vec3(modelPosition.xz * uSmallWavesFrequency * i, uTime * uSmallWavesSpeed)) * uSmallWavesElevation / i);
+//     }
+    
+//     modelPosition.y += elevation;
+
+//     vec4 viewPosition = viewMatrix * modelPosition;
+//     vec4 projectedPosition = projectionMatrix * viewPosition;
+//     gl_Position = projectedPosition;
+
+//     vElevation = elevation;
+// }
+
+
+// z as height
+
 void main()
 {
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+    // vec4 modelPosition = modelMatrix * vec4(position, 1.0);
 
     // Elevation
-    float elevation = sin(modelPosition.x * uBigWavesFrequency.x + uTime * 0.) *
-                      sin(modelPosition.z * uBigWavesFrequency.y + uTime * -uBigWavesSpeed) *
+    float elevation = sin(modelPosition.x * uBigWavesFrequency.x + uTime * uBigWavesSpeed) *
+                      sin(modelPosition.y * uBigWavesFrequency.y + uTime * uBigWavesSpeed) *
                       uBigWavesElevation;
 
     for(float i = 1.0; i <= uSmallIterations; i++)
     {
-        elevation -= abs(cnoise(vec3(modelPosition.xz * uSmallWavesFrequency * i, uTime * uSmallWavesSpeed)) * uSmallWavesElevation / i);
+        elevation -= abs(cnoise(vec3(modelPosition.xy * uSmallWavesFrequency * i, uTime * uSmallWavesSpeed)) * uSmallWavesElevation / i);
     }
     
-    elevation += (sin(modelPosition.z*uSinFreq)*uBigWavesElevation)*uSinElevation;
-    modelPosition.y += elevation;
+    modelPosition.z += elevation;
 
-    // redo the sin elevation
 
     vec4 viewPosition = viewMatrix * modelPosition;
     vec4 projectedPosition = projectionMatrix * viewPosition;
@@ -124,3 +178,4 @@ void main()
 
     vElevation = elevation;
 }
+
