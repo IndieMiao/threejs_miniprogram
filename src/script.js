@@ -74,7 +74,7 @@ function init()
     
 
     initCameraControl()
-    initCubeMeshAndGroup()
+    initCubeMesh()
     // initWater()
 
     initCubePlane()
@@ -136,54 +136,8 @@ function initDebug()
     // gui.hide()
 }
 
-function initCubeModel()
-{
-    const size =.04;
-    //mat
-    cubeMaterial = new THREE.MeshPhysicalMaterial( )
-    cubeMaterial.transparent = true
-    cubeMaterial.side = THREE.DoubleSide
-    // cubeMaterial.blending = THREE.AdditiveBlending
-    
-    cubeMaterial.color.set('#ffb9df')
-    cubeMaterial.transmission = 0.941
-    cubeMaterial.opacity= 0.145
-    cubeMaterial.ior= 1.15
-    // cubeMaterial.emissive.set('#ffb9df')
-    // cubeMaterial.emissive.set('#ffb9bc')
-    cubeMaterial.emissiveIntensity = 0.01
-   
-    cubeMaterial.roughness= 0.65
-    cubeMaterial.metalness= 0.76 
-    cubeMaterial.reflectivity = 0.08
-    cubeMaterial.thickness= 3.
-    cubeMaterial.envMap = environmentMap;
-    cubeMaterial.envMapIntensity = 0.5;
-    cubeMaterial.clearcoat =0;
-    cubeMaterial.clearcoatMap= environmentMap;
-//    gui.add(cubeMaterial, 'metalness').min(0).max(1).step(0.0001)
-//    gui.add(cubeMaterial,'roughness').min(0).max(1).step(0.001)
-//    gui.add(cubeMaterial,'ior').min(1).max(2).step(0.001)
-//    gui.add(cubeMaterial,'transmission').min(0).max(1).step(0.001)
-//    gui.add(cubeMaterial,'opacity').min(0).max(1).step(0.001)
-//    gui.add(cubeMaterial,'thickness').min(0).max(5).step(0.001)
-//    gui.add(cubeMaterial,'reflectivity').min(0).max(1).step(0.001)
-//    gui.add(cubeMaterial,'emissiveIntensity').min(0).max(1).step(0.001)
-   
-   cubeLoad = false
-    gltfLoader = new GLTFLoader()
-    gltfLoader.load('/models/jiduCube.gltf', (gltf) =>
-    {
-        cubeModel = gltf.scene;
 
-        cubeModel.children[0].material = cubeMaterial
-        gltf.scene.scale.set(size, size ,size)
-        cubeLoad = true;
-        // scene.add(cubeModel)
-    });
-}
-
-function initCubeMeshAndGroup()
+function initCubeMesh()
 {
     const size =.014;
     const sptuniform = {
@@ -340,33 +294,6 @@ function initCubePlane()
     // cubePlaneMesh.position.z = 0.19
     cubeMeshGroup.add(cubePlaneMesh)
 }
-
-function initFracturePlane()
-{
-    //Geometry
-    roundCube_uniform = {
-        iGlobalTime:{type:'f',value:0.01},
-    };
-    const cubePlane2Geometry = new THREE.PlaneGeometry(0.08,0.08,2,2)
-    roundCubeMaterial = new THREE.ShaderMaterial(
-        {
-            vertexShader: fractureCubeVertex,
-            fragmentShader: fractureCubeFragment,
-            side:THREE.DoubleSide,
-            uniforms:roundCube_uniform
-        }
-    )
-    roundCubeMaterial.transparent = true
-    // cubePlaneMaterial.opacity = 0.2
-    roundCubeMaterial.blending = THREE.AdditiveBlending
-    // Mesh
-    roundCubeMesh = new THREE.Mesh(cubePlane2Geometry, roundCubeMaterial)
-    roundCubeMesh.rotation.x = - Math.PI * 0.5
-    roundCubeMesh.position.y = 0.1
-    roundCubeMesh.position.z = 0.19
-    scene.add(cubePlane2)
-}
-
 
 function initCubePlane3()
 {
