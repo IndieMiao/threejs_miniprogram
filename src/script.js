@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
 import waterVertexShader from './shaders/water/vertex.glsl'
 import waterFragmentShader from './shaders/water/fragment.glsl'
-import { Blending, CubeTextureLoader, Vector3 } from 'three'
+import { Blending, CubeTextureLoader, RGBA_ASTC_10x5_Format, Vector2, Vector3 } from 'three'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 import typefaceFont from 'three/examples/fonts/helvetiker_regular.typeface.json'
@@ -21,7 +21,11 @@ import distordfragment from './shaders/distordVolume/distordfragment.glsl'
 
 import sptfragment from './shaders/spt/sptfragment.glsl'
 import sptvertex from './shaders/spt/sptvertex.glsl'
+
+import gradientfragment from './shaders/gradient/fragment.glsl'
+import gradientvertex from './shaders/gradient/vertex.glsl'
 import Stats from 'stats.js'
+import { SingleEntryPlugin } from 'webpack'
 
 
 
@@ -53,7 +57,15 @@ let cubeMeshGroup, cubeFxGroup ,cubeRootGroup
 
 let waterMesh,waterMaterial
 
+let gradient_material
+
 let axesHelper
+
+
+var colorlayers_uniform=[] 
+let vertDeform_unifrom
+const uniseed = 1
+
 
 /**
  * Base
@@ -74,7 +86,8 @@ function init()
 
     initCameraControl()
     initJiduCubeMesh()
-    initWater()
+    // initWater()
+    initGradientBG()
 
     initRoundCube()
     initDistordFx()
@@ -97,6 +110,92 @@ function initHierarchy()
     // cubeMeshGroup.position.set(0,0.2,0.1)
 
     // scene.add(cubeRootGroup)
+
+}
+
+// const sectionColors = [
+//     new THREE.Color('#FFBA27'),
+//     new THREE.Color('#EF008F'),
+//     new THREE.Color('#6EC3F4'),
+//     new THREE.Color('#7038FF')
+// ]
+var sectionColors = [ '#FFBA27', '#EF008F', '#6EC3F4', '#7038FF' ]
+
+function initGradientUniform ()
+{
+    vertDeform_unifrom = {
+        incline:Math.sin(1)/Math.cos(1),
+        offsetTop:-0.5,
+        offsetBottom:-0.5,
+        noiseFreq:new Vector2(3,4),
+        noiseAmp:3,
+        noiseSpeed:10,
+        noiseFlow:3,
+        noiseFlow:uniseed,
+    };
+    for (let e = 0; e < sectionColors.length; e += 1) {
+
+        colorlayers_uniform[e] = 
+        {
+            color:  new THREE.Color( sectionColors[e]),
+            noiseFreq: new Vector2(2 + e / sectionColors.length, 3 + e / sectionColors.length),
+            noiseSpeed: 11 + .3 * e,
+            noiseFlow:  6.5 + .3 * e,
+            noiseSeed: uniseed + 10 * e,
+            noiseFloor: .1,
+            noiseCeil: .63 + .07 * e,
+        }
+    }
+}
+
+function initGradientBG()
+{
+     initGradientUniform()
+        
+    // Geometry
+    const gradient_geometory= new THREE.PlaneGeometry(3.1, 3.1, 256,256) 
+
+     let Uniforms = {
+        u_time: { value: 0 },
+        u_baseColor: { value: new THREE.Color(debugObject.uRampColor1) },
+        u_tile:{value: new Vector2(1,1)},
+        u_waveLayers_length: { value: 4 },
+        u_active_colors: { value: [1,1,1,1] },
+        u_global:{
+            value:{
+                noiseSpeed: 1,
+                noiseFreq: 1
+            }},
+        u_vertDeform:{
+            value:{
+                incline: 0,
+                offsetTop: 0,
+                offsetBottom: 0,
+                noiseFreq : new Vector2(1,1),
+                noiseAmp: 1,
+                noiseSpeed: 1,
+                noiseFlow:1,
+                noiseSeed:1,
+            }},
+        u_waveLayers:
+        {
+            value: colorlayers_uniform,
+        }
+
+    }
+
+
+    gradient_material= new THREE.ShaderMaterial({
+        vertexShader: gradientvertex,
+        fragmentShader: gradientfragment,
+        uniforms:Uniforms
+    })
+
+    // Mesh
+    const gradient_mesh= new THREE.Mesh(gradient_geometory, gradient_material)
+    // gradient_mesh.rotation.x = - Math.PI * 0.5
+    gradient_mesh.position.set(0.,0.,-0.8)
+    scene.add(gradient_mesh)
 
 }
 
@@ -514,6 +613,10 @@ const tick = () =>
     if(waterMaterial)
     {
         waterMaterial.uniforms.uTime.value = elapsedTime
+    }
+    if(gradient_material)
+    {
+        gradient_material.uniforms.u_time.value = elapsedTime*0.1
     }
 
     if( cube_in_model !=null )
