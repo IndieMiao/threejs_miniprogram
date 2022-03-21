@@ -60,6 +60,8 @@ let gradient_material
 
 let axesHelper
 
+let stats
+
 
 var colorlayers_uniform=[] 
 let vertDeform_uniform
@@ -240,7 +242,7 @@ function initDebug()
 {
     gui = new dat.GUI({ width: 220 })
     debugObject = {}
-    // const stats = new Stats()
+    stats = new Stats()
     // document.body.appendChild(stats.dom)
     // gui.hide()
 }
@@ -602,7 +604,7 @@ function debugTick()
 
 const tick = () =>
 {
-    // stats.begin()
+    stats.begin()
     const elapsedTime = clock.getElapsedTime()
 
     // Water
@@ -645,7 +647,7 @@ const tick = () =>
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
-    // stats.end()
+    stats.end()
 }
 
 init()
