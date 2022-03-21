@@ -25,7 +25,6 @@ import sptvertex from './shaders/spt/sptvertex.glsl'
 import gradientfragment from './shaders/gradient/fragment.glsl'
 import gradientvertex from './shaders/gradient/vertex.glsl'
 import Stats from 'stats.js'
-import { SingleEntryPlugin } from 'webpack'
 
 
 
@@ -113,23 +112,19 @@ function initHierarchy()
 
 }
 
-// const sectionColors = [
-//     new THREE.Color('#FFBA27'),
-//     new THREE.Color('#EF008F'),
-//     new THREE.Color('#6EC3F4'),
-//     new THREE.Color('#7038FF')
-// ]
+
 var sectionColors = [ '#FFBA27', '#EF008F', '#6EC3F4', '#7038FF' ]
 
 function initGradientUniform ()
 {
+    let rotateangle = Math.PI/2
     vertDeform_unifrom = {
-        incline:Math.sin(1)/Math.cos(1),
+        incline:Math.sin(10)/Math.cos(10),
         offsetTop:-0.5,
         offsetBottom:-0.5,
         noiseFreq:new Vector2(3,4),
-        noiseAmp:3,
-        noiseSpeed:10,
+        noiseAmp:1,
+        noiseSpeed:5,
         noiseFlow:3,
         noiseFlow:uniseed,
     };
@@ -153,7 +148,7 @@ function initGradientBG()
      initGradientUniform()
         
     // Geometry
-    const gradient_geometory= new THREE.PlaneGeometry(3.1, 3.1, 256,256) 
+    const gradient_geometory= new THREE.PlaneGeometry(6.1, 6.1, 256,256) 
 
      let Uniforms = {
         u_time: { value: 0 },
@@ -167,23 +162,13 @@ function initGradientBG()
                 noiseFreq: 1
             }},
         u_vertDeform:{
-            value:{
-                incline: 0,
-                offsetTop: 0,
-                offsetBottom: 0,
-                noiseFreq : new Vector2(1,1),
-                noiseAmp: 1,
-                noiseSpeed: 1,
-                noiseFlow:1,
-                noiseSeed:1,
-            }},
+            value:vertDeform_unifrom},
         u_waveLayers:
         {
             value: colorlayers_uniform,
         }
 
     }
-
 
     gradient_material= new THREE.ShaderMaterial({
         vertexShader: gradientvertex,
@@ -194,8 +179,11 @@ function initGradientBG()
     // Mesh
     const gradient_mesh= new THREE.Mesh(gradient_geometory, gradient_material)
     // gradient_mesh.rotation.x = - Math.PI * 0.5
-    gradient_mesh.position.set(0.,0.,-0.8)
+    gradient_mesh.position.set(0.,-0.9,-0.8)
+
+
     scene.add(gradient_mesh)
+    // gradient_mesh.parent = camera
 
 }
 
