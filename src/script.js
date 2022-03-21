@@ -88,11 +88,11 @@ function init()
 
     initCameraControl()
     initJiduCubeMesh()
-    // initWater()
     initGradientBG()
 
-    initRoundCube()
-    initDistordFx()
+    // initRoundCube()
+    // initDistordFx()
+    scene.add(cubeFxGroup)
 
     initHierarchy()
 
@@ -119,7 +119,7 @@ function initHierarchy()
 var sectionColors = [ '#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE' ]
 // var sectionColors = [ '#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2' ]
 // var sectionColors = [ '#F3BB40', '#6AE5CE', '#CDC77A', '#F3BB40' ]
-// var sectionColors = [ '#F5689B', '#F5689B', '#E8E39B', '#F5689B' ]
+var sectionColors = [ '#F5689B', '#F5689B', '#E8E39B', '#F5689B' ]
 // var sectionColors = [ '#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6' ]
 // var sectionColors = [ '#9DE3F5', '#9DE3F5', '#B984F6', '#8861F5' ]
 
@@ -165,7 +165,7 @@ function initGradientBG()
 
      let Uniforms = {
         u_time: { value: 0 },
-        u_intensiy :{value: 0.8},
+        u_intensiy :{value: 1},
         u_baseColor: { value: new THREE.Color(debugObject.uRampColor1) },
         u_tile:{value: new Vector2(1,1)},
         u_waveLayers_length: { value: 4 },
@@ -296,12 +296,12 @@ function initJiduCubeMesh()
 
     cubeInnerMaterial.transparent = true
     cubeInnerMaterial.side = THREE.DoubleSide
-    cubeInnerMaterial.blending = THREE.AdditiveBlending
+    // cubeInnerMaterial.blending = THREE.AdditiveBlending
 
     
     cubeShellMateral.transparent = true
     cubeShellMateral.side = THREE.DoubleSide
-    // cubeShellMateral.blending = THREE.AdditiveBlending
+    cubeShellMateral.blending = THREE.AdditiveBlending
 
     debugObject.uColorOverLay= '#012dbc'
     debugObject.uShellColorOverLay= '#012dbc'
@@ -429,108 +429,7 @@ function initDistordFx()
     // distordFxMesh.position.y = 0.1
     // distordFxMesh.position.z = 0.19
     cubeFxGroup.add(distordFxMesh)
-    scene.add(cubeFxGroup)
 }
-
-function initWater()
-{
-    
-    // Geometry
-    const waterGeometry = new THREE.PlaneGeometry(3.1, 3.1, 256,256) 
-
-    // // ColorPat 1
-    // debugObject.uColor1 = '#1052bc'
-    // debugObject.uColor2 = '#9407b0'
-    // debugObject.uColor3 = '#d39296'
-    // debugObject.uColor4 = '#c1b9b9'
-    // debugObject.uColorBG = '#d39296'
-
-    // //ColorPat 2
-    // debugObject.uColor1 = '#090e58'
-    // debugObject.uColor2 = '#093a53'
-    // debugObject.uColor3 = '#c5f1ea'
-    // debugObject.uColor4 = '#e4d8d8'
-    // debugObject.uColorBG = '#f0e6e6'
-
-    // // //ColorPat 3
-    // debugObject.uColor1 = '#7900ff'
-    // debugObject.uColor2 = '#548cff'
-    // debugObject.uColor3 = '#cfffdc'
-    // debugObject.uColor4 = '#b43c3c'
-    // debugObject.uColorBG = '#93ffd8'
-
-    // // //ColorPat 4
-    // debugObject.uColor1 = '#000b49'
-    // debugObject.uColor2 = '#2666cf'
-    // debugObject.uColor3 = '#ebe645'
-    // debugObject.uColor4 = '#b43c3c'
-    // debugObject.uColorBG = '#93ffd8'
-
-
-    // //ColorPat 4
-    debugObject.uColor1 = '#012dbc'
-    debugObject.uColor2 = '#3eafcc'
-    // debugObject.uColor3 = '#ffffff'
-    // debugObject.uColor4 = '#c1b9b9'
-    // debugObject.uColorBG = 'black'
-
-
-
-
-    gui.addColor(debugObject, 'uColor1').onChange(() => { waterMaterial.uniforms.uDepthColor.value.set(debugObject.uColor1) })
-    gui.addColor(debugObject, 'uColor2').onChange(() => { waterMaterial.uniforms.uSurfaceColor.value.set(debugObject.uColor2) })
-    // gui.addColor(debugObject, 'uColor3').onChange(() => { waterMaterial.uniforms.uColorOffset.value.set(debugObject.uColor3) })
-    // gui.addColor(debugObject, 'uColor4').onChange(() => { waterMaterial.uniforms.uColorMultiplier.value.set(debugObject.uColor4) })
-
-
-    // Water Material
-    waterMaterial = new THREE.ShaderMaterial({
-        vertexShader: waterVertexShader,
-        fragmentShader: waterFragmentShader,
-        uniforms:
-        {
-            uTime: { value: 0 },
-            
-            uBigWavesElevation: { value: 0.25 },
-            uBigWavesFrequency: { value: new THREE.Vector2(2,2) },
-            uBigWavesSpeed: { value: 0.001 },
-
-            uSmallWavesElevation: { value: 1 },
-            uSmallWavesFrequency: { value: 0.8 },
-            uSmallWavesSpeed: { value: 0.16 },
-            uSmallIterations: { value: 1 },
-
-            uDepthColor: { value: new THREE.Color(debugObject.uColor1) },
-            uSurfaceColor: { value: new THREE.Color(debugObject.uColor2) },
-            uColorOffset: { value: 1 },
-            uColorMultiplier: { value: 0.5 },
-
-        }
-    })
-
-
-    // gui.add(waterMaterial.uniforms.uColorMiddeloffset, 'value').min(0.0001).max(5).step(0.01).name('uColorMiddeloffset')
-    // gui.add(waterMaterial.uniforms.uFar, 'value').min(0.0001).max(2).step(0.001).name('uFar')
-    // gui.add(waterMaterial.uniforms.uNear, 'value').min(0.0001).max(0.1).step(0.001).name('uNear')
-    gui.add(waterMaterial.uniforms.uBigWavesElevation, 'value').min(0).max(1).step(0.001).name('uBigWavesElevation')
-    gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 'x').min(0).max(10).step(0.001).name('uBigWavesFrequencyX')
-    gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 'y').min(0).max(10).step(0.001).name('uBigWavesFrequencyY')
-    gui.add(waterMaterial.uniforms.uBigWavesSpeed, 'value').min(0).max(4).step(0.001).name('uBigWavesSpeed')
-    gui.add(waterMaterial.uniforms.uSmallWavesElevation, 'value').min(0).max(1).step(0.001).name('uSmallWavesElevation')
-    gui.add(waterMaterial.uniforms.uSmallWavesFrequency, 'value').min(0).max(30).step(0.001).name('uSmallWavesFrequency')
-    gui.add(waterMaterial.uniforms.uSmallWavesSpeed, 'value').min(0).max(4).step(0.001).name('uSmallWavesSpeed')
-    gui.add(waterMaterial.uniforms.uSmallIterations, 'value').min(0).max(5).step(1).name('uSmallIterations')
-
-    gui.add(waterMaterial.uniforms.uColorOffset, 'value').min(0).max(1).step(0.001).name('uColorOffset')
-    gui.add(waterMaterial.uniforms.uColorMultiplier, 'value').min(0).max(10).step(0.001).name('uColorMultiplier')
-
-    // Mesh
-    waterMesh = new THREE.Mesh(waterGeometry, waterMaterial)
-    // waterMesh.rotation.x = - Math.PI * 0.5
-    waterMesh.position.set(0.,0.,-0.8)
-    scene.add(waterMesh)
-}
-
 
 function initHelper()
 {
@@ -561,7 +460,6 @@ function initCameraControl()
     
     scene.add(camera)
 }
-
 
 
 function initEvent()
@@ -607,11 +505,7 @@ const tick = () =>
     stats.begin()
     const elapsedTime = clock.getElapsedTime()
 
-    // Water
-    if(waterMaterial)
-    {
-        waterMaterial.uniforms.uTime.value = elapsedTime
-    }
+
     if(gradient_material)
     {
         gradient_material.uniforms.u_time.value = elapsedTime*0.1
@@ -633,7 +527,7 @@ const tick = () =>
 
     // var waterColorOffset = (Math.sin(elapsedTime * watercoloroffsetSpeed)+0.7)*0.1;
     // waterMaterial.uniforms.uColorOffset.value = waterColorOffset
-    if(roundCube_mesh!=null)
+    if(roundCube_mesh!=null && distordFxMesh!=null)
     {
         roundCube_uniform.iGlobalTime.value  = elapsedTime*0.3
         distordFx_uniform.iGlobalTime.value  = elapsedTime*0.3
