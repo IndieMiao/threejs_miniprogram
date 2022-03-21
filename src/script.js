@@ -62,7 +62,8 @@ let axesHelper
 
 
 var colorlayers_uniform=[] 
-let vertDeform_unifrom
+let vertDeform_uniform
+let gradient_global_uniform
 const uniseed = 1
 
 
@@ -112,13 +113,23 @@ function initHierarchy()
 
 }
 
-
-var sectionColors = [ '#FFBA27', '#EF008F', '#6EC3F4', '#7038FF' ]
+//gradient color define
+var sectionColors = [ '#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE' ]
+// var sectionColors = [ '#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2' ]
+// var sectionColors = [ '#F3BB40', '#6AE5CE', '#CDC77A', '#F3BB40' ]
+// var sectionColors = [ '#F5689B', '#F5689B', '#E8E39B', '#F5689B' ]
+// var sectionColors = [ '#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6' ]
+// var sectionColors = [ '#9DE3F5', '#9DE3F5', '#B984F6', '#8861F5' ]
 
 function initGradientUniform ()
 {
     let rotateangle = Math.PI/2
-    vertDeform_unifrom = {
+    gradient_global_uniform = {
+        noiseFreq : 0.9,
+        noiseSpeed : 0.2,
+        intensity : 0.5,
+    }
+    vertDeform_uniform = {
         incline:Math.sin(10)/Math.cos(10),
         offsetTop:-0.5,
         offsetBottom:-0.5,
@@ -134,8 +145,8 @@ function initGradientUniform ()
         {
             color:  new THREE.Color( sectionColors[e]),
             noiseFreq: new Vector2(2 + e / sectionColors.length, 3 + e / sectionColors.length),
-            noiseSpeed: 11 + .3 * e,
-            noiseFlow:  6.5 + .3 * e,
+            noiseSpeed: 5 + .3 * e,
+            noiseFlow:  3.5 + .3 * e,
             noiseSeed: uniseed + 10 * e,
             noiseFloor: .1,
             noiseCeil: .63 + .07 * e,
@@ -152,22 +163,19 @@ function initGradientBG()
 
      let Uniforms = {
         u_time: { value: 0 },
+        u_intensiy :{value: 0.8},
         u_baseColor: { value: new THREE.Color(debugObject.uRampColor1) },
         u_tile:{value: new Vector2(1,1)},
         u_waveLayers_length: { value: 4 },
         u_active_colors: { value: [1,1,1,1] },
         u_global:{
-            value:{
-                noiseSpeed: 1,
-                noiseFreq: 1
-            }},
+            value:gradient_global_uniform},
         u_vertDeform:{
-            value:vertDeform_unifrom},
+            value:vertDeform_uniform},
         u_waveLayers:
         {
             value: colorlayers_uniform,
         }
-
     }
 
     gradient_material= new THREE.ShaderMaterial({
@@ -286,7 +294,7 @@ function initJiduCubeMesh()
 
     cubeInnerMaterial.transparent = true
     cubeInnerMaterial.side = THREE.DoubleSide
-    // cubeInnerMaterial.blending = THREE.AdditiveBlending
+    cubeInnerMaterial.blending = THREE.AdditiveBlending
 
     
     cubeShellMateral.transparent = true
