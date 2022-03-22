@@ -126,16 +126,17 @@ function initHierarchy()
 
 function initEnergy()
 {
+    const energy_size = 0.8
     // instantiate a loader
     const texture = new THREE.TextureLoader().load('textures/RGBNoiseMedium.png');
     // const texture = new THREE.TextureLoader().load('textures/RGBNoiseBig.png');
     energy_uniform = {
         iGlobalTime:{type:'f',value:0.01},
         iChannel0: { type: 't', value: texture },
+        u_intensity:{value:.7},
         u_rot:{value:new Vector2(0)},
     };
 
-    const energy_size = 0.7
     //Geometry
 
     const energy_geometory= new THREE.PlaneGeometry(energy_size,energy_size,2,2)
@@ -163,8 +164,8 @@ var sectionColors = [ '#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE' ]
 // var sectionColors = [ '#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2' ]
 // var sectionColors = [ '#F3BB40', '#6AE5CE', '#CDC77A', '#F3BB40' ]
 var sectionColors = [ '#F5689B', '#F5689B', '#E8E39B', '#F5689B' ]
-// var sectionColors = [ '#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6' ]
-// var sectionColors = [ '#9DE3F5', '#9DE3F5', '#B984F6', '#8861F5' ]
+var sectionColors = [ '#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6' ]
+var sectionColors = [ '#9DE3F5', '#9DE3F5', '#B984F6', '#8861F5' ]
 
 function initGradientUniform ()
 {
@@ -385,7 +386,7 @@ function initJiduCubeMesh()
         cube_shell_model.children[0].material = cubeShellMateral
         gltf3.scene.scale.set(size, size ,size)
   
-         cubeMeshGroup.add(cube_shell_model)
+        //  cubeMeshGroup.add(cube_shell_model)
       });
 
      scene.add(cubeMeshGroup)
@@ -557,7 +558,7 @@ const tick = () =>
     if(energyMaterial)
     {
         energyMaterial.uniforms.iGlobalTime.value = elapsedTime*1.5
-        energyMaterial.uniforms.u_rot.value = new Vector2((Math.sin(elapsedTime))*0.5,0.2)
+        energyMaterial.uniforms.u_rot.value = new Vector2((Math.sin(elapsedTime)+1)*0.15,0.2)
         // energyMaterial.uniforms.u_rot.value = new Vector2(0.5,0.5)
     }
 

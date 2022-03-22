@@ -19,6 +19,7 @@
 
 uniform float iGlobalTime;
 uniform vec2 u_rot;
+uniform float u_intensity;
 uniform sampler2D iChannel0;
 varying vec2 vUv; 
 
@@ -45,7 +46,7 @@ float fbm(vec3 p, float sr)
     {
         float n = noise(p-time*.6);
         rz += (sin(n*2.4)-.45)*z;
-        z *= .27;
+        z *= .37;
         p *= 6.5;
     }
     return rz;
@@ -80,9 +81,11 @@ vec4 map(vec3 p)
 vec4 vmarch(in vec3 ro, in vec3 rd)
 {
 	vec4 rz = vec4(0);
-	float t = 2.5;
-	// float t = 5.;
-    t += 0.03*hash21(vUv.xy);
+	// float t = 2.5;
+	float t = 5.;
+    // t += 0.03*hash21(vUv.xy);
+    // t += 0.03*hash21(vUv.xy*vec2(425.,932.));
+    t += 0.03*hash21(gl_FragCoord.xy);
 	for(int i=0; i<STEPS; i++)
 	{
 		if(rz.a > 0.99 || t > 6.)break;
@@ -119,5 +122,5 @@ void main(void)
     /*col.rb = rot(col.rg, 0.35);
     col.gb = rot(col.gb, -0.1);*/
     
-    gl_FragColor = vec4(col.rgb, 1.0);
+    gl_FragColor = vec4(col.rgb *u_intensity, 1.0);
 }
