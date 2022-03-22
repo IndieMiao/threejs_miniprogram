@@ -133,7 +133,7 @@ function initEnergy()
     energy_uniform = {
         iGlobalTime:{type:'f',value:0.01},
         iChannel0: { type: 't', value: texture },
-        u_intensity:{value:.7},
+        u_intensity:{value:1.},
         u_rot:{value:new Vector2(0)},
     };
 
