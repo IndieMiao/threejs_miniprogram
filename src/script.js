@@ -25,6 +25,9 @@ import sptvertex from './shaders/spt/sptvertex.glsl'
 
 import gradientfragment from './shaders/gradient/fragment.glsl'
 import gradientvertex from './shaders/gradient/vertex.glsl'
+
+import energyfragment from './shaders/energy/energyfragment.glsl'
+import energyvertex from './shaders/energy/energyvertex.glsl'
 import Stats from 'stats.js'
 
 
@@ -57,7 +60,7 @@ let cubeMeshGroup, cubeFxGroup ,cubeRootGroup
 
 let waterMesh,waterMaterial
 
-let gradient_material
+let gradient_material, energy_material
 
 let axesHelper
 
@@ -67,6 +70,7 @@ let stats
 var colorlayers_uniform=[] 
 let vertDeform_uniform
 let gradient_global_uniform
+let energy_uniform, energyMaterial
 const uniseed = 1
 
 
@@ -91,14 +95,18 @@ function init()
     initJiduCubeMesh()
     initGradientBG()
 
+    initEnergy()
+
     // initRoundCube()
     // initDistordFx()
     scene.add(cubeFxGroup)
+    
 
     initHierarchy()
 
     initBackground()
 }
+
 function initHierarchy()
 {
     // cubeRootGroup.rotateX(90)
@@ -114,6 +122,40 @@ function initHierarchy()
 
     // scene.add(cubeRootGroup)
 
+}
+
+function initEnergy()
+{
+    // instantiate a loader
+    const texture = new THREE.TextureLoader().load('textures/RGBNoiseMedium.png');
+    // const texture = new THREE.TextureLoader().load('textures/RGBNoiseBig.png');
+    energy_uniform = {
+        iGlobalTime:{type:'f',value:0.01},
+        iChannel0: { type: 't', value: texture },
+        u_rot:{value:new Vector2(0)},
+    };
+
+    const energy_size = 0.7
+    //Geometry
+
+    const energy_geometory= new THREE.PlaneGeometry(energy_size,energy_size,2,2)
+    energyMaterial= new THREE.ShaderMaterial(
+        {
+            vertexShader: energyvertex,
+            fragmentShader: energyfragment,
+            // side:THREE.DoubleSide,
+            uniforms:energy_uniform
+        }
+    )
+    energyMaterial.transparent = true
+    // cubePlaneMaterial.opacity = 0.2
+    energyMaterial.blending = THREE.AdditiveBlending
+    // Mesh
+    const energy_mesh = new THREE.Mesh(energy_geometory, energyMaterial)
+    // distordFxMesh.rotation.x = - Math.PI * 0.5
+    // distordFxMesh.position.y = 0.1
+    // distordFxMesh.position.z = 0.19
+    cubeFxGroup.add(energy_mesh)
 }
 
 //gradient color define
@@ -157,6 +199,8 @@ function initGradientUniform ()
     }
 }
 
+
+
 function initGradientBG()
 {
      initGradientUniform()
@@ -194,7 +238,6 @@ function initGradientBG()
 
 
     scene.add(gradient_mesh)
-    // gradient_mesh.parent = camera
 
 }
 
@@ -244,7 +287,7 @@ function initDebug()
     gui = new dat.GUI({ width: 220 })
     debugObject = {}
     stats = new Stats()
-    // document.body.appendChild(stats.dom)
+    document.body.appendChild(stats.dom)
     // gui.hide()
 }
 
@@ -510,6 +553,12 @@ const tick = () =>
     if(gradient_material)
     {
         gradient_material.uniforms.u_time.value = elapsedTime*0.1
+    }
+    if(energyMaterial)
+    {
+        energyMaterial.uniforms.iGlobalTime.value = elapsedTime*1.5
+        energyMaterial.uniforms.u_rot.value = new Vector2((Math.sin(elapsedTime))*0.5,0.2)
+        // energyMaterial.uniforms.u_rot.value = new Vector2(0.5,0.5)
     }
 
     if( cube_in_model !=null )
