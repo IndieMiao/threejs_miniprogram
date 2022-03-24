@@ -29,6 +29,7 @@ import gradientvertex from './shaders/gradient/vertex.glsl'
 import energyfragment from './shaders/energy/energyfragment.glsl'
 import energyvertex from './shaders/energy/energyvertex.glsl'
 import Stats from 'stats.js'
+import gsap from 'gsap'
 
 
 
@@ -84,7 +85,7 @@ function init()
     initScene()
     initTick()
     initEvent()
-    initLight()
+    // initLight()
 
     initEnvMap()
     initDebug()
@@ -168,6 +169,17 @@ var sectionColors = [ '#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE','#311b6f' ]
 // var sectionColors = [ '#9DE3F5', '#9DE3F5', '#B984F6', '#8861F5' ,'#100d45']
 let activeColor = 4
 
+var sectionColorList = 
+[
+    [ '#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE','#311b6f' ],
+    [ '#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2' ,'#073d54'],
+    [ '#F3BB40', '#6AE5CE', '#CDC77A', '#F3BB40' ,'#0a0e43'],
+    [ '#F5689B', '#F5689B', '#E8E39B', '#F5689B' ,'#473010'],
+    [ '#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6' ,'#49122d'],
+    [ '#9DE3F5', '#9DE3F5', '#B984F6', '#8861F5' ,'#100d45']
+];
+
+
 function initGradientUniform ()
 {
     let rotateangle = Math.PI/2
@@ -186,11 +198,17 @@ function initGradientUniform ()
         noiseFlow:3,
         noiseFlow:uniseed,
     };
+    // init color
+    colorlayers_uniform = getColorLayers(sectionColorList[0])
+}
+function getColorLayers(colorsection)
+{   
+    let colorlayer=[];
     for (let e = 0; e < activeColor; e += 1) {
 
-        colorlayers_uniform[e] = 
+        colorlayer[e] = 
         {
-            color:  new THREE.Color( sectionColors[e]),
+            color:  new THREE.Color( colorsection[e]),
             noiseFreq: new Vector2(2 + e / activeColor, 3 + e / activeColor),
             noiseSpeed: 5 + .3 * e,
             noiseFlow:  3.5 + .3 * e,
@@ -198,6 +216,14 @@ function initGradientUniform ()
             noiseFloor: .1,
             noiseCeil: .63 + .07 * e,
         }
+    }
+    return colorlayer 
+}
+function SetLayersColor(colorlist)
+{
+    for (let e = 0; e < activeColor; e += 1) {
+
+        gradient_material.uniforms.u_waveLayers.value[e].color=  new THREE.Color( colorlist[e])
     }
 }
 
@@ -393,7 +419,7 @@ function initJiduCubeMesh()
      scene.add(cubeMeshGroup)
 
 
-gui.add(cubeInnerMaterial.uniforms._IOROffset, 'value').min(0).max(1).step(0.001).name('_IOROffset')
+    gui.add(cubeInnerMaterial.uniforms._IOROffset, 'value').min(0).max(1).step(0.001).name('_IOROffset')
 }
 
 
@@ -548,10 +574,9 @@ function debugTick()
     {
         //log camera position and camera angle
         console.log(camera.position)
-        // console.log(camera.rotation)
-    }
+        // console.log(camera.rotation)    }
 }
-
+}
 
 
 
@@ -611,3 +636,26 @@ const tick = () =>
 
 init()
 tick()
+
+function animatColor()
+{
+    colorlayers_uniform = getColorLayers(sectionColorList[0])
+    gradient_material.uniforms.u_waveLayers.value = colorlayers_uniform;
+
+    for(var e = 0 ;e<activeColor; e+=1)
+
+    {
+        var tempColor= {color:'white'};
+        gsap.to(tempColor, {color:(sectionColorList[2][e]), duration:1, onUpdate:()=>{
+        try{
+            gradient_material.uniforms.u_waveLayers.value[e].color = new THREE.Color(tempColor.color)
+            console.log(tempColor);
+        }
+        catch(err)
+        {}
+        }
+    })
+    
+    }
+}
+animatColor()
