@@ -38,7 +38,7 @@ import gsap from 'gsap'
  */
 
 let DEBUGMODE = false;
-let LOCKCAM = false;
+let LOCKCAM = true;
 
 let gltfLoader, gltfLoader2
 
@@ -173,7 +173,7 @@ var sectionColorList =
 [
     [ '#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE','#311b6f' ],
     [ '#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2' ,'#073d54'],
-    [ '#F3BB40', '#6AE5CE', '#CDC77A', '#F3BB40' ,'#0a0e43'],
+    [ '#F3BB40', '#6AE5CE', '#CDC77A', '#F3BB40' ,'#52430f'],
     [ '#F5689B', '#F5689B', '#E8E39B', '#F5689B' ,'#473010'],
     [ '#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6' ,'#49122d'],
     [ '#9DE3F5', '#9DE3F5', '#B984F6', '#8861F5' ,'#100d45']
@@ -459,6 +459,7 @@ function initRoundCube()
             u_intensity:{type:'f',value:2.8},
             u_opacityOffset:{type:'f',value:0.55},
             u_opacity:{type:'f',value:1},
+            u_chromeOffset:{type:'f',value:0.01},
             u_colorOverlay:{value:new THREE.Color(debugObject.u_colorOverlay)},
             u_colorOverlayIntensity:{value:0.7},
             iChannel0: { value: environmentMap}
@@ -659,3 +660,23 @@ function animatColor()
     }
 }
 animatColor()
+
+var changecolor = 
+{
+    colorID:0
+}
+var colorselection ={
+    color0:0,
+    color1:1,
+    color2:2,
+    color3:3,
+    color4:4,
+    color5:5
+}
+gui.add(changecolor,'colorID',colorselection).onChange(()=>{
+    colorlayers_uniform = getColorLayers(sectionColorList[changecolor.colorID])
+    console.log(colorlayers_uniform)
+    gradient_material.uniforms.u_waveLayers.value = colorlayers_uniform
+    roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[changecolor.colorID][4])
+    
+})

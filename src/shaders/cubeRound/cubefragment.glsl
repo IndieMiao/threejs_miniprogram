@@ -10,6 +10,7 @@ uniform float u_intensity;
 uniform float u_opacityOffset;
 uniform float u_opacity;
 uniform vec3 u_colorOverlay;
+uniform float u_chromeOffset;
 uniform float u_colorOverlayIntensity;
 
 varying vec2 vUv;
@@ -322,7 +323,7 @@ void main( void)
     // float tt = 3.14;
     float t = 3.14;
     float v = map2(cos(tt),-1.,1.,0.02,0.08);
-    float v2 = map2(cos(tt*1.68),-1.,1.,0.9,1.);
+    float v2 = map2(cos(tt*1.68),-1.,1.,0.5,1.);
     
     objDec inner, outter;
     outter.r = v * 0.75 + 0.1;
@@ -357,9 +358,9 @@ void main( void)
         vec3 rd =  ca*normalize(vec3(p,1.5));        
         
         vec3 col;
-        col.r = Render(ro, rd, 12.,0.67, inner, outter).r;
+        col.r = Render(ro, rd, 12.,0.7-u_chromeOffset, inner, outter).r;
         col.g = Render(ro, rd, 12.,0.7, inner, outter).g;
-        col.b = Render(ro, rd, 12.,0.73, inner, outter).b;
+        col.b = Render(ro, rd, 12.,0.7+u_chromeOffset, inner, outter).b;
         alpha = u_opacity*(Render(ro, rd, 12.,0.7, inner, outter).a*((col.r+col.g+col.b)/3.+u_opacityOffset));
         // alpha = (col.r+col.g+col.b)/3.;
         
