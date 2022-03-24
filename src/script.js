@@ -92,12 +92,12 @@ function init()
     
 
     initCameraControl()
-    initJiduCubeMesh()
+    // initJiduCubeMesh()
     initGradientBG()
 
     initEnergy()
 
-    // initRoundCube()
+    initRoundCube()
     // initDistordFx()
     scene.add(cubeFxGroup)
     
@@ -110,7 +110,7 @@ function init()
 function initHierarchy()
 {
     // cubeRootGroup.rotateX(90)
-    cubeFxGroup.position.set(0.0,0.0,0.38)
+    cubeFxGroup.position.set(0.0,0.0,0.48)
 
     // if(cube_shell_model!=null)
     // {
@@ -160,12 +160,13 @@ function initEnergy()
 }
 
 //gradient color define
-var sectionColors = [ '#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE' ]
-// var sectionColors = [ '#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2' ]
-// var sectionColors = [ '#F3BB40', '#6AE5CE', '#CDC77A', '#F3BB40' ]
-var sectionColors = [ '#F5689B', '#F5689B', '#E8E39B', '#F5689B' ]
-var sectionColors = [ '#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6' ]
-var sectionColors = [ '#9DE3F5', '#9DE3F5', '#B984F6', '#8861F5' ]
+var sectionColors = [ '#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE','#311b6f' ]
+// var sectionColors = [ '#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2' ,'#073d54']
+// var sectionColors = [ '#F3BB40', '#6AE5CE', '#CDC77A', '#F3BB40' ,'#0a0e43']
+// var sectionColors = [ '#F5689B', '#F5689B', '#E8E39B', '#F5689B' ,'#473010']
+// var sectionColors = [ '#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6' ,'#49122d']
+// var sectionColors = [ '#9DE3F5', '#9DE3F5', '#B984F6', '#8861F5' ,'#100d45']
+let activeColor = 4
 
 function initGradientUniform ()
 {
@@ -185,12 +186,12 @@ function initGradientUniform ()
         noiseFlow:3,
         noiseFlow:uniseed,
     };
-    for (let e = 0; e < sectionColors.length; e += 1) {
+    for (let e = 0; e < activeColor; e += 1) {
 
         colorlayers_uniform[e] = 
         {
             color:  new THREE.Color( sectionColors[e]),
-            noiseFreq: new Vector2(2 + e / sectionColors.length, 3 + e / sectionColors.length),
+            noiseFreq: new Vector2(2 + e / activeColor, 3 + e / activeColor),
             noiseSpeed: 5 + .3 * e,
             noiseFlow:  3.5 + .3 * e,
             noiseSeed: uniseed + 10 * e,
@@ -422,10 +423,18 @@ function initBackground()
 
 function initRoundCube()
 {
-    const roundcube_size = 0.48
+    const roundcube_size = 0.58
     //Geometry
+    debugObject.u_colorOverlay= '#33203c'
+
+    gui.addColor(debugObject, 'u_colorOverlay').onChange(() => { roundCube_material.uniforms.u_colorOverlay.value= new THREE.Color(debugObject.u_colorOverlay)})
     roundCube_uniform = {
             iGlobalTime:{type:'f',value:0.01},
+            u_intensity:{type:'f',value:2.8},
+            u_opacityOffset:{type:'f',value:0.55},
+            u_opacity:{type:'f',value:1},
+            u_colorOverlay:{value:new THREE.Color(debugObject.u_colorOverlay)},
+            u_colorOverlayIntensity:{value:0.7},
             iChannel0: { value: environmentMap}
     };
     const cubePlaneGeometry = new THREE.PlaneGeometry(roundcube_size,roundcube_size,2,2)
@@ -438,15 +447,16 @@ function initRoundCube()
         }
     )
     roundCube_material.transparent = true
-    // cubePlaneMaterial.opacity = 0.1
-    roundCube_material.blending = THREE.AdditiveBlending
+    // roundCube_material.blending = THREE.AdditiveBlending
 
     // Mesh
     roundCube_mesh = new THREE.Mesh(cubePlaneGeometry, roundCube_material)
-    // cubePlaneMesh.rotation.x = - Math.PI * 0.5
-    // cubePlaneMesh.position.y = 0.1
-    // cubePlaneMesh.position.z = 0.19
     cubeFxGroup.add(roundCube_mesh)
+    roundCube_mesh.position.z = -0.02
+    
+    
+
+
 }
 
 function initDistordFx()
@@ -550,6 +560,10 @@ const tick = () =>
     stats.begin()
     const elapsedTime = clock.getElapsedTime()
 
+    if(roundCube_material)
+    {
+        roundCube_material.uniforms.iGlobalTime.value = elapsedTime*0.5
+    }
 
     if(gradient_material)
     {

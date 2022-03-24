@@ -6,6 +6,11 @@ uniform float iGlobalTime;
 uniform float iInnerRotateSpeed;
 uniform float iOutterRotateSpeed;
 uniform samplerCube iChannel0;
+uniform float u_intensity;
+uniform float u_opacityOffset;
+uniform float u_opacity;
+uniform vec3 u_colorOverlay;
+uniform float u_colorOverlayIntensity;
 
 varying vec2 vUv;
 // varying float distToCamera;
@@ -317,13 +322,14 @@ void main( void)
     // float tt = 3.14;
     float t = 3.14;
     float v = map2(cos(tt),-1.,1.,0.02,0.08);
-    float v2 = map2(cos(tt*1.68),-1.,1.,0.,1.);
+    float v2 = map2(cos(tt*1.68),-1.,1.,0.9,1.);
     
     objDec inner, outter;
     outter.r = v * 0.75 + 0.1;
     outter.s   = (1.-v) * 0.75;
     outter.m = fromEuler(vec3(t * 0.9 + 0.2,  t * 0.6 + 1.2, t * 0.5 + 0.9));
     inner.r  = (1.-v2) * 0.35 + 0.1;
+    // inner.r  = (1.-v2) * 0.35 + 0.1;
     inner.s	  = v2 * 0.35;
     inner.m = fromEuler(vec3(t * 0.8 + 1.5,  t * 0.4 + 0.7, t * 0.7 + 2.3));
 
@@ -354,19 +360,22 @@ void main( void)
         col.r = Render(ro, rd, 12.,0.67, inner, outter).r;
         col.g = Render(ro, rd, 12.,0.7, inner, outter).g;
         col.b = Render(ro, rd, 12.,0.73, inner, outter).b;
-        alpha = Render(ro, rd, 12.,0.7, inner, outter).a;
+        alpha = u_opacity*(Render(ro, rd, 12.,0.7, inner, outter).a*((col.r+col.g+col.b)/3.+u_opacityOffset));
+        // alpha = (col.r+col.g+col.b)/3.;
         
       	tot += col;
         
         
             
    tot = desaturate(tot, -0.4);
+   tot += u_colorOverlay*vec3(u_colorOverlayIntensity);
 //    tot = vignette(tot, fragCoord / iResolution.xy, 1.2);
     // #if GAMMA
     	// tot = pow(tot, vec3(1. / 2.));
     // #endif
+    // alpha = clamp(pow(alpha,1./2.),0.,1.);
 
-	gl_FragColor  = vec4( tot, alpha );
-    // gl_FragColor = vec4(gl_FragColor.z);
+	gl_FragColor  = vec4( tot*vec3(u_intensity), alpha );
+	// gl_FragColor  = vec4( tot*vec3(u_intensity), 1.);
     
 }
