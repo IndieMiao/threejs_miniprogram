@@ -5,7 +5,6 @@ import * as dat from 'lil-gui'
 import {  RGBA_ASTC_10x5_Format, Vector2, Vector3 } from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
-import { floorPowerOfTwo } from 'three/src/math/mathutils'
 import cubeVertexShader from './shaders/cubeRound/cubevertex.glsl'
 import cubeFragmentShader from './shaders/cubeRound/cubefragment.glsl'
 import fractureCubeVertex from './shaders/cubeFracture/fracturecubevertex.glsl'
@@ -16,6 +15,7 @@ import energyfragment from './shaders/energy/energyfragment.glsl'
 import energyvertex from './shaders/energy/energyvertex.glsl'
 import Stats from 'stats.js'
 import gsap from 'gsap'
+// import { floorPowerOfTwo } from 'three/src/math/mathutils'
 
 
 
@@ -41,7 +41,7 @@ var colorlayers_uniform=[]
 let vertDeform_uniform
 let gradient_global_uniform
 let energy_uniform, energyMaterial
-const uniseed = 1
+const uniseed = 1.0
 
 
 /**
@@ -123,7 +123,7 @@ function initEnergy()
 }
 
 //gradient color define
-let activeColor = 4
+let active_color_number = 4
 
 var sectionColorList = 
 [
@@ -151,7 +151,8 @@ function initGradientUniform ()
         noiseFreq:new Vector2(3,4),
         noiseAmp:1,
         noiseSpeed:5,
-        noiseFlow:uniseed
+        noiseFlow:5,
+        noiseSeed:uniseed
     };
     // init color
     colorlayers_uniform = getColorLayers(sectionColorList[0])
@@ -159,24 +160,25 @@ function initGradientUniform ()
 function getColorLayers(colorsection)
 {   
     let colorlayer=[];
-    for (let e = 0; e < activeColor; e += 1) {
+    for (let e = 0; e < active_color_number; e += 1) {
 
         colorlayer[e] = 
         {
             color:  new THREE.Color( colorsection[e]),
-            noiseFreq: new Vector2(2 + e / activeColor, 3 + e / activeColor),
+            noiseFreq: new Vector2(2 + e / active_color_number, 3 + e / active_color_number),
             noiseSpeed: 5 + .3 * e,
             noiseFlow:  3.5 + .3 * e,
             noiseSeed: uniseed + 10 * e,
-            noiseFloor: .1,
-            noiseCeil: .63 + .07 * e,
+            noiseFloor: .05,
+            noiseCeil: .53 + .07 * e,
+            // noiseCeil: .63 + .07 * e,
         }
     }
     return colorlayer 
 }
 function SetLayersColor(colorlist)
 {
-    for (let e = 0; e < activeColor; e += 1) {
+    for (let e = 0; e < active_color_number; e += 1) {
 
         gradient_material.uniforms.u_waveLayers.value[e].color=  new THREE.Color( colorlist[e])
     }
@@ -194,10 +196,10 @@ function initGradientBG()
      let Uniforms = {
         u_time: { value: 0 },
         u_intensiy :{value: 1},
-        u_baseColor: { value: new THREE.Color(debugObject.uRampColor1) },
+        u_baseColor: { value: new THREE.Color('#eaf7ff') },
         u_tile:{value: new Vector2(1,1)},
-        u_waveLayers_length: { value: 4 },
-        u_active_colors: { value: [1,1,1,1] },
+        u_waveLayers_length: { value: active_color_number },
+        u_active_colors: { value: [1,1,1,1,1] },
         u_global:{
             value:gradient_global_uniform},
         u_vertDeform:{
@@ -259,12 +261,12 @@ function initEnvMap()
 
     environmentMap = cubeTextureLoader.load(
         [
-            '/envmap/hdr4/px.png',
-            '/envmap/hdr4/nx.png',
-            '/envmap/hdr4/py.png',
-            '/envmap/hdr4/ny.png',
-            '/envmap/hdr4/pz.png',
-            '/envmap/hdr4/nz.png'
+            '/textures/hdr4/px.png',
+            '/textures/hdr4/nx.png',
+            '/textures/hdr4/py.png',
+            '/textures/hdr4/ny.png',
+            '/textures/hdr4/pz.png',
+            '/textures/hdr4/nz.png'
         ]
     )
 }
@@ -451,7 +453,7 @@ function animatColor()
     colorlayers_uniform = getColorLayers(sectionColorList[0])
     gradient_material.uniforms.u_waveLayers.value = colorlayers_uniform;
 
-    for(var e = 0 ;e<activeColor; e+=1)
+    for(var e = 0 ;e<active_color_number; e+=1)
 
     {
         var tempColor= {color:'white'};

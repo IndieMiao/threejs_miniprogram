@@ -346,9 +346,14 @@ void main()
     for (int i = 0 ; i < u_waveLayers_length ; i++) 
     {    
         if (u_active_colors[i + 1] == 1.) 
-        {      WaveLayers layer = u_waveLayers[i] ;
-        float noise = smoothstep(layer.noiseFloor, layer.noiseCeil,snoise(vec3(noiseCoord.x * layer.noiseFreq.x + time * layer.noiseFlow,          noiseCoord.y * layer.noiseFreq.y, time * layer.noiseSpeed + layer.noiseSeed )) / 2.0 + 0.5 ) ;
-        v_color = blendNormal(v_color, layer.color, pow(noise, 4.)) ;
+        {   WaveLayers layer = u_waveLayers[i] ;
+            float noise = smoothstep(
+            layer.noiseFloor,
+            layer.noiseCeil,
+            snoise(vec3(noiseCoord.x * layer.noiseFreq.x + time * layer.noiseFlow,
+            noiseCoord.y * layer.noiseFreq.y,
+            time * layer.noiseSpeed + layer.noiseSeed )) / 2.0 + 0.5 ) ;
+            v_color = blendNormal(v_color, layer.color, pow(noise, 4.)) ;
     } 
     }  
     //  // Finish  //  
