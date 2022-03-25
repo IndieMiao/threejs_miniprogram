@@ -18,7 +18,6 @@ body
     outline: none;
 }
 .img100{width:100%;height:100%;position: absolute;left:0;top:0;display: block;z-index:1000;color:#fff;}
-.logo{position: absolute;left:3vw;top:4vw;width:25.3vw;z-index:1000;}
 .bottom-col{position: relative;}
 .list div{font-size:4.8vw;display: inline-block;position: absolute;border-radius: 2.13vw;line-height:9.06vw;
 padding:0 4vw;}
@@ -58,4 +57,13 @@ padding:0 4vw;}
 }
 
 .bottom-col{position: absolute;bottom:13.87vw;width:100%;text-align: center;}
-.bottom-col .text{font-size:2.667vw;}
+.bottom-col .text{font-size:2.667vw;padding-bottom:4vw;}
+.text-col{display: block;position: absolute;left:5.16vw;top:28vw;}
+.no-col{
+    position: absolute;left:5.16vw;top:10vw;
+}
+.no-col .count{width:10.2vw;margin-left:2vw;}
+.no-col .no{
+    width:27.8vw;
+}
+.bottom-col img{width:15.29vw;}

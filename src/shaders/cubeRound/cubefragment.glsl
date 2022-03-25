@@ -11,6 +11,9 @@ uniform float u_opacityOffset;
 uniform float u_opacity;
 uniform vec3 u_colorOverlay;
 uniform float u_chromeOffset;
+uniform float u_cameraOffset;
+uniform float u_cameraPerspective;
+uniform float u_cubePhi;
 uniform float u_colorOverlayIntensity;
 
 varying vec2 vUv;
@@ -318,12 +321,15 @@ void main(void)
 
 void main( void)
 {
-    
+
+    float scale = 0.5;
+    float cameraOffset = max(1., u_cameraOffset);
+    float cameraPerspective= max(1.,u_cameraPerspective);
     float tt = iGlobalTime * 0.8;
     // float tt = 3.14;
     float t = 3.14;
-    float v = map2(cos(tt),-1.,1.,0.02,0.08);
-    float v2 = map2(cos(tt*1.68),-1.,1.,0.5,1.);
+    float v = map2(cos(tt),-1.,1.,0.02,0.08)*scale;
+    float v2 = map2(cos(tt*1.68),-1.,1.,0.5,1.)*scale;
     
     objDec inner, outter;
     outter.r = v * 0.75 + 0.1;
@@ -337,7 +343,6 @@ void main( void)
   
 	vec3 tot = vec3(0.0);   
 
-    // vec2 p = (-iResolution.xy + 2.0*fragCoord)/iResolution.y;
     vec2 p = -1.0 + 2.0 *vUv;
         
  
@@ -346,16 +351,18 @@ void main( void)
         //float theta	= radians(360.)*(iMouse.x/iResolution.x-0.5) + radians(180.);
         float theta	= tt*0.5;
         //float phi	= radians(90.)*(iMouse.y/iResolution.y-0.5) + radians(90.);
-        float phi = 5.0;
-        vec3 ro = 3. * vec3( sin(phi)*cos(theta),cos(phi),sin(phi)*sin(theta));
-        //vec3 ro = vec3(0.0,.2,4.0);
+        float phi = u_cubePhi;
+
+        vec3 ro = cameraOffset * vec3( sin(phi)*cos(theta),cos(phi),sin(phi)*sin(theta));
+//        vec3 ro = vec3(0.0,.2,4.0);
         vec3 ta = vec3( 0 );
         // camera-to-world transformation
         mat3 ca = setCamera( ro, ta );
         //vec3 cd = ca[2];    
         float alpha = 0.0;
-        
-        vec3 rd =  ca*normalize(vec3(p,1.5));        
+
+    //Camera perspactive
+        vec3 rd =  ca*normalize(vec3(p,cameraPerspective));
         
         vec3 col;
         col.r = Render(ro, rd, 12.,0.7-u_chromeOffset, inner, outter).r;
