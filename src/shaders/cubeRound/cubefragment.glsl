@@ -321,15 +321,13 @@ void main(void)
 
 void main( void)
 {
-
-    float scale = 0.5;
     float cameraOffset = max(1., u_cameraOffset);
     float cameraPerspective= max(1.,u_cameraPerspective);
     float tt = iGlobalTime * 0.8;
     // float tt = 3.14;
     float t = 3.14;
-    float v = map2(cos(tt),-1.,1.,0.02,0.08)*scale;
-    float v2 = map2(cos(tt*1.68),-1.,1.,0.5,1.)*scale;
+    float v = map2(cos(tt),-1.,1.,0.02,0.08);
+    float v2 = map2(cos(tt*1.68),-1.,1.,0.5,1.);
     
     objDec inner, outter;
     outter.r = v * 0.75 + 0.1;
