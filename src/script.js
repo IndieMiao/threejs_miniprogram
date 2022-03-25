@@ -198,7 +198,7 @@ function getColorLayers(colorsection)
             noiseSpeed: 5 + .3 * e,
             noiseFlow:  3.5 + .3 * e,
             noiseSeed: uniseed + 10 * e,
-            noiseFloor: .05,
+            noiseFloor: .01,
             noiseCeil: .63 + .07 * e,
             baseColor:colorsection.baseColor,
             cubeColor:colorsection.cubeColor,
