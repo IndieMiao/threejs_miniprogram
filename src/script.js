@@ -128,7 +128,7 @@ let active_color_number = 4
 const sectionColorList =
     [
         {
-            colorLayers: ['#282860','#571c4c',  '#702556', '#905395'],
+            colorLayers: ['#282860','#571c4c',  '#000000', '#905395'],
             cubeColor: '#151515',
             baseColor: '#000000'
         },
@@ -313,21 +313,24 @@ function initRoundCube()
 {
     const roundcube_size = 0.58
     //Geometry
-    roundCube_uniform = {
-            iGlobalTime:{type:'f',value:0.01},
-            u_intensity:{type:'f',value:2.8},
-            u_opacityOffset:{type:'f',value:0.55},
-            u_opacity:{type:'f',value:1},
-            u_chromeOffset:{type:'f',value:0.01},
-            u_colorOverlay:{value:new THREE.Color('#131313')},
-            u_colorOverlayIntensity:{value:0.7},
-            iChannel0: { value: environmentMap}
-    };
-    const cubePlaneGeometry = new THREE.PlaneGeometry(roundcube_size,roundcube_size,2,2)
-    roundCube_material = new THREE.ShaderMaterial(
-        {
-            vertexShader: cubeVertexShader,
-            fragmentShader: cubeFragmentShader,
+            roundCube_uniform = {
+                iGlobalTime:{type:'f',value:0.01},
+                u_intensity:{type:'f',value:2.8},
+                u_opacityOffset:{type:'f',value:0.55},
+                u_opacity:{type:'f',value:1},
+                u_chromeOffset:{type:'f',value:0.01},
+                u_colorOverlay:{value:new THREE.Color('#131313')},
+                u_colorOverlayIntensity:{value:0.7},
+                u_cameraPerspective:{value:3.5},
+                u_cameraOffset:{value:6},
+                u_cubePhi:{value:4.4},
+                iChannel0: { value: environmentMap}
+            };
+            const cubePlaneGeometry = new THREE.PlaneGeometry(roundcube_size,roundcube_size,2,2)
+            roundCube_material = new THREE.ShaderMaterial(
+                {
+                    vertexShader: cubeVertexShader,
+                    fragmentShader: cubeFragmentShader,
             side:THREE.DoubleSide,
             uniforms:roundCube_uniform
         }
