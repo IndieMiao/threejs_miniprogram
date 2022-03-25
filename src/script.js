@@ -125,15 +125,44 @@ function initEnergy()
 //gradient color define
 let active_color_number = 4
 
-var sectionColorList = 
-[
-    [ '#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE', '#311b6f'],
-    [ '#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2' ,'#073d54'],
-    [ '#F3BB40', '#6AE5CE', '#CDC77A', '#F3BB40' ,'#52430f'],
-    [ '#F5689B', '#F5689B', '#E8E39B', '#F5689B' ,'#473010'],
-    [ '#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6' ,'#49122d'],
-    [ '#9DE3F5', '#9DE3F5', '#B984F6', '#8861F5' ,'#100d45']
-];
+const sectionColorList =
+    [
+        {
+            colorLayers: ['#282860','#571c4c',  '#702556', '#905395'],
+            cubeColor: '#151515',
+            baseColor: '#000000'
+        },
+        {
+            colorLayers: ['#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE'],
+            cubeColor: '#311b6f',
+            baseColor: '#dcf2ff'
+        },
+        {
+            colorLayers: ['#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2'],
+            cubeColor: '#073648',
+            baseColor: '#acffe5',
+        },
+        {
+            colorLayers: ['#F3BB40', '#6AE5CE', '#CDC77A', '#8d6a06'],
+            cubeColor: '#3f310d',
+            baseColor: '#ffe7b9',
+        },
+        {
+            colorLayers: ['#F5689B', '#fd4b89', '#E8E39B', '#9f1f4e'],
+            cubeColor: '#472710',
+            baseColor: '#ffb9d5',
+        },
+        {
+            colorLayers: ['#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6'],
+            cubeColor: '#49122d',
+            baseColor: '#ffb8d4',
+        },
+        {
+            colorLayers: ['#42a6be', '#6bceec', '#B984F6', '#8861F5'],
+            cubeColor: '#100d45',
+            baseColor: '#a9deef',
+        }
+    ];
 
 
 function initGradientUniform ()
@@ -164,13 +193,15 @@ function getColorLayers(colorsection)
 
         colorlayer[e] = 
         {
-            color:  new THREE.Color( colorsection[e]),
+            color: new THREE.Color(colorsection.colorLayers[e]),
             noiseFreq: new Vector2(2 + e / active_color_number, 3 + e / active_color_number),
             noiseSpeed: 5 + .3 * e,
             noiseFlow:  3.5 + .3 * e,
             noiseSeed: uniseed + 10 * e,
             noiseFloor: .05,
-            noiseCeil: .53 + .07 * e,
+            noiseCeil: .63 + .07 * e,
+            baseColor:colorsection.baseColor,
+            cubeColor:colorsection.cubeColor,
             // noiseCeil: .63 + .07 * e,
         }
     }
@@ -196,7 +227,7 @@ function initGradientBG()
      let Uniforms = {
         u_time: { value: 0 },
         u_intensiy :{value: 1},
-        u_baseColor: { value: new THREE.Color('#eaf7ff') },
+        u_baseColor: { value: new THREE.Color('#000') },
         u_tile:{value: new Vector2(1,1)},
         u_waveLayers_length: { value: active_color_number },
         u_active_colors: { value: [1,1,1,1,1] },
@@ -282,16 +313,13 @@ function initRoundCube()
 {
     const roundcube_size = 0.58
     //Geometry
-    debugObject.u_colorOverlay= '#33203c'
-
-    gui.addColor(debugObject, 'u_colorOverlay').onChange(() => { roundCube_material.uniforms.u_colorOverlay.value= new THREE.Color(debugObject.u_colorOverlay)})
     roundCube_uniform = {
             iGlobalTime:{type:'f',value:0.01},
             u_intensity:{type:'f',value:2.8},
             u_opacityOffset:{type:'f',value:0.55},
             u_opacity:{type:'f',value:1},
             u_chromeOffset:{type:'f',value:0.01},
-            u_colorOverlay:{value:new THREE.Color(debugObject.u_colorOverlay)},
+            u_colorOverlay:{value:new THREE.Color('#131313')},
             u_colorOverlayIntensity:{value:0.7},
             iChannel0: { value: environmentMap}
     };
@@ -481,12 +509,14 @@ var colorselection ={
     color2:2,
     color3:3,
     color4:4,
-    color5:5
+    color5:5,
+    color6:6
 }
 gui.add(changecolor,'colorID',colorselection).onChange(()=>{
     colorlayers_uniform = getColorLayers(sectionColorList[changecolor.colorID])
     console.log(colorlayers_uniform)
     gradient_material.uniforms.u_waveLayers.value = colorlayers_uniform
-    roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[changecolor.colorID][4])
+    gradient_material.uniforms.u_baseColor.value = new THREE.Color(sectionColorList[changecolor.colorID].baseColor)
+    roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[changecolor.colorID].cubeColor)
     
 })
