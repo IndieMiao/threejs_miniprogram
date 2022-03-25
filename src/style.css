@@ -17,3 +17,45 @@ body
     left: 0;
     outline: none;
 }
+.img100{width:100%;height:100%;position: absolute;left:0;top:0;display: block;z-index:1000;color:#fff;}
+.logo{position: absolute;left:3vw;top:4vw;width:25.3vw;z-index:1000;}
+.bottom-col{position: relative;}
+.list div{font-size:4.8vw;display: inline-block;position: absolute;border-radius: 2.13vw;line-height:9.06vw;
+padding:0 4vw;}
+.list div:before{
+    border: 1px solid #FFFFFF;
+    box-sizing: border-box;
+    width:1.86vw;
+    height:1.86vw;
+    display: block;position: absolute;
+    left:4vw;top:-4vw;
+    content: "";
+}
+.list div.active{
+    background: #7D33FF;
+}
+.list div.active:before{
+    background: #fff;
+}
+
+
+.list div:nth-child(1){
+    right:0;
+    top:36%;
+}
+.list div:nth-child(2){
+    left:0;
+    top:46%;
+}
+.list div:nth-child(3){
+    right:0;
+    top:54%;
+}
+
+.list div:nth-child(4){
+    left:2%;
+    top:60%;
+}
+
+.bottom-col{position: absolute;bottom:13.87vw;width:100%;text-align: center;}
+.bottom-col .text{font-size:2.667vw;}

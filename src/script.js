@@ -37,7 +37,7 @@ let axesHelper
 let stats
 
 
-var colorlayers_uniform=[] 
+var colorlayers_uniform=[]
 let vertDeform_uniform
 let gradient_global_uniform
 let energy_uniform, energyMaterial
@@ -58,7 +58,7 @@ function init()
     initEnvMap()
     initDebug()
     initHelper()
-    
+
 
     initCameraControl()
     initGradientBG()
@@ -68,7 +68,7 @@ function init()
     initRoundCube()
     // initDistordFx()
     scene.add(cubeFxGroup)
-    
+
 
     initHierarchy()
 
@@ -125,7 +125,7 @@ function initEnergy()
 //gradient color define
 let active_color_number = 4
 
-var sectionColorList = 
+var sectionColorList =
 [
     [ '#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE', '#311b6f'],
     [ '#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2' ,'#073d54'],
@@ -158,11 +158,11 @@ function initGradientUniform ()
     colorlayers_uniform = getColorLayers(sectionColorList[0])
 }
 function getColorLayers(colorsection)
-{   
+{
     let colorlayer=[];
     for (let e = 0; e < active_color_number; e += 1) {
 
-        colorlayer[e] = 
+        colorlayer[e] =
         {
             color:  new THREE.Color( colorsection[e]),
             noiseFreq: new Vector2(2 + e / active_color_number, 3 + e / active_color_number),
@@ -174,7 +174,7 @@ function getColorLayers(colorsection)
             // noiseCeil: .63 + .07 * e,
         }
     }
-    return colorlayer 
+    return colorlayer
 }
 function SetLayersColor(colorlist)
 {
@@ -189,9 +189,9 @@ function SetLayersColor(colorlist)
 function initGradientBG()
 {
      initGradientUniform()
-        
+
     // Geometry
-    const gradient_geometory= new THREE.PlaneGeometry(6.1, 6.1, 256,256) 
+    const gradient_geometory= new THREE.PlaneGeometry(6.1, 6.1, 256,256)
 
      let Uniforms = {
         u_time: { value: 0 },
@@ -251,8 +251,8 @@ function initDebug()
     gui = new dat.GUI({ width: 220 })
     debugObject = {}
     stats = new Stats()
-    document.body.appendChild(stats.dom)
-    // gui.hide()
+    //document.body.appendChild(stats.dom)
+    gui.hide()
 }
 
 function initEnvMap()
@@ -311,8 +311,8 @@ function initRoundCube()
     roundCube_mesh = new THREE.Mesh(cubePlaneGeometry, roundCube_material)
     cubeFxGroup.add(roundCube_mesh)
     roundCube_mesh.position.z = -0.02
-    
-    
+
+
 
 
 }
@@ -363,10 +363,10 @@ function initCameraControl()
         controls.enableZoom = false
         controls.enablePan = false
         controls.enableRotate = false
-        controls.maxAzimuthAngle =0 
+        controls.maxAzimuthAngle =0
         controls.minAzimuthAngle =0
     }
-    
+
     scene.add(camera)
 }
 
@@ -466,7 +466,7 @@ function animatColor()
         {}
         }
     })
-    
+
     }
 }
 // animatColor()
@@ -484,9 +484,33 @@ var colorselection ={
     color5:5
 }
 gui.add(changecolor,'colorID',colorselection).onChange(()=>{
+    console.log(changecolor.colorID);
     colorlayers_uniform = getColorLayers(sectionColorList[changecolor.colorID])
     console.log(colorlayers_uniform)
     gradient_material.uniforms.u_waveLayers.value = colorlayers_uniform
     roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[changecolor.colorID][4])
-    
+
 })
+
+var changecolorFun=function(value){
+    colorlayers_uniform = getColorLayers(sectionColorList[value])
+    console.log(colorlayers_uniform)
+    gradient_material.uniforms.u_waveLayers.value = colorlayers_uniform
+    roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[value][4])
+}
+
+
+$("#list1 div").click(function () {
+
+    changecolorFun(1);
+
+
+})
+
+
+
+
+
+
+
+
