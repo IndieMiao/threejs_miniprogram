@@ -63,7 +63,7 @@ function init()
     initCameraControl()
     initGradientBG()
 
-    initEnergy()
+    // initEnergy()
 
     initRoundCube()
     // initDistordFx()
@@ -324,6 +324,7 @@ function initRoundCube()
                 u_cameraPerspective:{value:3.5},
                 u_cameraOffset:{value:6},
                 u_cubePhi:{value:4.4},
+                u_dist:{value:12},
                 iChannel0: { value: environmentMap}
             };
             const cubePlaneGeometry = new THREE.PlaneGeometry(roundcube_size,roundcube_size,2,2)
