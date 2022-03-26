@@ -24,7 +24,7 @@ import gsap from 'gsap'
  */
 
 let DEBUGMODE = false;
-let LOCKCAM = true;
+let LOCKCAM = false;
 let gui, debugObject
 let canvas, scene, sizes ,renderer, camera, controls, clock
 let environmentMap
@@ -181,6 +181,8 @@ function initGradientUniform ()
         noiseFreq : 0.9,
         noiseSpeed : 0.2,
         intensity : 0.5,
+        u_rampMaskOffset:1,
+        u_rampMaskPow:0.4,
     }
     vertDeform_uniform = {
         incline:Math.sin(10)/Math.cos(10),
@@ -230,6 +232,8 @@ function initGradientBG()
         u_baseColor: {value: new THREE.Color(colorlayers_uniform[0].baseColor)},
         u_tile:{value: new Vector2(1,1)},
         u_waveLayers_length: { value: active_color_number },
+         u_rampMaskOffset: {value:gradient_global_uniform.u_rampMaskOffset},
+         u_rampMaskPow: {value:gradient_global_uniform.u_rampMaskPow},
         u_active_colors: { value: [1,1,1,1] },
         u_global:{
             value:gradient_global_uniform},
@@ -246,6 +250,7 @@ function initGradientBG()
         fragmentShader: gradientfragment,
         uniforms:Uniforms
     })
+    gradient_material.transparent = true
 
     // Mesh
     const gradient_mesh= new THREE.Mesh(gradient_geometory, gradient_material)
@@ -304,7 +309,7 @@ function initEnvMap()
 
 function initBackground()
 {
-    scene.background = new THREE.Color('gray')
+    scene.background = new THREE.Color('black')
     // scene.background = new THREE.Color(debugObject.uColorBG)
     // gui.addColor(debugObject, 'uColorBG').onChange(() => { scene.background = new THREE.Color(debugObject.uColorBG)})
 }
@@ -550,5 +555,19 @@ const cube_fx_function = {
 gui.add(cube_fx_function,'scale_up')
 gui.add(cube_fx_function,'scale_down')
 gui.add(cube_fx_function,'pos_fx')
+// gui.add(gradient_material.uniforms.u_rampMaskOffset,'value').min(-1).max(1).step(0.01).name('u_rampMaskOffset')
+// gui.add(gradient_material.uniforms.u_rampMaskPow,'value').min(0.001).max(5).step(0.01).name('u_rampMaskPow')
 
+let intro_number = 0
+let intro_offset_list = [-0.66,-0.55,-0.38,1]
+const gradient_fx = {
+    intro:function (){
+        const intro_step = intro_number % 4
+        // let intro_offset= -0.66 + (1+0.66)*intro_step/4
+        gsap.to(gradient_material.uniforms.u_rampMaskOffset,{value:intro_offset_list[intro_step], duration:4})
+        console.log(intro_step)
+        intro_number +=1
+    },
+}
+gui.add(gradient_fx,'intro')
 
