@@ -355,7 +355,7 @@ void main( void)
     float t = 3.14;
 //    float v = map2(cos(tt),-1.,1.,0.08,0.08);
     float v = map2(cos(tt),-1.,1.,0.00,0.02);
-    float v2 = map2(cos(tt*1.68),-1.,1.,0.5,1.);
+    float v2 = map2(cos(tt*1.68),-1.,1.,0.1,1.);
     
     objDec inner, outter;
 //    outter.r = v * 0.75 + 0.10;
@@ -363,7 +363,7 @@ void main( void)
     outter.r = 0.02;
     outter.s = 1.- 0.11;
     outter.m = fromEuler(vec3(t * 0.9 + 0.2,  t * 0.6 + 1.2, t * 0.5 + 0.9));
-    inner.r  = (1.-v2) * 0.35 + 0.1;
+    inner.r  = (1.-v2) * 0.25 + 0.1;
     // inner.r  = (1.-v2) * 0.35 + 0.1;
     inner.s	  = v2 * 0.35;
     inner.m = fromEuler(vec3(t * 0.8 + 1.5,  t * 0.4 + 0.7, t * 0.7 + 2.3));
