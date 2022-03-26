@@ -32,6 +32,7 @@ let roundCube_mesh, roundCube_material, roundCube_uniform
 let distordFxMesh, distordFxMaterial, distordFx_uniform
 let cube_in_model = null, cubeInnerMaterial,cube_in_Load, cubeShellMateral,cube_line_model = null,cube_shell_model = null
 let cubeMeshGroup, cubeFxGroup ,cubeRootGroup
+// let roundcube_size
 let gradient_material, energy_material
 let axesHelper
 let stats
@@ -310,7 +311,7 @@ function initBackground()
 
 function initRoundCube()
 {
-    const roundcube_size = 0.58
+    const roundcube_size = 0.32
     //Geometry
             roundCube_uniform = {
                 iGlobalTime:{type:'f',value:0.01},
@@ -343,10 +344,6 @@ function initRoundCube()
     roundCube_mesh = new THREE.Mesh(cubePlaneGeometry, roundCube_material)
     cubeFxGroup.add(roundCube_mesh)
     roundCube_mesh.position.z = -0.02
-    
-    
-
-
 }
 
 function initDistordFx()
@@ -524,3 +521,34 @@ gui.add(changecolor,'colorID',colorselection).onChange(()=>{
     roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[changecolor.colorID].cubeColor)
     roundCube_material.uniforms.u_absorb.value = new THREE.Color(sectionColorList[changecolor.colorID].absorbColor)
 })
+const cube_fx= {
+    pos:{ x:0, y:0, },
+    size: 0.5,
+}
+// gui.add(cube_fx,'size',0,1,0.01).onChange(()=> { roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size);})
+// gui.add(cube_fx.pos,'y',-1.5,1.5,0.001).onChange(()=> { roundCube_mesh.position.y =cube_fx.pos.y;})
+
+const cube_fx_function = {
+    scale_up:function(){
+        cube_fx.size = 1
+        gsap.to(cube_fx,{size:1.7, duration:1, onUpdate:()=>{
+            roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+        }})
+    },
+    scale_down:function(){
+        cube_fx.size = 1.7
+        gsap.to(cube_fx,{size:1, duration:1, onUpdate:()=>{
+                roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+            }})
+    },
+    pos_fx:function(){
+        roundCube_mesh.position.y = -1.5
+        gsap.to(roundCube_mesh.position,{y:0, duration:4 })
+    },
+    rot_fx:function(){},
+}
+gui.add(cube_fx_function,'scale_up')
+gui.add(cube_fx_function,'scale_down')
+gui.add(cube_fx_function,'pos_fx')
+
+
