@@ -1,5 +1,5 @@
 #define MAX_BOUNCES 2
-#define ABSORB		vec3(0, 0, 0)
+//#define ABSORB		vec3(0, 0, 0)
 #define GAMMA
 
 uniform float iGlobalTime;
@@ -10,6 +10,7 @@ uniform float u_intensity;
 uniform float u_opacityOffset;
 uniform float u_opacity;
 uniform vec3 u_colorOverlay;
+uniform vec3 u_absorb;
 uniform float u_chromeOffset;
 uniform float u_cameraOffset;
 uniform float u_cameraPerspective;
@@ -259,7 +260,7 @@ vec3 getSkyColor(vec3 rd)
 {
     vec3 col = textureCube(iChannel0, rd).rgb;
     // #if GAMMA
-    	col = pow(col, vec3(2.2));
+//    	col = pow(col, vec3(2.2));
     // #endif
     return col;
 }
@@ -273,7 +274,7 @@ vec4 Render(in vec3 ro, in vec3 rd, in float dist, float cref, in objDec inner, 
     vec3  col = vec3(0);
     vec3  rel = vec3(1);
     float transp = 1.;
-    vec3  absorb = ABSORB;
+    vec3  absorb = u_absorb;
     for(int i = 0; i < MAX_BOUNCES; i++)
     {
         vec3	n;
@@ -409,7 +410,7 @@ void main( void)
    tot += u_colorOverlay*vec3(u_colorOverlayIntensity);
 //    tot = vignette(tot, fragCoord / iResolution.xy, 1.2);
     // #if GAMMA
-    	// tot = pow(tot, vec3(1. / 2.));
+//    	 tot = pow(tot, vec3(1. / 2.));
     // #endif
     // alpha = clamp(pow(alpha,1./2.),0.,1.);
 

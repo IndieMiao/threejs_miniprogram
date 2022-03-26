@@ -130,37 +130,44 @@ const sectionColorList =
         {
             colorLayers: ['#282860','#571c4c',  '#000000', '#905395'],
             cubeColor: '#151515',
-            baseColor: '#000000'
+            baseColor: '#000000',
+            absorbColor: '#000000'
         },
         {
             colorLayers: ['#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE'],
             cubeColor: '#311b6f',
-            baseColor: '#dcf2ff'
+            baseColor: '#dcf2ff',
+            absorbColor: '#1c380d'
         },
         {
             colorLayers: ['#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2'],
             cubeColor: '#073648',
             baseColor: '#acffe5',
+            absorbColor: '#2f0f05'
         },
         {
             colorLayers: ['#F3BB40', '#6AE5CE', '#CDC77A', '#8d6a06'],
             cubeColor: '#3f310d',
             baseColor: '#ffe7b9',
+            absorbColor: '#09142a'
         },
         {
             colorLayers: ['#F5689B', '#fd4b89', '#E8E39B', '#9f1f4e'],
-            cubeColor: '#472710',
+            cubeColor: '#471810',
             baseColor: '#ffb9d5',
+            absorbColor: '#081e23'
         },
         {
             colorLayers: ['#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6'],
             cubeColor: '#49122d',
             baseColor: '#ffb8d4',
+            absorbColor: '#0b2d18'
         },
         {
             colorLayers: ['#42a6be', '#6bceec', '#B984F6', '#8861F5'],
             cubeColor: '#100d45',
             baseColor: '#a9deef',
+            absorbColor: '#2f1c09'
         }
     ];
 
@@ -225,9 +232,9 @@ function initGradientBG()
     const gradient_geometory= new THREE.PlaneGeometry(6.1, 6.1, 256,256) 
 
      let Uniforms = {
-        u_time: { value: 0 },
+        u_time: {value: 0 },
         u_intensiy :{value: 1},
-        u_baseColor: { value: new THREE.Color('#000') },
+        u_baseColor: {value: new THREE.Color('#000') },
         u_tile:{value: new Vector2(1,1)},
         u_waveLayers_length: { value: active_color_number },
         u_active_colors: { value: [1,1,1,1,1] },
@@ -292,12 +299,12 @@ function initEnvMap()
 
     environmentMap = cubeTextureLoader.load(
         [
-            '/textures/hdr4/px.png',
-            '/textures/hdr4/nx.png',
-            '/textures/hdr4/py.png',
-            '/textures/hdr4/ny.png',
-            '/textures/hdr4/pz.png',
-            '/textures/hdr4/nz.png'
+            '/textures/hdr5/px.png',
+            '/textures/hdr5/nx.png',
+            '/textures/hdr5/py.png',
+            '/textures/hdr5/ny.png',
+            '/textures/hdr5/pz.png',
+            '/textures/hdr5/nz.png'
         ]
     )
 }
@@ -315,7 +322,7 @@ function initRoundCube()
     //Geometry
             roundCube_uniform = {
                 iGlobalTime:{type:'f',value:0.01},
-                u_intensity:{type:'f',value:2.8},
+                u_intensity:{type:'f',value:1.6},
                 u_opacityOffset:{type:'f',value:0.55},
                 u_opacity:{type:'f',value:1},
                 u_chromeOffset:{type:'f',value:0.01},
@@ -323,6 +330,7 @@ function initRoundCube()
                 u_colorOverlayIntensity:{value:0.7},
                 u_cameraPerspective:{value:3.5},
                 u_cameraOffset:{value:6},
+                u_absorb:{value:new THREE.Color('#000')},
                 u_cubePhi:{value:4.4},
                 u_dist:{value:12},
                 iChannel0: { value: environmentMap}
@@ -522,5 +530,5 @@ gui.add(changecolor,'colorID',colorselection).onChange(()=>{
     gradient_material.uniforms.u_waveLayers.value = colorlayers_uniform
     gradient_material.uniforms.u_baseColor.value = new THREE.Color(sectionColorList[changecolor.colorID].baseColor)
     roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[changecolor.colorID].cubeColor)
-    
+    roundCube_material.uniforms.u_absorb.value = new THREE.Color(sectionColorList[changecolor.colorID].absorbColor)
 })
