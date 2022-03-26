@@ -128,7 +128,7 @@ let active_color_number = 4
 const sectionColorList =
     [
         {
-            colorLayers: ['#2535de','#d04e98',  '#9f5ffe', '#69A9FF'],
+            colorLayers: ['#9f5ffe','#4c39ec','#d04e98', '#6c1fff'],
             cubeColor: '#151515',
             baseColor: '#76f6fa',
             absorbColor: '#000000'
@@ -146,7 +146,7 @@ const sectionColorList =
             absorbColor: '#2f0512'
         },
         {
-            colorLayers: ['#F3BB40', '#6AE5CE', '#CDC77A', '#8d6a06'],
+            colorLayers: ['#d5aa13', '#F3BB40', '#a2cd7a', '#6ae59f'],
             cubeColor: '#3d3f0e',
             baseColor: '#ffe7b9',
             absorbColor: '#2f0821'
