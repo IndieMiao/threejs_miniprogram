@@ -128,7 +128,7 @@ let active_color_number = 4
 const sectionColorList =
     [
         {
-            colorLayers: ['#2535de','#d04e98',  '#9f5ffe', '#69A9FF'],
+            colorLayers: ['#9f5ffe','#4c39ec','#d04e98', '#6c1fff'],
             cubeColor: '#151515',
             baseColor: '#76f6fa',
             absorbColor: '#000000'
@@ -145,8 +145,9 @@ const sectionColorList =
             baseColor: '#acffe5',
             absorbColor: '#2f0512'
         },
+        //a2cd7a ,3be05b
         {
-            colorLayers: ['#F3BB40', '#6AE5CE', '#CDC77A', '#8d6a06'],
+            colorLayers: ['#ab890d', '#F3BB40', '#8acc52', '#a2cd7a'],
             cubeColor: '#3d3f0e',
             baseColor: '#ffe7b9',
             absorbColor: '#2f0821'
@@ -214,15 +215,6 @@ function getColorLayers(colorsection)
     }
     return colorlayer 
 }
-function SetLayersColor(colorlist)
-{
-    for (let e = 0; e < active_color_number; e += 1) {
-
-        gradient_material.uniforms.u_waveLayers.value[e].color=  new THREE.Color( colorlist[e])
-    }
-}
-
-
 
 function initGradientBG()
 {
@@ -237,7 +229,7 @@ function initGradientBG()
         u_baseColor: {value: new THREE.Color(colorlayers_uniform[0].baseColor)},
         u_tile:{value: new Vector2(1,1)},
         u_waveLayers_length: { value: active_color_number },
-        u_active_colors: { value: [1,1,1,1,1] },
+        u_active_colors: { value: [1,1,1,1] },
         u_global:{
             value:gradient_global_uniform},
         u_vertDeform:{
