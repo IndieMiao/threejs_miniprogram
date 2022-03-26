@@ -128,38 +128,38 @@ let active_color_number = 4
 const sectionColorList =
     [
         {
-            colorLayers: ['#282860','#571c4c',  '#000000', '#905395'],
+            colorLayers: ['#2535de','#d04e98',  '#9f5ffe', '#69A9FF'],
             cubeColor: '#151515',
-            baseColor: '#000000',
+            baseColor: '#76f6fa',
             absorbColor: '#000000'
         },
         {
             colorLayers: ['#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE'],
             cubeColor: '#311b6f',
             baseColor: '#dcf2ff',
-            absorbColor: '#1c380d'
+            absorbColor: '#380f05'
         },
         {
             colorLayers: ['#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2'],
-            cubeColor: '#073648',
+            cubeColor: '#06264d',
             baseColor: '#acffe5',
-            absorbColor: '#2f0f05'
+            absorbColor: '#2f0512'
         },
         {
             colorLayers: ['#F3BB40', '#6AE5CE', '#CDC77A', '#8d6a06'],
-            cubeColor: '#3f310d',
+            cubeColor: '#3d3f0e',
             baseColor: '#ffe7b9',
-            absorbColor: '#09142a'
+            absorbColor: '#2f0821'
         },
         {
             colorLayers: ['#F5689B', '#fd4b89', '#E8E39B', '#9f1f4e'],
-            cubeColor: '#471810',
+            cubeColor: '#480729',
             baseColor: '#ffb9d5',
-            absorbColor: '#081e23'
+            absorbColor: '#130823'
         },
         {
             colorLayers: ['#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6'],
-            cubeColor: '#49122d',
+            cubeColor: '#420a27',
             baseColor: '#ffb8d4',
             absorbColor: '#0b2d18'
         },
@@ -167,7 +167,7 @@ const sectionColorList =
             colorLayers: ['#42a6be', '#6bceec', '#B984F6', '#8861F5'],
             cubeColor: '#100d45',
             baseColor: '#a9deef',
-            absorbColor: '#2f1c09'
+            absorbColor: '#2f0926'
         }
     ];
 
@@ -234,7 +234,7 @@ function initGradientBG()
      let Uniforms = {
         u_time: {value: 0 },
         u_intensiy :{value: 1},
-        u_baseColor: {value: new THREE.Color('#000') },
+        u_baseColor: {value: new THREE.Color(colorlayers_uniform[0].baseColor)},
         u_tile:{value: new Vector2(1,1)},
         u_waveLayers_length: { value: active_color_number },
         u_active_colors: { value: [1,1,1,1,1] },
