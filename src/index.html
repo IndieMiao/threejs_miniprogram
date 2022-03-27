@@ -4,175 +4,223 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>h5 </title>
-    <script src="../static/jquery.min.js"></script>
+    <script src="../static/js/jquery.min.js"></script>
+    <script src="../static/js/swiper-bundle.min.js"></script>
 </head>
 <body>
 
-<canvas class="webgl"></canvas>
-
-<div class="img100">
+    <canvas class="webgl"></canvas>
 
 
-    <div class="content content1">
+    <img class="logo" src="../static/img/second/logo.png" />
 
-        <div class="no-col">
-            <img class="no" src="../static/img/select/1/01.png"/>
-            <img class="count" src="../static/img/select/of6.png"/>
-        </div>
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <div class="swiper-slide-img" >
 
-        <img class="text-col" style="width:79.8vw;" src="../static/img/select/1/1.png"/>
+                    <img class="img"  style="width:44vw;margin-top:81vw;" src="../static/img/second/word.png">
 
-        <div class="list">
-            <div>说走就走，一次未知的旅行</div>
-            <div>呼朋引伴，一场热闹的party</div>
-            <div>洒扫庭厨，一次彻底的大扫除</div>
-            <div>抱紧屏幕，不舍昼夜的游戏和追剧</div>
-        </div>
+                    <img  class="graph" src="../static/img/second/graph.png">
 
-        <div class="bottom-col">
-            <div class="text">我的酷灵魂收集完成度</div>
-            <div>
-                <img src="../static/img/select/1/p.png">
+                </div>
             </div>
+            <div class="swiper-slide">
+                <div class="swiper-slide-img" >
 
-        </div>
-    </div>
+                    <img class="img"  style="width:53.6vw;margin-top:81vw;" src="../static/img/third/word1.png">
 
-    <div class="content content2">
+                    <img  class="graph" src="../static/img/second/graph.png">
 
-        <div class="no-col">
-            <img class="no" src="../static/img/select/2/02.png"/>
-            <img class="count" src="../static/img/select/of6.png"/>
-        </div>
-
-        <img class="text-col" style="width:79.8vw;" src="../static/img/select/2/2.png"/>
-
-        <div class="list">
-            <div>随便想的创意，一次通过</div>
-            <div>卡壳很久的瓶颈，终于突破</div>
-            <div>暗恋的对象突然主动约你</div>
-            <div>等了很久的第二季官宣上映</div>
-        </div>
-
-        <div class="bottom-col">
-            <div class="text">我的酷灵魂收集完成度</div>
-            <div>
-                <img src="../static/img/select/2/p.png">
+                </div>
             </div>
+            <div class="swiper-slide">
+                <div class="swiper-slide-img" >
 
-        </div>
-    </div>
+                    <img class="img" style="width:27.46vw;position: absolute;top:23.6vw;left:50%;margin-left:-13.73vw;" src="../static/img/fourth/cube.png">
 
-    <div class="content content3">
+                    <img class="img" style="width:61.6vw;position: absolute;top:81vw;left:50%;margin-left:-30.8vw;" src="../static/img/fourth/word1.png">
 
-        <div class="no-col">
-            <img class="no" src="../static/img/select/3/03.png"/>
-            <img class="count" src="../static/img/select/of6.png"/>
-        </div>
+                    <img id="btn1" style="width:32.98vw;top:124vw;position: absolute;left:50%;margin-left:-16.49vw;" src="../static/img/fourth/button.png">
 
-        <img class="text-col" style="width:79.8vw;" src="../static/img/select/3/3.png"/>
-
-        <div class="list">
-            <div>从不后悔自己所做的决定</div>
-            <div>不会再有孤独这种情绪</div>
-            <div>每一次喜欢都能勇敢告白</div>
-            <div>讲的每一个冷笑话都不会冷</div>
-        </div>
-
-        <div class="bottom-col">
-            <div class="text">我的酷灵魂收集完成度</div>
-            <div>
-                <img src="../static/img/select/3/p.png">
-            </div>
-
-        </div>
-    </div>
-
-    <div class="content content4">
-
-        <div class="no-col">
-            <img class="no" src="../static/img/select/4/04.png"/>
-            <img class="count" src="../static/img/select/of6.png"/>
-        </div>
-
-        <img class="text-col" style="width:79.8vw;" src="../static/img/select/4/4.png"/>
-
-        <div class="list">
-            <div>永远能在DDL前完美落地</div>
-            <div>先说坑在哪里，好处可以待会讲</div>
-            <div>未来太远，享受当前比较重要</div>
-            <div>相比结果，更重视过程的舒适</div>
-        </div>
-
-        <div class="bottom-col">
-            <div class="text">我的酷灵魂收集完成度</div>
-            <div>
-                <img src="../static/img/select/4/p.png">
-            </div>
-
-        </div>
-    </div>
-
-    <div class="content content5">
-
-        <div class="no-col">
-            <img class="no" src="../static/img/select/5/05.png"/>
-            <img class="count" src="../static/img/select/of6.png"/>
-        </div>
-
-        <img class="text-col" style="width:79.8vw;" src="../static/img/select/5/5.png"/>
-
-        <div class="list">
-            <div>不用自己停车了，想开车去逛胡同</div>
-            <div>上下班路上也能睡觉了，想住在更房间更大的郊区</div>
-            <div>可以在车里蹦迪了，高速累的不再是腰而是腿</div>
-            <div>驾照标准进一步降低了，最好直接取消科目二</div>
-        </div>
-
-        <div class="bottom-col">
-            <div class="text">我的酷灵魂收集完成度</div>
-            <div>
-                <img src="../static/img/select/5/p.png">
-            </div>
-
-        </div>
-    </div>
-
-    <div class="content content6">
-
-        <div class="no-col">
-            <img class="no" src="../static/img/select/6/06.png"/>
-            <img class="count" src="../static/img/select/of6.png"/>
-        </div>
-
-        <img class="text-col" style="width:79.8vw;" src="../static/img/select/6/6.png"/>
-
-        <div class="list">
-            <div>可以一口气讲5个小时脱口秀</div>
-            <div>熟练掌握一滴水不撒地投喂水果</div>
-            <div>不用麦克风的金嗓子移动点歌台</div>
-            <div>可以保持安静但又不让人犯困</div>
-        </div>
-
-        <div class="bottom-col">
-            <div class="text">我的酷灵魂收集完成度</div>
-            <div>
-                <img src="../static/img/select/6/p.png">
+                </div>
             </div>
 
         </div>
     </div>
 
 
-</div>
+    <div class="tansuo">
+        <div class="swiper-slide-img">
 
-<div class="bottom-icon">
-    <img class="left" src="../static/img/select/Rectangle15.png">
-    <img class="right" src="../static/img/select/Rectangle16.png">
-</div>
+            <img style="width:27.46vw;position: absolute;top:52.9vw;left:50%;margin-left:-13.73vw;" src="../static/img/fifth/cube.png">
+
+            <img id="btn2" style="width:32.98vw;top:107vw;position: absolute;left:50%;margin-left:-16.49vw;" src="../static/img/fifth/button.png">
+
+        </div>
+    </div>
+
+    <div class="img100">
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/CustomEase.min.js"></script>
+        <div class="content content1">
+
+            <div class="no-col">
+                <img class="no" style="width:27.8vw;" src="../static/img/select/1/01.png"/>
+                <img class="count" src="../static/img/select/of6.png"/>
+            </div>
+
+            <img class="text-col" style="width:79.8vw;" src="../static/img/select/1/1.png"/>
+
+            <div class="list">
+                <div>说走就走，一次未知的旅行</div>
+                <div>呼朋引伴，一场热闹的party</div>
+                <div>洒扫庭厨，一次彻底的大扫除</div>
+                <div>抱紧屏幕，不舍昼夜的游戏和追剧</div>
+            </div>
+
+            <div class="bottom-col">
+                <div class="text">我的酷灵魂收集完成度</div>
+                <div>
+                    <img src="../static/img/select/1/p.png">
+                </div>
+
+            </div>
+        </div>
+
+        <div class="content content2">
+
+            <div class="no-col">
+                <img class="no"  style="width:41.06vw;" src="../static/img/select/2/02.png"/>
+                <img class="count" src="../static/img/select/of6.png"/>
+            </div>
+
+            <img class="text-col" style="width:84.8vw;" src="../static/img/select/2/2.png"/>
+
+            <div class="list">
+                <div>随便想的创意，一次通过</div>
+                <div>卡壳很久的瓶颈，终于突破</div>
+                <div>暗恋的对象突然主动约你</div>
+                <div>等了很久的第二季官宣上映</div>
+            </div>
+
+            <div class="bottom-col">
+                <div class="text">我的酷灵魂收集完成度</div>
+                <div>
+                    <img src="../static/img/select/2/p.png">
+                </div>
+
+            </div>
+        </div>
+
+        <div class="content content3">
+
+            <div class="no-col">
+                <img class="no" style="width:40.5vw;" src="../static/img/select/3/03.png"/>
+                <img class="count" src="../static/img/select/of6.png"/>
+            </div>
+
+            <img class="text-col" style="width:84.8vw;" src="../static/img/select/3/3.png"/>
+
+            <div class="list">
+                <div>从不后悔自己所做的决定</div>
+                <div>不会再有孤独这种情绪</div>
+                <div>每一次喜欢都能勇敢告白</div>
+                <div>讲的每一个冷笑话都不会冷</div>
+            </div>
+
+            <div class="bottom-col">
+                <div class="text">我的酷灵魂收集完成度</div>
+                <div>
+                    <img src="../static/img/select/3/p.png">
+                </div>
+
+            </div>
+        </div>
+
+        <div class="content content4">
+
+            <div class="no-col">
+                <img class="no" style="width:40.2vw;" src="../static/img/select/4/04.png"/>
+                <img class="count" src="../static/img/select/of6.png"/>
+            </div>
+
+            <img class="text-col" style="width:84.5vw;" src="../static/img/select/4/4.png"/>
+
+            <div class="list">
+                <div>永远能在DDL前完美落地</div>
+                <div>先说坑在哪里，好处可以待会讲</div>
+                <div>未来太远，享受当前比较重要</div>
+                <div>相比结果，更重视过程的舒适</div>
+            </div>
+
+            <div class="bottom-col">
+                <div class="text">我的酷灵魂收集完成度</div>
+                <div>
+                    <img src="../static/img/select/4/p.png">
+                </div>
+
+            </div>
+        </div>
+
+        <div class="content content5">
+
+            <div class="no-col">
+                <img class="no" style="width:41vw;" src="../static/img/select/5/05.png"/>
+                <img class="count" src="../static/img/select/of6.png"/>
+            </div>
+
+            <img class="text-col" style="width:80.6vw;" src="../static/img/select/5/5.png"/>
+
+            <div class="list">
+                <div>不用自己停车了，想开车去逛胡同</div>
+                <div>上下班路上也能睡觉了，想住在更房间更大的郊区</div>
+                <div>可以在车里蹦迪了，高速累的不再是腰而是腿</div>
+                <div>驾照标准进一步降低了，最好直接取消科目二</div>
+            </div>
+
+            <div class="bottom-col">
+                <div class="text">我的酷灵魂收集完成度</div>
+                <div>
+                    <img src="../static/img/select/5/p.png">
+                </div>
+
+            </div>
+        </div>
+
+        <div class="content content6">
+
+            <div class="no-col">
+                <img class="no" style="width:41.2vw;" src="../static/img/select/6/06.png"/>
+                <img class="count" src="../static/img/select/of6.png"/>
+            </div>
+
+            <img class="text-col" style="width:84.8vw;" src="../static/img/select/6/6.png"/>
+
+            <div class="list">
+                <div>可以一口气讲5个小时脱口秀</div>
+                <div>熟练掌握一滴水不撒地投喂水果</div>
+                <div>不用麦克风的金嗓子移动点歌台</div>
+                <div>可以保持安静但又不让人犯困</div>
+            </div>
+
+            <div class="bottom-col">
+                <div class="text">我的酷灵魂收集完成度</div>
+                <div>
+                    <img src="../static/img/select/6/p.png">
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="bottom-icon">
+        <img class="left" src="../static/img/select/Rectangle15.png">
+        <img class="right" src="../static/img/select/Rectangle16.png">
+    </div>
+<script src="./CustomEase.min.js"></script>
 <!-- <script src="script.js"></script> -->
 
 </body>

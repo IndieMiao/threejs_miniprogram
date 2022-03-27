@@ -1,3 +1,4 @@
+import '../static/css/swiper-bundle.min.css'
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -129,7 +130,6 @@ function initEnergy()
 //gradient color define
 let active_color_number = 4
 
-
 const sectionColorList =
     [
         {
@@ -207,46 +207,46 @@ function getColorLayers(colorsection)
     for (let e = 0; e < active_color_number; e += 1) {
 
         colorlayer[e] =
-        {
-            color: new THREE.Color(colorsection.colorLayers[e]),
-            noiseFreq: new Vector2(2 + e / active_color_number, 3 + e / active_color_number),
-            noiseSpeed: 5 + .3 * e,
-            noiseFlow:  3.5 + .3 * e,
-            noiseSeed: uniseed + 10 * e,
-            noiseFloor: .01,
-            noiseCeil: .63 + .07 * e,
-            baseColor:colorsection.baseColor,
-            cubeColor:colorsection.cubeColor,
-            // noiseCeil: .63 + .07 * e,
-        }
+            {
+                color: new THREE.Color(colorsection.colorLayers[e]),
+                noiseFreq: new Vector2(2 + e / active_color_number, 3 + e / active_color_number),
+                noiseSpeed: 5 + .3 * e,
+                noiseFlow:  3.5 + .3 * e,
+                noiseSeed: uniseed + 10 * e,
+                noiseFloor: .01,
+                noiseCeil: .63 + .07 * e,
+                baseColor:colorsection.baseColor,
+                cubeColor:colorsection.cubeColor,
+                // noiseCeil: .63 + .07 * e,
+            }
     }
     return colorlayer
 }
 
 function initGradientBG()
 {
-     initGradientUniform()
+    initGradientUniform()
 
     // Geometry
     const gradient_geometory= new THREE.PlaneGeometry(6.1, 6.1, 256,256)
 
-     let Uniforms = {
+    let Uniforms = {
         u_time: {value: 0 },
         u_intensiy :{value: 1},
         u_baseColor: {value: new THREE.Color(colorlayers_uniform[0].baseColor)},
         u_tile:{value: new Vector2(1,1)},
         u_waveLayers_length: { value: active_color_number },
-         u_rampMaskOffset: {value:gradient_global_uniform.u_rampMaskOffset},
-         u_rampMaskPow: {value:gradient_global_uniform.u_rampMaskPow},
+        u_rampMaskOffset: {value:gradient_global_uniform.u_rampMaskOffset},
+        u_rampMaskPow: {value:gradient_global_uniform.u_rampMaskPow},
         u_active_colors: { value: [1,1,1,1] },
         u_global:{
             value:gradient_global_uniform},
         u_vertDeform:{
             value:vertDeform_uniform},
         u_waveLayers:
-        {
-            value: colorlayers_uniform,
-        }
+            {
+                value: colorlayers_uniform,
+            }
     }
 
     gradient_material= new THREE.ShaderMaterial({
@@ -291,8 +291,8 @@ function initDebug()
     gui = new dat.GUI({ width: 220 })
     debugObject = {}
     stats = new Stats()
-    //document.body.appendChild(stats.dom)
-    gui.hide()
+    document.body.appendChild(stats.dom)
+    // gui.hide()
 }
 
 function initEnvMap()
@@ -322,26 +322,26 @@ function initRoundCube()
 {
     const roundcube_size = 0.32
     //Geometry
-            roundCube_uniform = {
-                iGlobalTime:{type:'f',value:0.01},
-                u_intensity:{type:'f',value:1.6},
-                u_opacityOffset:{type:'f',value:0.55},
-                u_opacity:{type:'f',value:1},
-                u_chromeOffset:{type:'f',value:0.01},
-                u_colorOverlay:{value:new THREE.Color('#131313')},
-                u_colorOverlayIntensity:{value:0.7},
-                u_cameraPerspective:{value:3.5},
-                u_cameraOffset:{value:6},
-                u_absorb:{value:new THREE.Color('#000')},
-                u_cubePhi:{value:4.4},
-                u_dist:{value:12},
-                iChannel0: { value: environmentMap}
-            };
-            const cubePlaneGeometry = new THREE.PlaneGeometry(roundcube_size,roundcube_size,2,2)
-            roundCube_material = new THREE.ShaderMaterial(
-                {
-                    vertexShader: cubeVertexShader,
-                    fragmentShader: cubeFragmentShader,
+    roundCube_uniform = {
+        iGlobalTime:{type:'f',value:0.01},
+        u_intensity:{type:'f',value:1.6},
+        u_opacityOffset:{type:'f',value:0.55},
+        u_opacity:{type:'f',value:1},
+        u_chromeOffset:{type:'f',value:0.01},
+        u_colorOverlay:{value:new THREE.Color('#131313')},
+        u_colorOverlayIntensity:{value:0.7},
+        u_cameraPerspective:{value:3.5},
+        u_cameraOffset:{value:6},
+        u_absorb:{value:new THREE.Color('#000')},
+        u_cubePhi:{value:4.4},
+        u_dist:{value:12},
+        iChannel0: { value: environmentMap}
+    };
+    const cubePlaneGeometry = new THREE.PlaneGeometry(roundcube_size,roundcube_size,2,2)
+    roundCube_material = new THREE.ShaderMaterial(
+        {
+            vertexShader: cubeVertexShader,
+            fragmentShader: cubeFragmentShader,
             side:THREE.DoubleSide,
             uniforms:roundCube_uniform
         }
@@ -442,7 +442,7 @@ function debugTick()
         //log camera position and camera angle
         console.log(camera.position)
         // console.log(camera.rotation)    }
-}
+    }
 }
 
 
@@ -488,33 +488,11 @@ const tick = () =>
 init()
 tick()
 
-function animatColor()
-{
-    colorlayers_uniform = getColorLayers(sectionColorList[0])
-    gradient_material.uniforms.u_waveLayers.value = colorlayers_uniform;
-
-    for(var e = 0 ;e<active_color_number; e+=1)
-
-    {
-        var tempColor= {color:'white'};
-        gsap.to(tempColor, {color:(sectionColorList[2][e]), duration:1, onUpdate:()=>{
-        try{
-            gradient_material.uniforms.u_waveLayers.value[e].color = new THREE.Color(tempColor.color)
-            console.log(tempColor);
-        }
-        catch(err)
-        {}
-        }
-    })
-
-    }
-}
-// animatColor()
 
 var changecolor =
-{
-    colorID:0
-}
+    {
+        colorID:0
+    }
 var colorselection ={
     color0:0,
     color1:1,
@@ -525,78 +503,37 @@ var colorselection ={
     color6:6
 }
 gui.add(changecolor,'colorID',colorselection).onChange(()=>{
-    console.log(changecolor.colorID);
     colorlayers_uniform = getColorLayers(sectionColorList[changecolor.colorID])
     console.log(colorlayers_uniform)
     gradient_material.uniforms.u_waveLayers.value = colorlayers_uniform
-
     gradient_material.uniforms.u_baseColor.value = new THREE.Color(sectionColorList[changecolor.colorID].baseColor)
     roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[changecolor.colorID].cubeColor)
     roundCube_material.uniforms.u_absorb.value = new THREE.Color(sectionColorList[changecolor.colorID].absorbColor)
-
 })
 
-var changecolorFun=function(value){
-    colorlayers_uniform = getColorLayers(sectionColorList[value])
-    console.log(colorlayers_uniform)
-    gradient_material.uniforms.u_waveLayers.value = colorlayers_uniform
-    roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[value][4])
+function animate_gradient(gradient_number)
+{
+    const origin_gradient = getCurrentGradient()
+    const target_gradient = getTargetGradient()
+    const duration = 4
+    function getCurrentGradient()
+    {
+
+
+    }
+
+    function getTargetGradient()
+    {}
+
+    function doAnimate(){
+
+    }
+    doAnimate()
+
+
+
 }
 
-
-$(".content .list div").click(function () {
-
-    var index=$(".content").index($(this).parent().parent());
-
-    $(this).parent().find("div").removeClass("active");
-    $(this).addClass("active");
-
-    var cIndex=index+1;
-    console.log(cIndex);
-    if(cIndex==6){
-     console.log("结束");
-
-    window.location.href="loading.html?id=1";
-     return;
-    }
-
-
-    changecolorFun(cIndex);
-    $(".content").removeClass("active");
-    $(".content"+(cIndex+1)).addClass("active");
-
-
-
-})
-
-$(".bottom-icon .left").click(function () {
-    var index=$(".content").index($(".content.active"));
-    console.log(index);
-    if(index>0){
-        var cIndex=index-1;
-        changecolorFun(cIndex);
-        $(".content").removeClass("active");
-        $(".content"+(cIndex+1)).addClass("active");
-    }
-})
-
-$(".bottom-icon .right").click(function () {
-
-    if($(".content.active").find(".list div.active").length==0){
-        return;
-    }
-
-    var index=$(".content").index($(".content.active"));
-    console.log(index);
-    if(index<5){
-        var cIndex=index+1;
-        changecolorFun(cIndex);
-        $(".content").removeClass("active");
-        $(".content"+(cIndex+1)).addClass("active");
-    }
-})
-
-$(".content1").addClass("active");
 
 const cube_fx= {
     pos:{ x:0, y:0, },
@@ -616,9 +553,9 @@ const cube_fx_function = {
     scale_down:function(){
         cube_fx.size = 1.7
         gsap.to(cube_fx,{size:1, duration:1, onUpdate:()=>{
-                roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
-                energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
-            }})
+            roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+            energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+        }})
     },
     pos_fx:function(){
         roundCube_mesh.position.y = -1.5
@@ -656,9 +593,94 @@ const energy_fx= {
 
         gsap.to(energy_material.uniforms.u_intensity,{value:1.3, duration:duration, ease:'custom'})
         gsap.to(absorb_scale,{scale:1.8,duration:duration,ease:'custom', onUpdate:()=>{
-           energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
-            }})
+            energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
+        }})
     }
 }
 gui.add(energy_fx,'absorb_fx')
 
+
+var changecolorFun=function(colorID){
+    colorlayers_uniform = getColorLayers(sectionColorList[colorID])
+    console.log(colorlayers_uniform)
+    gradient_material.uniforms.u_waveLayers.value = colorlayers_uniform
+    gradient_material.uniforms.u_baseColor.value = new THREE.Color(sectionColorList[colorID].baseColor)
+    roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[colorID].cubeColor)
+    roundCube_material.uniforms.u_absorb.value = new THREE.Color(sectionColorList[colorID].absorbColor)
+}
+
+
+var swiper = new Swiper(".mySwiper", {
+    direction: 'vertical',
+    on: {
+        slideChange: function (e) {
+            intro_number=e.realIndex;
+            gradient_fx.intro();
+        }
+    }
+});
+
+
+$("#btn1").click(function () {
+    $(".mySwiper").hide();
+    $(".tansuo").addClass("active");
+})
+
+$("#btn2").click(function () {
+    window.location.href="index.html";
+})
+
+
+$(".content .list div").click(function () {
+
+    var index=$(".content").index($(this).parent().parent());
+
+    $(this).parent().find("div").removeClass("active");
+    $(this).addClass("active");
+
+    var cIndex=index+1;
+    console.log(cIndex);
+    if(cIndex==6){
+        console.log("结束");
+
+        window.location.href="loading.html?id=1";
+        return;
+    }
+
+
+    changecolorFun(cIndex+1);
+    $(".content").removeClass("active");
+    $(".content"+(cIndex+1)).addClass("active");
+
+
+
+})
+
+$(".bottom-icon .left").click(function () {
+    var index=$(".content").index($(".content.active"));
+    console.log(index);
+    if(index>0){
+        var cIndex=index-1;
+        changecolorFun(cIndex+1);
+        $(".content").removeClass("active");
+        $(".content"+(cIndex+1)).addClass("active");
+    }
+})
+
+$(".bottom-icon .right").click(function () {
+
+    if($(".content.active").find(".list div.active").length==0){
+        return;
+    }
+
+    var index=$(".content").index($(".content.active"));
+    console.log(index);
+    if(index<5){
+        var cIndex=index+1;
+        changecolorFun(cIndex);
+        $(".content").removeClass("active");
+        $(".content"+(cIndex+1)).addClass("active");
+    }
+})
+
+//$(".content1").addClass("active");
