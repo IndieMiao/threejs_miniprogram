@@ -24,7 +24,7 @@ import gsap from 'gsap'
  */
 
 let DEBUGMODE = false;
-let LOCKCAM = false;
+let LOCKCAM = true;
 let gui, debugObject
 let canvas, scene, sizes ,renderer, camera, controls, clock
 let environmentMap
