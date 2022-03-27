@@ -34,6 +34,7 @@ let cube_in_model = null, cubeInnerMaterial,cube_in_Load, cubeShellMateral,cube_
 let cubeMeshGroup, cubeFxGroup ,cubeRootGroup
 // let roundcube_size
 let gradient_material, energy_material
+let energy_mesh
 let axesHelper
 let stats
 
@@ -64,7 +65,7 @@ function init()
     initCameraControl()
     initGradientBG()
 
-    // initEnergy()
+    initEnergy()
 
     initRoundCube()
     // initDistordFx()
@@ -95,7 +96,7 @@ function initHierarchy()
 
 function initEnergy()
 {
-    const energy_size = 0.8
+    const energy_size = 0.38
     // instantiate a loader
     const texture = new THREE.TextureLoader().load('textures/RGBNoiseMedium.png');
     energy_uniform = {
@@ -119,7 +120,7 @@ function initEnergy()
     energyMaterial.transparent = true
     energyMaterial.blending = THREE.AdditiveBlending
     // Mesh
-    const energy_mesh = new THREE.Mesh(energy_geometory, energyMaterial)
+    energy_mesh = new THREE.Mesh(energy_geometory, energyMaterial)
     cubeFxGroup.add(energy_mesh)
 }
 
@@ -356,8 +357,10 @@ function initDistordFx()
     const distord_size = 0.9
     //Geometry
     distordFx_uniform = {
-        iGlobalTime:{type:'f',value:0.01},
-    };
+        iGlobalTime: {type: 'f', value: 0.01},
+        u_ray: {value: 96},
+        u_intensity: {value: 100.},
+    } ;
     const cubePlane2Geometry = new THREE.PlaneGeometry(distord_size,distord_size,2,2)
     distordFxMaterial = new THREE.ShaderMaterial(
         {
@@ -538,17 +541,21 @@ const cube_fx_function = {
         cube_fx.size = 1
         gsap.to(cube_fx,{size:1.7, duration:1, onUpdate:()=>{
             roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+            energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
         }})
     },
     scale_down:function(){
         cube_fx.size = 1.7
         gsap.to(cube_fx,{size:1, duration:1, onUpdate:()=>{
                 roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+                energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
             }})
     },
     pos_fx:function(){
         roundCube_mesh.position.y = -1.5
+        energy_mesh.position.y = -1.5
         gsap.to(roundCube_mesh.position,{y:0, duration:4 })
+        gsap.to(energy_mesh.position,{y:0, duration:4 })
     },
     rot_fx:function(){},
 }

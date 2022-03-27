@@ -2,6 +2,7 @@
 // Created by L. Haeussler 2021
 
 uniform float iGlobalTime;
+uniform int u_ray;
 
 varying vec2 vUv;
 
@@ -55,7 +56,7 @@ vec3 raymarch( in vec3 ro, vec3 rd, vec2 tminmax, float radius )
     float c = 1.;
     float t = max( 0., tminmax.x );
     float translucency = 1.;
-    for( int i=0; i<1024; i++ )
+    for( int i=0; i<u_ray; i++ )
 	{
         float dt = mix( 0.05, 0.01, step( 0.001, c ) );
         
