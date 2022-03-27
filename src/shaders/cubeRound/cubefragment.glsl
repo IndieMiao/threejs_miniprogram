@@ -1,5 +1,5 @@
 #define MAX_BOUNCES 2
-#define ABSORB		vec3(0, 0, 0)
+//#define ABSORB		vec3(0, 0, 0)
 #define GAMMA
 
 uniform float iGlobalTime;
@@ -10,10 +10,12 @@ uniform float u_intensity;
 uniform float u_opacityOffset;
 uniform float u_opacity;
 uniform vec3 u_colorOverlay;
+uniform vec3 u_absorb;
 uniform float u_chromeOffset;
 uniform float u_cameraOffset;
 uniform float u_cameraPerspective;
 uniform float u_cubePhi;
+uniform float u_dist;
 uniform float u_colorOverlayIntensity;
 
 varying vec2 vUv;
@@ -70,16 +72,15 @@ float capIntersect( in vec3 ro, in vec3 rd, in vec3 pa, in vec3 pb, in float r )
 // I kept the -1 for no collision paradigm even if I hate it (Make code more complex), but I prefered to stay compatible with IQ interface.
 float roundedboxIntersect( in vec3 ro, in vec3 rd, in vec3 size, in float rad )
 {
-    
-	// bounding box
+    // bounding box
     vec3 m = 1.0/rd;
     vec3 n = m*ro;
     vec3 k = abs(m)*(size+rad);
     vec3 t1 = -n - k;
     vec3 t2 = -n + k;
-	float tN = max( max( t1.x, t1.y ), t1.z );
-	float tF = min( min( t2.x, t2.y ), t2.z );
-	if( tN > tF || tF < 0.0) return -1.0;
+    float tN = max( max( t1.x, t1.y ), t1.z );
+    float tF = min( min( t2.x, t2.y ), t2.z );
+    if( tN>tF || tF<0.0) return -1.0;
     float t = tN;
 
     // convert to first octant
@@ -88,31 +89,74 @@ float roundedboxIntersect( in vec3 ro, in vec3 rd, in vec3 size, in float rad )
     ro  *= s;
     rd  *= s;
     pos *= s;
-        
+
     // faces
     pos -= size;
     pos = max( pos.xyz, pos.yzx );
-    if( min(min(pos.x,pos.y),pos.z)<0.0 ) return t;
-  
-  	// fat edges
-    float d;
-    d = capIntersect(ro, rd, size * vec3(-1, 1, 1), size, rad);
-    t = d > 0. ? d : 1e20;
-    d = capIntersect(ro, rd, size * vec3( 1,-1, 1), size, rad);
-    t = min(d > 0. ? d : 1e20, t);    
-    d = capIntersect(ro, rd, size * vec3( 1, 1,-1), size, rad);
-    t = min(d > 0. ? d : 1e20, t);    
+    if( min(min(pos.x,pos.y),pos.z) < 0.0 ) return t;
+
+    // some precomputation
+    vec3 oc = ro - size;
+    vec3 dd = rd*rd;
+    vec3 oo = oc*oc;
+    vec3 od = oc*rd;
+    float ra2 = rad*rad;
+
+    t = 1e20;
+
+    // corner
+    {
+        float b = od.x + od.y + od.z;
+        float c = oo.x + oo.y + oo.z - ra2;
+        float h = b*b - c;
+        if( h>0.0 ) t = -b-sqrt(h);
+    }
+    // edge X
+    {
+        float a = dd.y + dd.z;
+        float b = od.y + od.z;
+        float c = oo.y + oo.z - ra2;
+        float h = b*b - a*c;
+        if( h>0.0 )
+        {
+            h = (-b-sqrt(h))/a;
+            if( h>0.0 && h<t && abs(ro.x+rd.x*h)<size.x ) t = h;
+        }
+    }
+    // edge Y
+    {
+        float a = dd.z + dd.x;
+        float b = od.z + od.x;
+        float c = oo.z + oo.x - ra2;
+        float h = b*b - a*c;
+        if( h>0.0 )
+        {
+            h = (-b-sqrt(h))/a;
+            if( h>0.0 && h<t && abs(ro.y+rd.y*h)<size.y ) t = h;
+        }
+    }
+    // edge Z
+    {
+        float a = dd.x + dd.y;
+        float b = od.x + od.y;
+        float c = oo.x + oo.y - ra2;
+        float h = b*b - a*c;
+        if( h>0.0 )
+        {
+            h = (-b-sqrt(h))/a;
+            if( h>0.0 && h<t && abs(ro.z+rd.z*h)<size.z ) t = h;
+        }
+    }
 
     if( t>1e19 ) t=-1.0;
-    
-	return t;
+
+    return t;
 }
 
 // normal of a rounded box
 vec3 roundedboxNormal( in vec3 pos, in vec3 siz, in float rad )
 {
     return sign(pos)*normalize(max(abs(pos)-siz,0.0));
-    
 }
 
 mat3 fromEuler(vec3 ang)
@@ -216,7 +260,7 @@ vec3 getSkyColor(vec3 rd)
 {
     vec3 col = textureCube(iChannel0, rd).rgb;
     // #if GAMMA
-    	col = pow(col, vec3(2.2));
+//    	col = pow(col, vec3(2.2));
     // #endif
     return col;
 }
@@ -230,13 +274,13 @@ vec4 Render(in vec3 ro, in vec3 rd, in float dist, float cref, in objDec inner, 
     vec3  col = vec3(0);
     vec3  rel = vec3(1);
     float transp = 1.;
-    vec3  absorb = ABSORB;
+    vec3  absorb = u_absorb;
     for(int i = 0; i < MAX_BOUNCES; i++)
     {
         vec3	n;
         float 	d;
         bool	inter;
-        if(sgn > 0.)
+        if(sgn > 0.0)
         {
             inter = intersectSceneFromOutside(ro, rd, dist, d, n, inner, outter);
         }
@@ -295,29 +339,12 @@ mat3 setCamera( in vec3 ro, in vec3 ta )
     return mat3( cu, cv, cw );
 }
 
-/*
-vec3 vignette(vec3 color, vec2 q, float v)
-{
-    color *= 0.3 + 0.8 * pow(16.0 * q.x * q.y * (1.0 - q.x) * (1.0 - q.y), v);
-    return color;
-}
-*/
-
 vec3 desaturate(in vec3 c, in float a)
 {
     float l = dot(c, vec3(1. / 3.));
     return mix(c, vec3(l), a);
 }
 
-/*
-void main(void)
-{
-    
-
-	gl_FragColor  = vec4( 2.0,1.0,0.0,1.0);
-}
-
-*/
 
 void main( void)
 {
@@ -326,14 +353,17 @@ void main( void)
     float tt = iGlobalTime * 0.8;
     // float tt = 3.14;
     float t = 3.14;
-    float v = map2(cos(tt),-1.,1.,0.02,0.08);
-    float v2 = map2(cos(tt*1.68),-1.,1.,0.5,1.);
+//    float v = map2(cos(tt),-1.,1.,0.08,0.08);
+    float v = map2(cos(tt),-1.,1.,0.00,0.02);
+    float v2 = map2(cos(tt*1.68),-1.,1.,0.1,1.);
     
     objDec inner, outter;
-    outter.r = v * 0.75 + 0.1;
-    outter.s   = (1.-v) * 0.75;
+//    outter.r = v * 0.75 + 0.10;
+//    outter.s   = (1.-v) * 0.75;
+    outter.r = 0.02;
+    outter.s = 1.- 0.11;
     outter.m = fromEuler(vec3(t * 0.9 + 0.2,  t * 0.6 + 1.2, t * 0.5 + 0.9));
-    inner.r  = (1.-v2) * 0.35 + 0.1;
+    inner.r  = (1.-v2) * 0.25 + 0.1;
     // inner.r  = (1.-v2) * 0.35 + 0.1;
     inner.s	  = v2 * 0.35;
     inner.m = fromEuler(vec3(t * 0.8 + 1.5,  t * 0.4 + 0.7, t * 0.7 + 2.3));
@@ -363,11 +393,14 @@ void main( void)
         vec3 rd =  ca*normalize(vec3(p,cameraPerspective));
         
         vec3 col;
-        col.r = Render(ro, rd, 12.,0.7-u_chromeOffset, inner, outter).r;
-        col.g = Render(ro, rd, 12.,0.7, inner, outter).g;
-        col.b = Render(ro, rd, 12.,0.7+u_chromeOffset, inner, outter).b;
-        alpha = u_opacity*(Render(ro, rd, 12.,0.7, inner, outter).a*((col.r+col.g+col.b)/3.+u_opacityOffset));
-        // alpha = (col.r+col.g+col.b)/3.;
+        vec2 ga_temp;
+        col.r = Render(ro, rd, u_dist,0.7-u_chromeOffset, inner, outter).r;
+        ga_temp = Render(ro, rd, u_dist,0.7, inner, outter).ga;
+        col.g = ga_temp.x;
+        col.b = Render(ro, rd, u_dist,0.7+u_chromeOffset, inner, outter).b;
+//        alpha = u_opacity*(Render(ro, rd, u_dist,0.7, inner, outter).a*((col.r+col.g+col.b)/3.+u_opacityOffset));
+        alpha = u_opacity*ga_temp.y*((col.r+col.g+col.b)/3.+u_opacityOffset);
+    // alpha = (col.r+col.g+col.b)/3.;
         
       	tot += col;
         
@@ -377,11 +410,11 @@ void main( void)
    tot += u_colorOverlay*vec3(u_colorOverlayIntensity);
 //    tot = vignette(tot, fragCoord / iResolution.xy, 1.2);
     // #if GAMMA
-    	// tot = pow(tot, vec3(1. / 2.));
+//    	 tot = pow(tot, vec3(1. / 2.));
     // #endif
     // alpha = clamp(pow(alpha,1./2.),0.,1.);
 
 	gl_FragColor  = vec4( tot*vec3(u_intensity), alpha );
-	// gl_FragColor  = vec4( tot*vec3(u_intensity), 1.);
-    
+//	 gl_FragColor  = vec4( tot*vec3(u_intensity), 1.);
+
 }

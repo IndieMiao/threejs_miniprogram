@@ -1,4 +1,6 @@
 uniform float iGlobalTime;
+uniform float u_intensity;
+uniform int u_ray;
 
 varying vec2 vUv;
 
@@ -79,10 +81,11 @@ void main(void) {
     vec3 d = normalize(vec3(p.xy, 2.0));
     
     float t = 0.0;
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < u_ray; i++) {
         t += 0.01;
         light += fetch(d * t + o);
     }
 
-    gl_FragColor = vec4(light*3.,pow(generic_desaturate(light),2.7));
+
+    gl_FragColor = vec4(light*u_intensity,pow(generic_desaturate(light),1.));
 }

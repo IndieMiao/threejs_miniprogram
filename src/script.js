@@ -15,6 +15,8 @@ import energyfragment from './shaders/energy/energyfragment.glsl'
 import energyvertex from './shaders/energy/energyvertex.glsl'
 import Stats from 'stats.js'
 import gsap from 'gsap'
+import {abs} from "three/examples/jsm/nodes/ShaderNode";
+gsap.registerPlugin(CustomEase)
 // import { floorPowerOfTwo } from 'three/src/math/mathutils'
 
 
@@ -32,7 +34,9 @@ let roundCube_mesh, roundCube_material, roundCube_uniform
 let distordFxMesh, distordFxMaterial, distordFx_uniform
 let cube_in_model = null, cubeInnerMaterial,cube_in_Load, cubeShellMateral,cube_line_model = null,cube_shell_model = null
 let cubeMeshGroup, cubeFxGroup ,cubeRootGroup
-let gradient_material, energy_material
+// let roundcube_size
+let gradient_material
+let energy_mesh
 let axesHelper
 let stats
 
@@ -40,7 +44,7 @@ let stats
 var colorlayers_uniform=[]
 let vertDeform_uniform
 let gradient_global_uniform
-let energy_uniform, energyMaterial
+let energy_uniform, energy_material
 const uniseed = 1.0
 
 
@@ -94,20 +98,20 @@ function initHierarchy()
 
 function initEnergy()
 {
-    const energy_size = 0.8
+    const energy_size = 0.38
     // instantiate a loader
     const texture = new THREE.TextureLoader().load('textures/RGBNoiseMedium.png');
     energy_uniform = {
         iGlobalTime:{type:'f',value:0.01},
         iChannel0: { type: 't', value: texture },
-        u_intensity:{value:1.},
+        u_intensity:{value:0.},
         u_rot:{value:new Vector2(0)},
     };
 
     //Geometry
 
     const energy_geometory= new THREE.PlaneGeometry(energy_size,energy_size,2,2)
-    energyMaterial= new THREE.ShaderMaterial(
+    energy_material= new THREE.ShaderMaterial(
         {
             vertexShader: energyvertex,
             fragmentShader: energyfragment,
@@ -115,10 +119,10 @@ function initEnergy()
             uniforms:energy_uniform
         }
     )
-    energyMaterial.transparent = true
-    energyMaterial.blending = THREE.AdditiveBlending
+    energy_material.transparent = true
+    energy_material.blending = THREE.AdditiveBlending
     // Mesh
-    const energy_mesh = new THREE.Mesh(energy_geometory, energyMaterial)
+    energy_mesh = new THREE.Mesh(energy_geometory, energy_material)
     cubeFxGroup.add(energy_mesh)
 }
 
@@ -129,39 +133,47 @@ let active_color_number = 4
 const sectionColorList =
     [
         {
-            colorLayers: ['#282860','#571c4c',  '#000000', '#905395'],
+            colorLayers: ['#9f5ffe','#4c39ec','#d04e98', '#6c1fff'],
             cubeColor: '#151515',
-            baseColor: '#000000'
+            baseColor: '#76f6fa',
+            absorbColor: '#000000'
         },
         {
             colorLayers: ['#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE'],
             cubeColor: '#311b6f',
-            baseColor: '#dcf2ff'
+            baseColor: '#dcf2ff',
+            absorbColor: '#380f05'
         },
         {
             colorLayers: ['#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2'],
-            cubeColor: '#073648',
+            cubeColor: '#06264d',
             baseColor: '#acffe5',
+            absorbColor: '#2f0512'
         },
+        //a2cd7a ,3be05b
         {
-            colorLayers: ['#F3BB40', '#6AE5CE', '#CDC77A', '#8d6a06'],
-            cubeColor: '#3f310d',
+            colorLayers: ['#ab890d', '#F3BB40', '#8acc52', '#a2cd7a'],
+            cubeColor: '#3d3f0e',
             baseColor: '#ffe7b9',
+            absorbColor: '#2f0821'
         },
         {
             colorLayers: ['#F5689B', '#fd4b89', '#E8E39B', '#9f1f4e'],
-            cubeColor: '#472710',
+            cubeColor: '#480729',
             baseColor: '#ffb9d5',
+            absorbColor: '#130823'
         },
         {
             colorLayers: ['#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6'],
-            cubeColor: '#49122d',
+            cubeColor: '#420a27',
             baseColor: '#ffb8d4',
+            absorbColor: '#0b2d18'
         },
         {
             colorLayers: ['#42a6be', '#6bceec', '#B984F6', '#8861F5'],
             cubeColor: '#100d45',
             baseColor: '#a9deef',
+            absorbColor: '#2f0926'
         }
     ];
 
@@ -173,6 +185,8 @@ function initGradientUniform ()
         noiseFreq : 0.9,
         noiseSpeed : 0.2,
         intensity : 0.5,
+        u_rampMaskOffset:1,
+        u_rampMaskPow:0.4,
     }
     vertDeform_uniform = {
         incline:Math.sin(10)/Math.cos(10),
@@ -208,15 +222,6 @@ function getColorLayers(colorsection)
     }
     return colorlayer
 }
-function SetLayersColor(colorlist)
-{
-    for (let e = 0; e < active_color_number; e += 1) {
-
-        gradient_material.uniforms.u_waveLayers.value[e].color=  new THREE.Color( colorlist[e])
-    }
-}
-
-
 
 function initGradientBG()
 {
@@ -226,12 +231,14 @@ function initGradientBG()
     const gradient_geometory= new THREE.PlaneGeometry(6.1, 6.1, 256,256)
 
      let Uniforms = {
-        u_time: { value: 0 },
+        u_time: {value: 0 },
         u_intensiy :{value: 1},
-        u_baseColor: { value: new THREE.Color('#000') },
+        u_baseColor: {value: new THREE.Color(colorlayers_uniform[0].baseColor)},
         u_tile:{value: new Vector2(1,1)},
         u_waveLayers_length: { value: active_color_number },
-        u_active_colors: { value: [1,1,1,1,1] },
+         u_rampMaskOffset: {value:gradient_global_uniform.u_rampMaskOffset},
+         u_rampMaskPow: {value:gradient_global_uniform.u_rampMaskPow},
+        u_active_colors: { value: [1,1,1,1] },
         u_global:{
             value:gradient_global_uniform},
         u_vertDeform:{
@@ -247,6 +254,7 @@ function initGradientBG()
         fragmentShader: gradientfragment,
         uniforms:Uniforms
     })
+    gradient_material.transparent = true
 
     // Mesh
     const gradient_mesh= new THREE.Mesh(gradient_geometory, gradient_material)
@@ -293,30 +301,30 @@ function initEnvMap()
 
     environmentMap = cubeTextureLoader.load(
         [
-            '/textures/hdr4/px.png',
-            '/textures/hdr4/nx.png',
-            '/textures/hdr4/py.png',
-            '/textures/hdr4/ny.png',
-            '/textures/hdr4/pz.png',
-            '/textures/hdr4/nz.png'
+            '/textures/hdr5/px.png',
+            '/textures/hdr5/nx.png',
+            '/textures/hdr5/py.png',
+            '/textures/hdr5/ny.png',
+            '/textures/hdr5/pz.png',
+            '/textures/hdr5/nz.png'
         ]
     )
 }
 
 function initBackground()
 {
-    scene.background = new THREE.Color('gray')
+    scene.background = new THREE.Color('black')
     // scene.background = new THREE.Color(debugObject.uColorBG)
     // gui.addColor(debugObject, 'uColorBG').onChange(() => { scene.background = new THREE.Color(debugObject.uColorBG)})
 }
 
 function initRoundCube()
 {
-    const roundcube_size = 0.58
+    const roundcube_size = 0.32
     //Geometry
             roundCube_uniform = {
                 iGlobalTime:{type:'f',value:0.01},
-                u_intensity:{type:'f',value:2.8},
+                u_intensity:{type:'f',value:1.6},
                 u_opacityOffset:{type:'f',value:0.55},
                 u_opacity:{type:'f',value:1},
                 u_chromeOffset:{type:'f',value:0.01},
@@ -324,7 +332,9 @@ function initRoundCube()
                 u_colorOverlayIntensity:{value:0.7},
                 u_cameraPerspective:{value:3.5},
                 u_cameraOffset:{value:6},
+                u_absorb:{value:new THREE.Color('#000')},
                 u_cubePhi:{value:4.4},
+                u_dist:{value:12},
                 iChannel0: { value: environmentMap}
             };
             const cubePlaneGeometry = new THREE.PlaneGeometry(roundcube_size,roundcube_size,2,2)
@@ -343,10 +353,6 @@ function initRoundCube()
     roundCube_mesh = new THREE.Mesh(cubePlaneGeometry, roundCube_material)
     cubeFxGroup.add(roundCube_mesh)
     roundCube_mesh.position.z = -0.02
-
-
-
-
 }
 
 function initDistordFx()
@@ -354,8 +360,10 @@ function initDistordFx()
     const distord_size = 0.9
     //Geometry
     distordFx_uniform = {
-        iGlobalTime:{type:'f',value:0.01},
-    };
+        iGlobalTime: {type: 'f', value: 0.01},
+        u_ray: {value: 96},
+        u_intensity: {value: 100.},
+    } ;
     const cubePlane2Geometry = new THREE.PlaneGeometry(distord_size,distord_size,2,2)
     distordFxMaterial = new THREE.ShaderMaterial(
         {
@@ -452,10 +460,10 @@ const tick = () =>
     {
         gradient_material.uniforms.u_time.value = elapsedTime*0.1
     }
-    if(energyMaterial)
+    if(energy_material)
     {
-        energyMaterial.uniforms.iGlobalTime.value = elapsedTime*1.5
-        energyMaterial.uniforms.u_rot.value = new Vector2((Math.sin(elapsedTime)+1)*0.15,0.2)
+        energy_material.uniforms.iGlobalTime.value = elapsedTime*1.5
+        energy_material.uniforms.u_rot.value = new Vector2((Math.sin(elapsedTime)+1)*0.15,0.2)
         // energyMaterial.uniforms.u_rot.value = new Vector2(0.5,0.5)
     }
     // Update controls
@@ -524,7 +532,7 @@ gui.add(changecolor,'colorID',colorselection).onChange(()=>{
 
     gradient_material.uniforms.u_baseColor.value = new THREE.Color(sectionColorList[changecolor.colorID].baseColor)
     roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[changecolor.colorID].cubeColor)
-
+    roundCube_material.uniforms.u_absorb.value = new THREE.Color(sectionColorList[changecolor.colorID].absorbColor)
 
 })
 
@@ -590,9 +598,67 @@ $(".bottom-icon .right").click(function () {
 
 $(".content1").addClass("active");
 
+const cube_fx= {
+    pos:{ x:0, y:0, },
+    size: 0.5,
+}
+// gui.add(cube_fx,'size',0,1,0.01).onChange(()=> { roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size);})
+// gui.add(cube_fx.pos,'y',-1.5,1.5,0.001).onChange(()=> { roundCube_mesh.position.y =cube_fx.pos.y;})
 
+const cube_fx_function = {
+    scale_up:function(){
+        cube_fx.size = 1
+        gsap.to(cube_fx,{size:1.7, duration:1, onUpdate:()=>{
+            roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+            energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+        }})
+    },
+    scale_down:function(){
+        cube_fx.size = 1.7
+        gsap.to(cube_fx,{size:1, duration:1, onUpdate:()=>{
+                roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+                energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+            }})
+    },
+    pos_fx:function(){
+        roundCube_mesh.position.y = -1.5
+        energy_mesh.position.y = -1.5
+        gsap.to(roundCube_mesh.position,{y:0, duration:4 })
+        gsap.to(energy_mesh.position,{y:0, duration:4 })
+    },
+    rot_fx:function(){},
+}
+gui.add(cube_fx_function,'scale_up')
+gui.add(cube_fx_function,'scale_down')
+gui.add(cube_fx_function,'pos_fx')
 
+let intro_number = 0
+let intro_offset_list = [-0.66,-0.55,-0.38,1]
+const gradient_fx = {
+    intro:function (){
+        const intro_step = intro_number % 4
+        // let intro_offset= -0.66 + (1+0.66)*intro_step/4
+        gsap.to(gradient_material.uniforms.u_rampMaskOffset,{value:intro_offset_list[intro_step], duration:4})
+        console.log(intro_step)
+        intro_number +=1
+    },
+}
+gui.add(gradient_fx,'intro')
+CustomEase.create("custom", "M0,0 C0.126,0.382 0.136,1 0.37,1 0.61,1 0.818,0.001 1,0 ");
+// CustomEase.create("custom", "M0,0 C0.126,0.382 -0.03,0.999 0.37,1 0.762,1 0.818,0.001 1,0 ");
 
+const energy_fx= {
+    absorb_fx:function (){
+        const absorb_scale = {scale:0.5}
+        const duration = 4
+        energy_mesh.scale.set(absorb_scale.scale)
+        energy_material.uniforms.u_intensity.value = 0
 
-
+        gsap.to(energy_material.uniforms.u_intensity,{value:1.3, duration:duration, ease:'custom'})
+        gsap.to(absorb_scale,{scale:1.8,duration:duration,ease:'custom', onUpdate:()=>{
+           energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
+            }})
+    }
+}
+gui.add(energy_fx,'absorb_fx')
 
