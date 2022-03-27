@@ -636,14 +636,18 @@ var swiper = new Swiper(".mySwiper", {
         slideChange: function (e) {
             intro_number=e.realIndex;
             gradient_fx.intro();
+            if(e.realIndex==2){
+                cube_fx_function.pos_fx();
+            }
         }
     }
 });
 
+gradient_fx.intro();
+
 
 $("#btn1").click(function () {
     $(".mySwiper").hide();
-    $(".tansuo").addClass("active");
 })
 
 $("#btn2").click(function () {

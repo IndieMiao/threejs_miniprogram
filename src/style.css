@@ -153,3 +153,12 @@ padding:0 4vw;}
 .swiper-slide-active .img{opacity:1;transform:translateY(0);}
 .tansuo{transition:all 2s;z-index:-1;opacity:0;}
 .tansuo.active{opacity:1;z-index:100;}
+
+.loading{position:absolute;bottom:18vw;text-align:center;width:100%;}
+.loading img{width:37.6vw;}
+.success-text{position:absolute;top:48vw;text-align:center;width:100%;left:0;}
+.success-text img{width:27.2vw;display:block;margin:0 auto;}
+.success-text div{font-size:3.1vw;padding-top:2vw;}
+.success .btn{
+    position: absolute;width:34vw;top:98vw;left:50%;margin-left:-17vw;
+}
