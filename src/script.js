@@ -487,28 +487,6 @@ const tick = () =>
 init()
 tick()
 
-function animatColor()
-{
-    colorlayers_uniform = getColorLayers(sectionColorList[0])
-    gradient_material.uniforms.u_waveLayers.value = colorlayers_uniform;
-
-    for(var e = 0 ;e<active_color_number; e+=1)
-
-    {
-        var tempColor= {color:'white'};
-        gsap.to(tempColor, {color:(sectionColorList[2][e]), duration:1, onUpdate:()=>{
-        try{
-            gradient_material.uniforms.u_waveLayers.value[e].color = new THREE.Color(tempColor.color)
-            console.log(tempColor);
-        }
-        catch(err)
-        {}
-        }
-    })
-    
-    }
-}
-// animatColor()
 
 var changecolor =
 {
@@ -531,6 +509,31 @@ gui.add(changecolor,'colorID',colorselection).onChange(()=>{
     roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[changecolor.colorID].cubeColor)
     roundCube_material.uniforms.u_absorb.value = new THREE.Color(sectionColorList[changecolor.colorID].absorbColor)
 })
+
+function animate_gradient(gradient_number)
+{
+    const origin_gradient = getCurrentGradient()
+    const target_gradient = getTargetGradient()
+    const duration = 4
+    function getCurrentGradient()
+    {
+
+
+    }
+
+    function getTargetGradient()
+    {}
+
+    function doAnimate(){
+
+    }
+    doAnimate()
+
+
+
+}
+
+
 const cube_fx= {
     pos:{ x:0, y:0, },
     size: 0.5,
