@@ -15,6 +15,8 @@ import energyfragment from './shaders/energy/energyfragment.glsl'
 import energyvertex from './shaders/energy/energyvertex.glsl'
 import Stats from 'stats.js'
 import gsap from 'gsap'
+import {abs} from "three/examples/jsm/nodes/ShaderNode";
+gsap.registerPlugin(CustomEase)
 // import { floorPowerOfTwo } from 'three/src/math/mathutils'
 
 
@@ -33,7 +35,7 @@ let distordFxMesh, distordFxMaterial, distordFx_uniform
 let cube_in_model = null, cubeInnerMaterial,cube_in_Load, cubeShellMateral,cube_line_model = null,cube_shell_model = null
 let cubeMeshGroup, cubeFxGroup ,cubeRootGroup
 // let roundcube_size
-let gradient_material, energy_material
+let gradient_material
 let energy_mesh
 let axesHelper
 let stats
@@ -42,7 +44,7 @@ let stats
 var colorlayers_uniform=[] 
 let vertDeform_uniform
 let gradient_global_uniform
-let energy_uniform, energyMaterial
+let energy_uniform, energy_material
 const uniseed = 1.0
 
 
@@ -102,14 +104,14 @@ function initEnergy()
     energy_uniform = {
         iGlobalTime:{type:'f',value:0.01},
         iChannel0: { type: 't', value: texture },
-        u_intensity:{value:1.},
+        u_intensity:{value:0.},
         u_rot:{value:new Vector2(0)},
     };
 
     //Geometry
 
     const energy_geometory= new THREE.PlaneGeometry(energy_size,energy_size,2,2)
-    energyMaterial= new THREE.ShaderMaterial(
+    energy_material= new THREE.ShaderMaterial(
         {
             vertexShader: energyvertex,
             fragmentShader: energyfragment,
@@ -117,10 +119,10 @@ function initEnergy()
             uniforms:energy_uniform
         }
     )
-    energyMaterial.transparent = true
-    energyMaterial.blending = THREE.AdditiveBlending
+    energy_material.transparent = true
+    energy_material.blending = THREE.AdditiveBlending
     // Mesh
-    energy_mesh = new THREE.Mesh(energy_geometory, energyMaterial)
+    energy_mesh = new THREE.Mesh(energy_geometory, energy_material)
     cubeFxGroup.add(energy_mesh)
 }
 
@@ -457,10 +459,10 @@ const tick = () =>
     {
         gradient_material.uniforms.u_time.value = elapsedTime*0.1
     }
-    if(energyMaterial)
+    if(energy_material)
     {
-        energyMaterial.uniforms.iGlobalTime.value = elapsedTime*1.5
-        energyMaterial.uniforms.u_rot.value = new Vector2((Math.sin(elapsedTime)+1)*0.15,0.2)
+        energy_material.uniforms.iGlobalTime.value = elapsedTime*1.5
+        energy_material.uniforms.u_rot.value = new Vector2((Math.sin(elapsedTime)+1)*0.15,0.2)
         // energyMaterial.uniforms.u_rot.value = new Vector2(0.5,0.5)
     }
     // Update controls
@@ -562,8 +564,6 @@ const cube_fx_function = {
 gui.add(cube_fx_function,'scale_up')
 gui.add(cube_fx_function,'scale_down')
 gui.add(cube_fx_function,'pos_fx')
-// gui.add(gradient_material.uniforms.u_rampMaskOffset,'value').min(-1).max(1).step(0.01).name('u_rampMaskOffset')
-// gui.add(gradient_material.uniforms.u_rampMaskPow,'value').min(0.001).max(5).step(0.01).name('u_rampMaskPow')
 
 let intro_number = 0
 let intro_offset_list = [-0.66,-0.55,-0.38,1]
@@ -577,4 +577,21 @@ const gradient_fx = {
     },
 }
 gui.add(gradient_fx,'intro')
+CustomEase.create("custom", "M0,0 C0.126,0.382 0.136,1 0.37,1 0.61,1 0.818,0.001 1,0 ");
+// CustomEase.create("custom", "M0,0 C0.126,0.382 -0.03,0.999 0.37,1 0.762,1 0.818,0.001 1,0 ");
+
+const energy_fx= {
+    absorb_fx:function (){
+        const absorb_scale = {scale:0.5}
+        const duration = 4
+        energy_mesh.scale.set(absorb_scale.scale)
+        energy_material.uniforms.u_intensity.value = 0
+
+        gsap.to(energy_material.uniforms.u_intensity,{value:1.3, duration:duration, ease:'custom'})
+        gsap.to(absorb_scale,{scale:1.8,duration:duration,ease:'custom', onUpdate:()=>{
+           energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
+            }})
+    }
+}
+gui.add(energy_fx,'absorb_fx')
 
