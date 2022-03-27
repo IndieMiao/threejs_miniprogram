@@ -536,13 +536,59 @@ var changecolorFun=function(value){
 }
 
 
-$("#list1 div").click(function () {
+$(".content .list div").click(function () {
 
-    changecolorFun(1);
+    var index=$(".content").index($(this).parent().parent());
+
+    $(this).parent().find("div").removeClass("active");
+    $(this).addClass("active");
+
+    var cIndex=index+1;
+    console.log(cIndex);
+    if(cIndex==6){
+     console.log("结束");
+
+    window.location.href="loading.html?id=1";
+     return;
+    }
+
+
+    changecolorFun(cIndex);
+    $(".content").removeClass("active");
+    $(".content"+(cIndex+1)).addClass("active");
+
 
 
 })
 
+$(".bottom-icon .left").click(function () {
+    var index=$(".content").index($(".content.active"));
+    console.log(index);
+    if(index>0){
+        var cIndex=index-1;
+        changecolorFun(cIndex);
+        $(".content").removeClass("active");
+        $(".content"+(cIndex+1)).addClass("active");
+    }
+})
+
+$(".bottom-icon .right").click(function () {
+
+    if($(".content.active").find(".list div.active").length==0){
+        return;
+    }
+
+    var index=$(".content").index($(".content.active"));
+    console.log(index);
+    if(index<5){
+        var cIndex=index+1;
+        changecolorFun(cIndex);
+        $(".content").removeClass("active");
+        $(".content"+(cIndex+1)).addClass("active");
+    }
+})
+
+$(".content1").addClass("active");
 
 
 
