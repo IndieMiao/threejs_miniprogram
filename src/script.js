@@ -584,7 +584,7 @@ const cube_fx_function = {
     //     gsap.to(roundCube_mesh.position,{y:0, duration:4 })
     //     gsap.to(energy_mesh.position,{y:0, duration:4 })
     // },
-    pos_fx:()=>{animate_cube_posy(-1.5,0,4)},
+    pos_fx:()=>{animate_cube_posy(-1.5,0.52,2)},
     rot_fx:function(){},
 }
 function animate_cube_posy(origin_y, target_y, duration){
@@ -647,6 +647,11 @@ var swiper = new Swiper(".mySwiper", {
             if(e.realIndex==2){
                 cube_fx_function.pos_fx();
             }
+            else{
+                animate_cube_posy(-1.5,-1,1)
+            }
+
+
         }
     }
 });
@@ -656,6 +661,9 @@ gradient_fx.intro();
 
 $("#btn1").click(function () {
     $(".mySwiper").hide();
+    animate_cube_posy(-1.5,0,1);
+    $(".success").addClass("active");
+
 })
 
 $("#btn2").click(function () {
