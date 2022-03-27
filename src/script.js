@@ -489,6 +489,22 @@ init()
 tick()
 
 
+
+const energy_fx= {
+    absorb_fx:function (){
+        const absorb_scale = {scale:0.5}
+        const duration = 4
+        energy_mesh.scale.set(absorb_scale.scale)
+        energy_material.uniforms.u_intensity.value = 0
+
+        gsap.to(energy_material.uniforms.u_intensity,{value:1.3, duration:duration, ease:'custom'})
+        gsap.to(absorb_scale,{scale:1.8,duration:duration,ease:'custom', onUpdate:()=>{
+                energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
+            }})
+    }
+}
+gui.add(energy_fx,'absorb_fx')
+
 var changecolor =
 {
     colorID:0
@@ -551,7 +567,7 @@ function animate_gradient(origin_id, target_id, duration)
             roundCube_material.uniforms.u_absorb.value = new THREE.Color(cube_color_trans.absorb_color)
         }
     })
-
+    energy_fx.absorb_fx()
 }
 
 
@@ -610,19 +626,4 @@ const gradient_fx = {
 gui.add(gradient_fx,'intro')
 CustomEase.create("custom", "M0,0 C0.126,0.382 0.136,1 0.37,1 0.61,1 0.818,0.001 1,0 ");
 // CustomEase.create("custom", "M0,0 C0.126,0.382 -0.03,0.999 0.37,1 0.762,1 0.818,0.001 1,0 ");
-
-const energy_fx= {
-    absorb_fx:function (){
-        const absorb_scale = {scale:0.5}
-        const duration = 4
-        energy_mesh.scale.set(absorb_scale.scale)
-        energy_material.uniforms.u_intensity.value = 0
-
-        gsap.to(energy_material.uniforms.u_intensity,{value:1.3, duration:duration, ease:'custom'})
-        gsap.to(absorb_scale,{scale:1.8,duration:duration,ease:'custom', onUpdate:()=>{
-           energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
-            }})
-    }
-}
-gui.add(energy_fx,'absorb_fx')
 
