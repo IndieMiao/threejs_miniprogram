@@ -490,6 +490,7 @@ tick()
 
 
 
+CustomEase.create("custom", "M0,0 C0.126,0.382 0.136,1 0.37,1 0.61,1 0.818,0.001 1,0 ");
 const energy_fx= {
     absorb_fx:function (){
         const absorb_scale = {scale:0.5}
@@ -624,6 +625,4 @@ const gradient_fx = {
     },
 }
 gui.add(gradient_fx,'intro')
-CustomEase.create("custom", "M0,0 C0.126,0.382 0.136,1 0.37,1 0.61,1 0.818,0.001 1,0 ");
-// CustomEase.create("custom", "M0,0 C0.126,0.382 -0.03,0.999 0.37,1 0.762,1 0.818,0.001 1,0 ");
 
