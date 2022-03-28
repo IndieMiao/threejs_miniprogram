@@ -548,7 +548,6 @@ function animate_gradient(origin_id, target_id, duration)
                 gradient_material.uniforms.u_waveLayers.value[i].color = new THREE.Color( gradient_color.color)
             }})
     }
-
     let base_color_trans = {base_color:origin_gradient.baseColor}
     let cube_color_trans = {overlay_color:origin_gradient.cubeColor, absorb_color: origin_gradient.absorbColor}
     gsap.to(base_color_trans,{base_color:target_gradient.baseColor, duration:duration, onUpdate:()=>
@@ -556,7 +555,6 @@ function animate_gradient(origin_id, target_id, duration)
             gradient_material.uniforms.u_baseColor.value = new THREE.Color( base_color_trans.base_color)
         }
     })
-
     gsap.to(cube_color_trans,{overlay_color:target_gradient.cubeColor, duration:duration, onUpdate:()=>
         {
             // console.log('overlay:'+ target_gradient.cubeColor)
