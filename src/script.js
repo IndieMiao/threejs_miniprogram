@@ -13,6 +13,7 @@ import gradientfragment from './shaders/gradient/fragment.glsl'
 import gradientvertex from './shaders/gradient/vertex.glsl'
 import energyfragment from './shaders/energy/energyfragment.glsl'
 import energyvertex from './shaders/energy/energyvertex.glsl'
+import {Text} from 'troika-three-text'
 import Stats from 'stats.js'
 import gsap from 'gsap'
 import {abs} from "three/examples/jsm/nodes/ShaderNode";
@@ -26,7 +27,7 @@ gsap.registerPlugin(CustomEase)
  */
 
 let DEBUGMODE = false;
-let LOCKCAM = true;
+let LOCKCAM = false;
 let gui, debugObject
 let canvas, scene, sizes ,renderer, camera, controls, clock
 let environmentMap
@@ -46,6 +47,8 @@ let vertDeform_uniform
 let gradient_global_uniform
 let energy_uniform, energy_material
 const uniseed = 1.0
+
+let myText
 
 
 /**
@@ -68,6 +71,7 @@ function init()
     initGradientBG()
 
     initEnergy()
+    initText()
 
     initRoundCube()
     // initDistordFx()
@@ -77,6 +81,18 @@ function init()
     initHierarchy()
 
     initBackground()
+}
+function initText()
+{
+    myText = new Text()
+    scene.add(myText)
+
+// Set properties to configure:
+    myText.text = "选项一!"
+    myText.fontSize = 0.06
+    myText.position.z = 0.1
+    myText.font = '/fonts/SourceHanSansHWSC-Regular.otf'
+    myText.color = new THREE.Color('#ffffff')
 }
 
 function initHierarchy()
@@ -474,7 +490,7 @@ const tick = () =>
         roundCube_uniform.iGlobalTime.value  = elapsedTime*0.3
         distordFx_uniform.iGlobalTime.value  = elapsedTime*0.3
     }
-
+    myText.sync()
     debugTick()
 
     // Render
@@ -587,8 +603,6 @@ const cube_fx= {
     pos:{ x:0, y:0, },
     size: 0.5,
 }
-// gui.add(cube_fx,'size',0,1,0.01).onChange(()=> { roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size);})
-// gui.add(cube_fx.pos,'y',-1.5,1.5,0.001).onChange(()=> { roundCube_mesh.position.y =cube_fx.pos.y;})
 
 const cube_fx_function = {
     scale_up:function(){
@@ -605,12 +619,7 @@ const cube_fx_function = {
                 energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
             }})
     },
-    // pos_fx:function(){
-    //     roundCube_mesh.position.y = -1.5
-    //     energy_mesh.position.y = -1.5
-    //     gsap.to(roundCube_mesh.position,{y:0, duration:4 })
-    //     gsap.to(energy_mesh.position,{y:0, duration:4 })
-    // },
+
     pos_fx:()=>{animate_cube_posy(-1.5,0,4)},
     rot_fx:function(){},
 }
