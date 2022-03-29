@@ -612,7 +612,7 @@ const cube_fx_function = {
     //     gsap.to(roundCube_mesh.position,{y:0, duration:4 })
     //     gsap.to(energy_mesh.position,{y:0, duration:4 })
     // },
-    pos_fx:()=>{animate_cube_posy(-1.5,0.45,2)},
+    pos_fx:()=>{animate_cube_posy(-1.5,0.38,2)},
 rot_fx:function(){},
 }
 function animate_cube_posy(origin_y, target_y, duration){
@@ -685,7 +685,7 @@ $("#btn1").click(function () {
     $(".content1").addClass("active");
     $(".bottom-icon").show();
     gradient_fx.intro();
-    animate_cube_posy(0.45,0,1);
+    animate_cube_posy(0.38,0,1);
     cube_fx_function.scale_up();
 
     /*$(".success").addClass("active");
