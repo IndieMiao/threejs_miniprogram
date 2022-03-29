@@ -491,6 +491,7 @@ tick()
 
 
 
+CustomEase.create("custom", "M0,0 C0.126,0.382 0.136,1 0.37,1 0.61,1 0.818,0.001 1,0 ");
 const energy_fx= {
     absorb_fx:function (){
         const absorb_scale = {scale:0.5}
@@ -524,53 +525,64 @@ let latest_color_id = 0
 gui.add(changecolor,'colorID',colorselection).onChange(()=>{
     console.log(changecolor.colorID)
     animate_gradient(latest_color_id,changecolor.colorID,2)
-// gradient_material.uniforms.u_baseColor.value = new THREE.Color(sectionColorList[changecolor.colorID].baseColor)
-// roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[changecolor.colorID].cubeColor)
-// roundCube_material.uniforms.u_absorb.value = new THREE.Color(sectionColorList[changecolor.colorID].absorbColor)
 latest_color_id = changecolor.colorID
 })
 
-function animate_gradient(origin_id, target_id, duration)
+function animate_gradient(origin_id,target_id, duration)
 {
     const origin_gradient = getGradient(origin_id)
     const target_gradient = getGradient(target_id)
+    let tl = gsap.timeline();
+    let base_color_trans = {base_color:origin_gradient.baseColor}
+    let cube_color_trans = {overlay_color:origin_gradient.cubeColor, absorb_color: origin_gradient.absorbColor}
+
     function getGradient(gradient_id)
     {
         return sectionColorList[gradient_id]
     }
 
-    for(let i=0; i<active_color_number; i+=1)
-    {
-        const gradient_color = {color:origin_gradient.colorLayers[i]}
-        // console.log(gradient_color)
-        gsap.to(gradient_color,{color:target_gradient.colorLayers[i], duration:duration, onUpdate:()=>
-            {
-                gradient_material.uniforms.u_waveLayers.value[i].color = new THREE.Color( gradient_color.color)
-            }})
-    }
+    // energy_fx color
+    const absorb_scale = {scale:0.5}
+    const energy_duration = duration*2
+    energy_mesh.scale.set(0.5)
+    energy_material.uniforms.u_intensity.value = 0
 
-    let base_color_trans = {base_color:origin_gradient.baseColor}
-    let cube_color_trans = {overlay_color:origin_gradient.cubeColor, absorb_color: origin_gradient.absorbColor}
-    gsap.to(base_color_trans,{base_color:target_gradient.baseColor, duration:duration, onUpdate:()=>
-        {
-            gradient_material.uniforms.u_baseColor.value = new THREE.Color( base_color_trans.base_color)
-        }
-})
+    tl.to(energy_material.uniforms.u_intensity,{value:1.3, duration:energy_duration, ease:'custom'})
+    tl.to(absorb_scale,{scale:1.8,duration:energy_duration,ease:'custom', onUpdate:()=>{
+        energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
+    }}, "<")
 
-    gsap.to(cube_color_trans,{overlay_color:target_gradient.cubeColor, duration:duration, onUpdate:()=>
+    //cube color
+    tl.to(cube_color_trans,{overlay_color:target_gradient.cubeColor, duration:duration, onUpdate:()=>
         {
             // console.log('overlay:'+ target_gradient.cubeColor)
             roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(cube_color_trans.overlay_color)
         }
-})
-    gsap.to(cube_color_trans,{absorb_color:target_gradient.absorbColor, duration:duration, onUpdate:()=>
+},"<0.75")
+    tl.to(cube_color_trans,{absorb_color:target_gradient.absorbColor, duration:duration, onUpdate:()=>
         {
             roundCube_material.uniforms.u_absorb.value = new THREE.Color(cube_color_trans.absorb_color)
         }
-})
-    energy_fx.absorb_fx()
-}
+},"<")
 
+
+    //gradient color
+    tl.to(base_color_trans,{base_color:target_gradient.baseColor, duration:duration, onUpdate:()=>
+        {
+            gradient_material.uniforms.u_baseColor.value = new THREE.Color( base_color_trans.base_color)
+        }
+},"<")
+
+    for(let i=0; i<active_color_number; i+=1)
+    {
+        const gradient_color = {color:origin_gradient.colorLayers[i]}
+        // console.log(gradient_color)
+        tl.to(gradient_color,{color:target_gradient.colorLayers[i], duration:duration, onUpdate:()=>
+            {
+                gradient_material.uniforms.u_waveLayers.value[i].color = new THREE.Color( gradient_color.color)
+            }},"<")
+    }
+}
 
 const cube_fx= {
     pos:{ x:0, y:0, },
@@ -600,7 +612,7 @@ const cube_fx_function = {
     //     gsap.to(roundCube_mesh.position,{y:0, duration:4 })
     //     gsap.to(energy_mesh.position,{y:0, duration:4 })
     // },
-    pos_fx:()=>{animate_cube_posy(-1.5,0.52,2)},
+    pos_fx:()=>{animate_cube_posy(-1.5,0.45,2)},
 rot_fx:function(){},
 }
 function animate_cube_posy(origin_y, target_y, duration){
@@ -615,6 +627,7 @@ gui.add(cube_fx_function,'pos_fx')
 
 let intro_number = 0
 let intro_offset_list = [-0.66,-0.55,-0.38,1]
+
 const gradient_fx = {
     intro:function (){
         const intro_step = intro_number % 4
@@ -625,8 +638,7 @@ const gradient_fx = {
     },
 }
 gui.add(gradient_fx,'intro')
-CustomEase.create("custom", "M0,0 C0.126,0.382 0.136,1 0.37,1 0.61,1 0.818,0.001 1,0 ");
-// CustomEase.create("custom", "M0,0 C0.126,0.382 -0.03,0.999 0.37,1 0.762,1 0.818,0.001 1,0 ");
+
 
 
 
@@ -673,7 +685,7 @@ $("#btn1").click(function () {
     $(".content1").addClass("active");
     $(".bottom-icon").show();
     gradient_fx.intro();
-    animate_cube_posy(-1.5,0,1);
+    animate_cube_posy(0.45,0,1);
     cube_fx_function.scale_up();
 
     /*$(".success").addClass("active");
@@ -697,6 +709,7 @@ $(".content .list div").click(function () {
 
     $(this).parent().find("div").removeClass("active");
     $(this).addClass("active");
+    $(this).parent().addClass("animation");
 
     var cIndex=index+1;
     console.log(cIndex);
@@ -708,14 +721,21 @@ $(".content .list div").click(function () {
         $(".bottom-icon").hide();
         $(".success").addClass("active");
         cube_fx_function.scale_down();
-        animate_cube_posy(-1.5,0.52,0);
+        animate_cube_posy(0,0.15,1);
         return;
     }
 
 
     changecolorFun(cIndex+1);
-    $(".content").removeClass("active");
-    $(".content"+(cIndex+1)).addClass("active");
+
+
+    var $parent=$(this).parent();
+    setTimeout(function(){
+        $(".content").removeClass("active");
+        $(".content"+(cIndex+1)).addClass("active");
+        $parent.removeClass("animation");
+    },3000);
+
 
 
 
