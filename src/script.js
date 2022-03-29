@@ -19,6 +19,7 @@ import gsap from 'gsap'
 import {abs} from "three/examples/jsm/nodes/ShaderNode";
 gsap.registerPlugin(CustomEase)
 // import { floorPowerOfTwo } from 'three/src/math/mathutils'
+// import {TextGl} from './textFx.js'
 
 
 
@@ -71,7 +72,7 @@ function init()
     initGradientBG()
 
     initEnergy()
-    initText()
+    // initText()
 
     initRoundCube()
     // initDistordFx()
@@ -82,17 +83,12 @@ function init()
 
     initBackground()
 }
+
 function initText()
 {
-    myText = new Text()
-    scene.add(myText)
-
-// Set properties to configure:
-    myText.text = "选项一!"
-    myText.fontSize = 0.06
-    myText.position.z = 0.1
-    myText.font = '/fonts/SourceHanSansHWSC-Regular.otf'
-    myText.color = new THREE.Color('#ffffff')
+    myText = new TextGl('选项一 test , 测试')
+    console.log(myText.getLength())
+    scene.add(myText.text)
 }
 
 function initHierarchy()
@@ -490,7 +486,7 @@ const tick = () =>
         roundCube_uniform.iGlobalTime.value  = elapsedTime*0.3
         distordFx_uniform.iGlobalTime.value  = elapsedTime*0.3
     }
-    myText.sync()
+    // myText.text.sync()
     debugTick()
 
     // Render
