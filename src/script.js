@@ -1,3 +1,4 @@
+import '../static/css/swiper-bundle.min.css'
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
@@ -43,7 +44,7 @@ let axesHelper
 let stats
 
 
-var colorlayers_uniform=[] 
+var colorlayers_uniform=[]
 let vertDeform_uniform
 let gradient_global_uniform
 let energy_uniform, energy_material
@@ -66,7 +67,7 @@ function init()
     initEnvMap()
     initDebug()
     initHelper()
-    
+
 
     initCameraControl()
     initGradientBG()
@@ -77,7 +78,7 @@ function init()
     initRoundCube()
     // initDistordFx()
     scene.add(cubeFxGroup)
-    
+
 
     initHierarchy()
 
@@ -213,51 +214,51 @@ function initGradientUniform ()
     colorlayers_uniform = getColorLayers(sectionColorList[0])
 }
 function getColorLayers(colorsection)
-{   
+{
     let colorlayer=[];
     for (let e = 0; e < active_color_number; e += 1) {
 
-        colorlayer[e] = 
-        {
-            color: new THREE.Color(colorsection.colorLayers[e]),
-            noiseFreq: new Vector2(2 + e / active_color_number, 3 + e / active_color_number),
-            noiseSpeed: 5 + .3 * e,
-            noiseFlow:  3.5 + .3 * e,
-            noiseSeed: uniseed + 10 * e,
-            noiseFloor: .01,
-            noiseCeil: .63 + .07 * e,
-            baseColor:colorsection.baseColor,
-            cubeColor:colorsection.cubeColor,
-            // noiseCeil: .63 + .07 * e,
-        }
+        colorlayer[e] =
+            {
+                color: new THREE.Color(colorsection.colorLayers[e]),
+                noiseFreq: new Vector2(2 + e / active_color_number, 3 + e / active_color_number),
+                noiseSpeed: 5 + .3 * e,
+                noiseFlow:  3.5 + .3 * e,
+                noiseSeed: uniseed + 10 * e,
+                noiseFloor: .01,
+                noiseCeil: .63 + .07 * e,
+                baseColor:colorsection.baseColor,
+                cubeColor:colorsection.cubeColor,
+                // noiseCeil: .63 + .07 * e,
+            }
     }
-    return colorlayer 
+    return colorlayer
 }
 
 function initGradientBG()
 {
-     initGradientUniform()
-        
-    // Geometry
-    const gradient_geometory= new THREE.PlaneGeometry(6.1, 6.1, 256,256) 
+    initGradientUniform()
 
-     let Uniforms = {
+    // Geometry
+    const gradient_geometory= new THREE.PlaneGeometry(6.1, 6.1, 256,256)
+
+    let Uniforms = {
         u_time: {value: 0 },
         u_intensiy :{value: 1},
         u_baseColor: {value: new THREE.Color(colorlayers_uniform[0].baseColor)},
         u_tile:{value: new Vector2(1,1)},
         u_waveLayers_length: { value: active_color_number },
-         u_rampMaskOffset: {value:gradient_global_uniform.u_rampMaskOffset},
-         u_rampMaskPow: {value:gradient_global_uniform.u_rampMaskPow},
+        u_rampMaskOffset: {value:gradient_global_uniform.u_rampMaskOffset},
+        u_rampMaskPow: {value:gradient_global_uniform.u_rampMaskPow},
         u_active_colors: { value: [1,1,1,1] },
         u_global:{
             value:gradient_global_uniform},
         u_vertDeform:{
             value:vertDeform_uniform},
         u_waveLayers:
-        {
-            value: colorlayers_uniform,
-        }
+            {
+                value: colorlayers_uniform,
+            }
     }
 
     gradient_material= new THREE.ShaderMaterial({
@@ -333,26 +334,26 @@ function initRoundCube()
 {
     const roundcube_size = 0.32
     //Geometry
-            roundCube_uniform = {
-                iGlobalTime:{type:'f',value:0.01},
-                u_intensity:{type:'f',value:1.6},
-                u_opacityOffset:{type:'f',value:0.55},
-                u_opacity:{type:'f',value:1},
-                u_chromeOffset:{type:'f',value:0.01},
-                u_colorOverlay:{value:new THREE.Color('#131313')},
-                u_colorOverlayIntensity:{value:0.7},
-                u_cameraPerspective:{value:3.5},
-                u_cameraOffset:{value:6},
-                u_absorb:{value:new THREE.Color('#000')},
-                u_cubePhi:{value:4.4},
-                u_dist:{value:12},
-                iChannel0: { value: environmentMap}
-            };
-            const cubePlaneGeometry = new THREE.PlaneGeometry(roundcube_size,roundcube_size,2,2)
-            roundCube_material = new THREE.ShaderMaterial(
-                {
-                    vertexShader: cubeVertexShader,
-                    fragmentShader: cubeFragmentShader,
+    roundCube_uniform = {
+        iGlobalTime:{type:'f',value:0.01},
+        u_intensity:{type:'f',value:1.6},
+        u_opacityOffset:{type:'f',value:0.55},
+        u_opacity:{type:'f',value:1},
+        u_chromeOffset:{type:'f',value:0.01},
+        u_colorOverlay:{value:new THREE.Color('#131313')},
+        u_colorOverlayIntensity:{value:0.7},
+        u_cameraPerspective:{value:3.5},
+        u_cameraOffset:{value:6},
+        u_absorb:{value:new THREE.Color('#000')},
+        u_cubePhi:{value:4.4},
+        u_dist:{value:12},
+        iChannel0: { value: environmentMap}
+    };
+    const cubePlaneGeometry = new THREE.PlaneGeometry(roundcube_size,roundcube_size,2,2)
+    roundCube_material = new THREE.ShaderMaterial(
+        {
+            vertexShader: cubeVertexShader,
+            fragmentShader: cubeFragmentShader,
             side:THREE.DoubleSide,
             uniforms:roundCube_uniform
         }
@@ -415,10 +416,10 @@ function initCameraControl()
         controls.enableZoom = false
         controls.enablePan = false
         controls.enableRotate = false
-        controls.maxAzimuthAngle =0 
+        controls.maxAzimuthAngle =0
         controls.minAzimuthAngle =0
     }
-    
+
     scene.add(camera)
 }
 
@@ -454,7 +455,7 @@ function debugTick()
         //log camera position and camera angle
         console.log(camera.position)
         // console.log(camera.rotation)    }
-}
+    }
 }
 
 
@@ -512,16 +513,16 @@ const energy_fx= {
 
         gsap.to(energy_material.uniforms.u_intensity,{value:1.3, duration:duration, ease:'custom'})
         gsap.to(absorb_scale,{scale:1.8,duration:duration,ease:'custom', onUpdate:()=>{
-                energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
-            }})
+            energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
+        }})
     }
 }
 gui.add(energy_fx,'absorb_fx')
 
 var changecolor =
-{
-    colorID:0
-}
+    {
+        colorID:0
+    }
 var colorselection ={
     color0:0,
     color1:1,
@@ -536,7 +537,7 @@ let latest_color_id = 0
 gui.add(changecolor,'colorID',colorselection).onChange(()=>{
     console.log(changecolor.colorID)
     animate_gradient(latest_color_id,changecolor.colorID,2)
-    latest_color_id = changecolor.colorID
+latest_color_id = changecolor.colorID
 })
 
 function animate_gradient(origin_id,target_id, duration)
@@ -560,8 +561,8 @@ function animate_gradient(origin_id,target_id, duration)
 
     tl.to(energy_material.uniforms.u_intensity,{value:1.3, duration:energy_duration, ease:'custom'})
     tl.to(absorb_scale,{scale:1.8,duration:energy_duration,ease:'custom', onUpdate:()=>{
-            energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
-        }}, "<")
+        energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
+    }}, "<")
 
     //cube color
     tl.to(cube_color_trans,{overlay_color:target_gradient.cubeColor, duration:duration, onUpdate:()=>
@@ -569,12 +570,12 @@ function animate_gradient(origin_id,target_id, duration)
             // console.log('overlay:'+ target_gradient.cubeColor)
             roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(cube_color_trans.overlay_color)
         }
-    },"<0.75")
+},"<0.75")
     tl.to(cube_color_trans,{absorb_color:target_gradient.absorbColor, duration:duration, onUpdate:()=>
         {
             roundCube_material.uniforms.u_absorb.value = new THREE.Color(cube_color_trans.absorb_color)
         }
-    },"<")
+},"<")
 
 
     //gradient color
@@ -582,7 +583,7 @@ function animate_gradient(origin_id,target_id, duration)
         {
             gradient_material.uniforms.u_baseColor.value = new THREE.Color( base_color_trans.base_color)
         }
-    },"<")
+},"<")
 
     for(let i=0; i<active_color_number; i+=1)
     {
@@ -611,13 +612,12 @@ const cube_fx_function = {
     scale_down:function(){
         cube_fx.size = 1.7
         gsap.to(cube_fx,{size:1, duration:1, onUpdate:()=>{
-                roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
-                energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
-            }})
+            roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+            energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+        }})
     },
-
-    pos_fx:()=>{animate_cube_posy(-1.5,0,4)},
-    rot_fx:function(){},
+    pos_fx:()=>{animate_cube_posy(-1.5,0.38,2)},
+rot_fx:function(){},
 }
 function animate_cube_posy(origin_y, target_y, duration){
     roundCube_mesh.position.y = origin_y
@@ -642,4 +642,134 @@ const gradient_fx = {
     },
 }
 gui.add(gradient_fx,'intro')
+
+
+
+
+var changecolorFun=function(colorID){
+    animate_gradient(latest_color_id,colorID,2)
+    latest_color_id = colorID;
+}
+
+
+var swiper = new Swiper(".mySwiper", {
+    direction: 'vertical',
+    on: {
+        slideChange: function (e) {
+            intro_number=e.realIndex;
+            gradient_fx.intro();
+            if(e.realIndex==2){
+                cube_fx_function.pos_fx();
+            }
+            else{
+                animate_cube_posy(-1.5,-1,1)
+            }
+
+
+        }
+    }
+});
+
+if(window.location.href.indexOf("step=2")>-1){
+
+    $(".success").addClass("active");
+    cube_fx_function.pos_fx();
+}
+else{
+    $(".mySwiper").show();
+    gradient_fx.intro();
+}
+
+
+
+$("#btn1").click(function () {
+    $(".mySwiper").hide();
+    $(".logo").hide();
+    $("#startCol").addClass("active");
+    $(".content1").addClass("active");
+    $(".bottom-icon").show();
+    gradient_fx.intro();
+    animate_cube_posy(0.38,0,1);
+    cube_fx_function.scale_up();
+
+    /*$(".success").addClass("active");
+    gradient_fx.intro();*/
+
+})
+
+$("#btn2").click(function () {
+    window.location.href="index.html";
+})
+
+$("#startBtn").click(function(){
+    window.location.href="result.html?id=1&date=2022.03.25&name="+escape("测试");
+
+});
+
+
+$(".content .list div").click(function () {
+
+    var index=$(".content").index($(this).parent().parent());
+
+    $(this).parent().find("div").removeClass("active");
+    $(this).addClass("active");
+    $(this).parent().addClass("animation");
+
+    var cIndex=index+1;
+    console.log(cIndex);
+    if(cIndex==6){
+        console.log("结束");
+
+        $(".mySwiper").hide();
+        $("#startCol").hide();
+        $(".bottom-icon").hide();
+        $(".success").addClass("active");
+        cube_fx_function.scale_down();
+        animate_cube_posy(0,0.15,1);
+        return;
+    }
+
+
+    changecolorFun(cIndex+1);
+
+
+    var $parent=$(this).parent();
+    setTimeout(function(){
+        $(".content").removeClass("active");
+        $(".content"+(cIndex+1)).addClass("active");
+        $parent.removeClass("animation");
+    },3000);
+
+
+
+
+})
+
+$(".bottom-icon .left").click(function () {
+    var index=$(".content").index($(".content.active"));
+    console.log(index);
+    if(index>0){
+        var cIndex=index-1;
+        changecolorFun(cIndex+1);
+        $(".content").removeClass("active");
+        $(".content"+(cIndex+1)).addClass("active");
+    }
+})
+
+$(".bottom-icon .right").click(function () {
+
+    if($(".content.active").find(".list div.active").length==0){
+        return;
+    }
+
+    var index=$(".content").index($(".content.active"));
+    console.log(index);
+    if(index<5){
+        var cIndex=index+1;
+        changecolorFun(cIndex);
+        $(".content").removeClass("active");
+        $(".content"+(cIndex+1)).addClass("active");
+    }
+})
+
 
