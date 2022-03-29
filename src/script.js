@@ -490,6 +490,22 @@ init()
 tick()
 
 
+
+const energy_fx= {
+    absorb_fx:function (){
+        const absorb_scale = {scale:0.5}
+        const duration = 4
+        energy_mesh.scale.set(absorb_scale.scale)
+        energy_material.uniforms.u_intensity.value = 0
+
+        gsap.to(energy_material.uniforms.u_intensity,{value:1.3, duration:duration, ease:'custom'})
+        gsap.to(absorb_scale,{scale:1.8,duration:duration,ease:'custom', onUpdate:()=>{
+            energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
+        }})
+    }
+}
+gui.add(energy_fx,'absorb_fx')
+
 var changecolor =
     {
         colorID:0
@@ -508,10 +524,10 @@ let latest_color_id = 0
 gui.add(changecolor,'colorID',colorselection).onChange(()=>{
     console.log(changecolor.colorID)
     animate_gradient(latest_color_id,changecolor.colorID,2)
-    // gradient_material.uniforms.u_baseColor.value = new THREE.Color(sectionColorList[changecolor.colorID].baseColor)
-    // roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[changecolor.colorID].cubeColor)
-    // roundCube_material.uniforms.u_absorb.value = new THREE.Color(sectionColorList[changecolor.colorID].absorbColor)
-    latest_color_id = changecolor.colorID
+// gradient_material.uniforms.u_baseColor.value = new THREE.Color(sectionColorList[changecolor.colorID].baseColor)
+// roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[changecolor.colorID].cubeColor)
+// roundCube_material.uniforms.u_absorb.value = new THREE.Color(sectionColorList[changecolor.colorID].absorbColor)
+latest_color_id = changecolor.colorID
 })
 
 function animate_gradient(origin_id, target_id, duration)
@@ -539,20 +555,20 @@ function animate_gradient(origin_id, target_id, duration)
         {
             gradient_material.uniforms.u_baseColor.value = new THREE.Color( base_color_trans.base_color)
         }
-    })
+})
 
     gsap.to(cube_color_trans,{overlay_color:target_gradient.cubeColor, duration:duration, onUpdate:()=>
         {
             // console.log('overlay:'+ target_gradient.cubeColor)
             roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(cube_color_trans.overlay_color)
         }
-    })
+})
     gsap.to(cube_color_trans,{absorb_color:target_gradient.absorbColor, duration:duration, onUpdate:()=>
         {
             roundCube_material.uniforms.u_absorb.value = new THREE.Color(cube_color_trans.absorb_color)
         }
-    })
-
+})
+    energy_fx.absorb_fx()
 }
 
 
@@ -585,7 +601,7 @@ const cube_fx_function = {
     //     gsap.to(energy_mesh.position,{y:0, duration:4 })
     // },
     pos_fx:()=>{animate_cube_posy(-1.5,0.52,2)},
-    rot_fx:function(){},
+rot_fx:function(){},
 }
 function animate_cube_posy(origin_y, target_y, duration){
     roundCube_mesh.position.y = origin_y
@@ -612,29 +628,11 @@ gui.add(gradient_fx,'intro')
 CustomEase.create("custom", "M0,0 C0.126,0.382 0.136,1 0.37,1 0.61,1 0.818,0.001 1,0 ");
 // CustomEase.create("custom", "M0,0 C0.126,0.382 -0.03,0.999 0.37,1 0.762,1 0.818,0.001 1,0 ");
 
-const energy_fx= {
-    absorb_fx:function (){
-        const absorb_scale = {scale:0.5}
-        const duration = 4
-        energy_mesh.scale.set(absorb_scale.scale)
-        energy_material.uniforms.u_intensity.value = 0
-
-        gsap.to(energy_material.uniforms.u_intensity,{value:1.3, duration:duration, ease:'custom'})
-        gsap.to(absorb_scale,{scale:1.8,duration:duration,ease:'custom', onUpdate:()=>{
-            energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
-        }})
-    }
-}
-gui.add(energy_fx,'absorb_fx')
 
 
 var changecolorFun=function(colorID){
-    colorlayers_uniform = getColorLayers(sectionColorList[colorID])
-    console.log(colorlayers_uniform)
-    gradient_material.uniforms.u_waveLayers.value = colorlayers_uniform
-    gradient_material.uniforms.u_baseColor.value = new THREE.Color(sectionColorList[colorID].baseColor)
-    roundCube_material.uniforms.u_colorOverlay.value = new THREE.Color(sectionColorList[colorID].cubeColor)
-    roundCube_material.uniforms.u_absorb.value = new THREE.Color(sectionColorList[colorID].absorbColor)
+    animate_gradient(latest_color_id,colorID,2)
+    latest_color_id = colorID;
 }
 
 
@@ -656,19 +654,41 @@ var swiper = new Swiper(".mySwiper", {
     }
 });
 
-gradient_fx.intro();
+if(window.location.href.indexOf("step=2")>-1){
+
+    $(".success").addClass("active");
+    cube_fx_function.pos_fx();
+}
+else{
+    $(".mySwiper").show();
+    gradient_fx.intro();
+}
+
 
 
 $("#btn1").click(function () {
     $(".mySwiper").hide();
+    $(".logo").hide();
+    $("#startCol").addClass("active");
+    $(".content1").addClass("active");
+    $(".bottom-icon").show();
+    gradient_fx.intro();
     animate_cube_posy(-1.5,0,1);
-    $(".success").addClass("active");
+    cube_fx_function.scale_up();
+
+    /*$(".success").addClass("active");
+    gradient_fx.intro();*/
 
 })
 
 $("#btn2").click(function () {
     window.location.href="index.html";
 })
+
+$("#startBtn").click(function(){
+    window.location.href="result.html?id=1&date=2022.03.25&name="+escape("测试");
+
+});
 
 
 $(".content .list div").click(function () {
@@ -683,7 +703,12 @@ $(".content .list div").click(function () {
     if(cIndex==6){
         console.log("结束");
 
-        window.location.href="loading.html?id=1";
+        $(".mySwiper").hide();
+        $("#startCol").hide();
+        $(".bottom-icon").hide();
+        $(".success").addClass("active");
+        cube_fx_function.scale_down();
+        animate_cube_posy(-1.5,0.52,0);
         return;
     }
 
@@ -723,4 +748,4 @@ $(".bottom-icon .right").click(function () {
     }
 })
 
-//$(".content1").addClass("active");
+
