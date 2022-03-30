@@ -355,7 +355,7 @@ void main( void)
     float t = 3.14;
 //    float v = map2(cos(tt),-1.,1.,0.08,0.08);
     float v = map2(cos(tt),-1.,1.,0.00,0.02);
-    float v2 = map2(cos(tt*1.68),-1.,1.,0.1,1.);
+    float v2 = map2(cos(tt*1.68),-1.,1.,0.01,0.3);
     
     objDec inner, outter;
 //    outter.r = v * 0.75 + 0.10;
