@@ -347,6 +347,7 @@ function initRoundCube()
         u_absorb:{value:new THREE.Color('#000')},
         u_cubePhi:{value:4.4},
         u_dist:{value:12},
+        u_inner_rot_offset:{value: new Vector3(0,0,0)},
         iChannel0: { value: environmentMap}
     };
     const cubePlaneGeometry = new THREE.PlaneGeometry(roundcube_size,roundcube_size,2,2)
@@ -557,6 +558,7 @@ function animate_gradient(origin_id,target_id, duration)
     const origin_scale = 1.7
     const absorb_scale = {scale:1.}
     const energy_duration = duration*2
+    const inner_rot = {inner_rot_offset:0}
     energy_mesh.scale.set(origin_scale)
     energy_material.uniforms.u_intensity.value = 0.8
 
@@ -565,6 +567,9 @@ function animate_gradient(origin_id,target_id, duration)
         energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
     }}, "<")
 
+    tl.fromTo(inner_rot,{inner_rot_offset:0},{inner_rot_offset:10,duration:energy_duration*2,ease:'custom', onUpdate:()=>{
+            roundCube_material.uniforms.u_inner_rot_offset.value = new Vector3(inner_rot.inner_rot_offset)
+        }}, "<-1")
     //cube color
     tl.to(cube_color_trans,{overlay_color:target_gradient.cubeColor, duration:duration, onUpdate:()=>
         {

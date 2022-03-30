@@ -16,6 +16,7 @@ uniform float u_cameraOffset;
 uniform float u_cameraPerspective;
 uniform float u_cubePhi;
 uniform float u_dist;
+uniform vec3 u_inner_rot_offset;
 uniform float u_colorOverlayIntensity;
 
 varying vec2 vUv;
@@ -355,7 +356,7 @@ void main( void)
     float t = 3.14;
 //    float v = map2(cos(tt),-1.,1.,0.08,0.08);
     float v = map2(cos(tt),-1.,1.,0.00,0.02);
-    float v2 = map2(cos(tt*1.68),-1.,1.,0.01,0.2);
+    float v2 = map2(cos(tt*1.68),-1.,1.,0.06,0.3);
     
     objDec inner, outter;
 //    outter.r = v * 0.75 + 0.10;
@@ -366,7 +367,10 @@ void main( void)
     inner.r  = (1.-v2) * 0.25 + 0.05;
     // inner.r  = (1.-v2) * 0.35 + 0.1;
     inner.s	  = v2 * 0.35 ;
-    inner.m = fromEuler(vec3(t * 0.8 + 1.5,  t * 0.4 + 0.7, t * 0.7 + 2.3));
+    inner.m = fromEuler(vec3(
+        t * 0.8 + 1.5 + u_inner_rot_offset.x,
+        t * 0.4 + 0.7 + u_inner_rot_offset.y,
+        t * 0.7 + 2.3 + u_inner_rot_offset.z));
 
   
 	vec3 tot = vec3(0.0);   
