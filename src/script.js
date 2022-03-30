@@ -111,13 +111,13 @@ function initHierarchy()
 
 function initEnergy()
 {
-    const energy_size = 0.38
+    const energy_size = 0.2
     // instantiate a loader
     const texture = new THREE.TextureLoader().load('textures/RGBNoiseMedium.png');
     energy_uniform = {
         iGlobalTime:{type:'f',value:0.01},
         iChannel0: { type: 't', value: texture },
-        u_intensity:{value:0.},
+        u_intensity:{value:0.8},
         u_rot:{value:new Vector2(0)},
     };
 
@@ -504,20 +504,20 @@ tick()
 
 
 CustomEase.create("custom", "M0,0 C0.126,0.382 0.136,1 0.37,1 0.61,1 0.818,0.001 1,0 ");
-const energy_fx= {
-    absorb_fx:function (){
-        const absorb_scale = {scale:0.5}
-        const duration = 4
-        energy_mesh.scale.set(absorb_scale.scale)
-        energy_material.uniforms.u_intensity.value = 0
-
-        gsap.to(energy_material.uniforms.u_intensity,{value:1.3, duration:duration, ease:'custom'})
-        gsap.to(absorb_scale,{scale:1.8,duration:duration,ease:'custom', onUpdate:()=>{
-            energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
-        }})
-    }
-}
-gui.add(energy_fx,'absorb_fx')
+// const energy_fx= {
+//     absorb_fx:function (){
+//         const absorb_scale = {scale:0.5}
+//         const duration = 4
+//         energy_mesh.scale.set(absorb_scale.scale)
+//         energy_material.uniforms.u_intensity.value = 0
+//
+//         gsap.to(energy_material.uniforms.u_intensity,{value:1.3, duration:duration, ease:'custom'})
+//         gsap.to(absorb_scale,{scale:1.8,duration:duration,ease:'custom', onUpdate:()=>{
+//             energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
+//         }})
+//     }
+// }
+// gui.add(energy_fx,'absorb_fx')
 
 var changecolor =
     {
@@ -554,13 +554,14 @@ function animate_gradient(origin_id,target_id, duration)
     }
 
     // energy_fx color
-    const absorb_scale = {scale:0.5}
+    const origin_scale = 1.7
+    const absorb_scale = {scale:1.}
     const energy_duration = duration*2
-    energy_mesh.scale.set(0.5)
-    energy_material.uniforms.u_intensity.value = 0
+    energy_mesh.scale.set(origin_scale)
+    energy_material.uniforms.u_intensity.value = 0.8
 
-    tl.to(energy_material.uniforms.u_intensity,{value:1.3, duration:energy_duration, ease:'custom'})
-    tl.to(absorb_scale,{scale:1.8,duration:energy_duration,ease:'custom', onUpdate:()=>{
+    tl.to(energy_material.uniforms.u_intensity,{value:1.5, duration:energy_duration, ease:'custom'},'+=1.5')
+    tl.fromTo(absorb_scale,{scale:origin_scale},{scale:3.5,duration:energy_duration,ease:'custom', onUpdate:()=>{
         energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
     }}, "<")
 
