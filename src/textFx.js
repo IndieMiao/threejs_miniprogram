@@ -2,6 +2,7 @@ import gsap from 'gsap'
 import * as THREE from 'three'
 import {Text} from 'troika-three-text'
 import qadata from './qadata.js'
+import {Vector3} from "three";
 
 class TextGl
 {
@@ -84,8 +85,8 @@ class OptionPosition
 
 class OptionGroup
 {
-    constructor(question_id, origin_radius = 2,target_radius = 1, answer_count = 4) {
-        this.rawOption = qadata
+    constructor(optiondata = qadata,question_id, origin_radius = 2,target_radius = 1, answer_count = 4) {
+        this.rawOption = optiondata
         this.answer_count = answer_count
         this.getCurrentQA(question_id)
         this.option_origin_postitions= this.getOptionPositions(origin_radius,answer_count)
@@ -100,7 +101,12 @@ class OptionGroup
     }
     getOptionPositions(radius,count = 4)
     {
-        return OptionPosition(1,4).positions
+        // return OptionPosition(1,4).positions
+        console.log(OptionPosition(1,4).positions)
+    }
+    initTextGL()
+    {
+
     }
     selectOption()
     {
@@ -109,7 +115,16 @@ class OptionGroup
     {
         for(let i=0;i<this.answer_count;i++)
         {
-           this.tl.to(``)
+            let ani_position = {position: this.option_origin_postitions}
+           this.tl.fromTo(ani_position,{ position:this.option_origin_postitions },
+         {
+                    position:this.option_target_positions,
+                    duration:3,
+                    onUpdate:()=>
+                    {
+
+                    }
+               })
 
         }
     }
