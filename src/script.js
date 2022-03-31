@@ -622,7 +622,7 @@ const cube_fx_function = {
             energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
         }})
     },
-    pos_fx:()=>{animate_cube_posy(-1.5,0.38,2)},
+    pos_fx:()=>{animate_cube_posy(-1.5,0.38,1.5)},
 rot_fx:function(){},
 }
 function animate_cube_posy(origin_y, target_y, duration){
@@ -668,7 +668,9 @@ var swiper = new Swiper(".mySwiper", {
                 cube_fx_function.pos_fx();
             }
             else{
-                animate_cube_posy(-1.5,-1,1)
+                setTimeout(function(){
+                    animate_cube_posy(-1.5,-1,1)
+                },1);
             }
 
 
@@ -683,7 +685,9 @@ if(window.location.href.indexOf("step=2")>-1){
 }
 else{
     $(".mySwiper").show();
+    animate_cube_posy(-1.5,-1.5,0);
     gradient_fx.intro();
+
 }
 
 
@@ -708,11 +712,49 @@ $("#btn2").click(function () {
 })
 
 $("#startBtn").click(function(){
-    window.location.href="result.html?id=1&date=2022.03.25&name="+escape("测试");
+
+    for(var i=0;i<configJson.length;i++){
+        if(codeResult==configJson[i].CODE){
+
+
+            var ua = navigator.userAgent.toLowerCase();
+            if(ua.match(/MicroMessenger/i)=="micromessenger") {
+                //ios的ua中无miniProgram，但都有MicroMessenger（表示是微信浏览器）
+                wx.miniProgram.getEnv((res)=>{
+                    if (res.miniprogram) {
+                            wx.miniProgram.navigateTo({
+                                url:'/pages/natureTest?id='+configJson[i].ID,
+                                success: function(){
+                                    console.log('success')
+                                },
+                                fail: function(){
+                                    console.log('fail');
+                                    window.location.href="result.html?id="+configJson[i]+"&date=2022.03.25&name="+escape("测试");
+                                },
+                                complete:function(){
+                                    console.log('complete');
+                                }
+                            });
+                    }
+                    else{
+                        window.location.href="noWx.html?id="+configJson[i].ID;
+                    }
+            })
+            }else{
+                window.location.href="noWx.html?id="+configJson[i].ID;
+            }
+
+
+
+            return false;
+        }
+    }
+
 
 });
 
 
+var codeResult="";
 $(".content .list div").click(function () {
 
     var index=$(".content").index($(this).parent().parent());
@@ -722,7 +764,6 @@ $(".content .list div").click(function () {
     $(this).parent().addClass("animation");
 
     var cIndex=index+1;
-    console.log(cIndex);
     if(cIndex==6){
         console.log("结束");
 
@@ -735,7 +776,20 @@ $(".content .list div").click(function () {
         return;
     }
 
+    if(index<4){
+        var selectIndex=$(this).index();
+        if(selectIndex<=1){
+            codeResult=codeResult+"0";
+        }
+        else{
+            codeResult=codeResult+"1";
+        }
+        console.log("题目："+index+"选项："+selectIndex+"结果编码："+codeResult);
+    }
 
+
+
+    console.log("colorId:"+(cIndex+1));
     changecolorFun(cIndex+1);
 
 
@@ -777,5 +831,6 @@ $(".bottom-icon .right").click(function () {
         $(".content"+(cIndex+1)).addClass("active");
     }
 })
+
 
 
