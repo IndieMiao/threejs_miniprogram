@@ -622,7 +622,7 @@ const cube_fx_function = {
             energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
         }})
     },
-    pos_fx:()=>{animate_cube_posy(-1.5,0.3,1.5)},
+    pos_fx:()=>{animate_cube_posy(-1.5,0.16,1.5)},
 rot_fx:function(){},
 }
 function animate_cube_posy(origin_y, target_y, duration){
@@ -704,7 +704,7 @@ $("#btn1").click(function () {
     $(".content1").addClass("active");
     $(".bottom-icon").show();
     gradient_fx.intro();
-    animate_cube_posy(0.3,0,1);
+    animate_cube_posy(0.16,0,1);
     cube_fx_function.scale_up();
 
     /*$(".success").addClass("active");
@@ -725,7 +725,7 @@ function getUrlParam(name) {
 function openMiniProgram(id){
     console.log("跳转");
     wx.miniProgram.navigateTo({
-        url:'pages/natureTest?id='+id,
+        url:'/pages/natureTest?id='+id,
         success: function(){
             console.log('success')
         },
