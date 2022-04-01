@@ -622,7 +622,7 @@ const cube_fx_function = {
             energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
         }})
     },
-    pos_fx:()=>{animate_cube_posy(-1.5,0.38,1.5)},
+    pos_fx:()=>{animate_cube_posy(-1.5,0.3,1.5)},
 rot_fx:function(){},
 }
 function animate_cube_posy(origin_y, target_y, duration){
@@ -662,13 +662,18 @@ var swiper = new Swiper(".mySwiper", {
     direction: 'vertical',
     on: {
         slideChange: function (e) {
+
             intro_number=e.realIndex;
-            gradient_fx.intro();
             if(e.realIndex==2){
-                cube_fx_function.pos_fx();
+                console.log(2);
+                setTimeout(function() {
+                    gradient_fx.intro();
+                    cube_fx_function.pos_fx();
+                },10);
             }
             else{
                 setTimeout(function(){
+                    gradient_fx.intro();
                     animate_cube_posy(-1.5,-1,1)
                 },1);
             }
@@ -681,7 +686,7 @@ var swiper = new Swiper(".mySwiper", {
 if(window.location.href.indexOf("step=2")>-1){
 
     $(".success").addClass("active");
-    cube_fx_function.pos_fx();
+    animate_cube_posy(0,0.15,1);
 }
 else{
     $(".mySwiper").show();
@@ -699,7 +704,7 @@ $("#btn1").click(function () {
     $(".content1").addClass("active");
     $(".bottom-icon").show();
     gradient_fx.intro();
-    animate_cube_posy(0.38,0,1);
+    animate_cube_posy(0.3,0,1);
     cube_fx_function.scale_up();
 
     /*$(".success").addClass("active");
@@ -711,35 +716,52 @@ $("#btn2").click(function () {
     window.location.href="index.html";
 })
 
+function getUrlParam(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+    var r = window.location.search.substr(1).match(reg); //匹配目标参数
+    if (r != null) return unescape(r[2]); return null; //返回参数值
+}
+
+function openMiniProgram(id){
+    console.log("跳转");
+    wx.miniProgram.navigateTo({
+        url:'pages/natureTest?id='+id,
+        success: function(){
+            console.log('success')
+        },
+        fail: function(){
+            console.log('fail');
+        },
+        complete:function(){
+            console.log('complete');
+        }
+    });
+}
+
+
 $("#startBtn").click(function(){
 
+
+    var selectCode="";
+    for(var i in codeResult){
+        selectCode=selectCode+codeResult[i];
+    }
+    console.log("点击",selectCode);
+
+    if(window.location.href.indexOf("step=2")>-1){
+        var id=getUrlParam("id");
+        openMiniProgram(id);
+        return;
+    }
+
     for(var i=0;i<configJson.length;i++){
-        if(codeResult==configJson[i].CODE){
+        if(selectCode==configJson[i].CODE){
 
 
             var ua = navigator.userAgent.toLowerCase();
             if(ua.match(/MicroMessenger/i)=="micromessenger") {
-                //ios的ua中无miniProgram，但都有MicroMessenger（表示是微信浏览器）
-                wx.miniProgram.getEnv((res)=>{
-                    if (res.miniprogram) {
-                            wx.miniProgram.navigateTo({
-                                url:'/pages/natureTest?id='+configJson[i].ID,
-                                success: function(){
-                                    console.log('success')
-                                },
-                                fail: function(){
-                                    console.log('fail');
-                                    window.location.href="result.html?id="+configJson[i]+"&date=2022.03.25&name="+escape("测试");
-                                },
-                                complete:function(){
-                                    console.log('complete');
-                                }
-                            });
-                    }
-                    else{
-                        window.location.href="noWx.html?id="+configJson[i].ID;
-                    }
-            })
+                console.log("跳转");
+                openMiniProgram(configJson[i].ID);
             }else{
                 window.location.href="noWx.html?id="+configJson[i].ID;
             }
@@ -754,7 +776,7 @@ $("#startBtn").click(function(){
 });
 
 
-var codeResult="";
+var codeResult={};
 $(".content .list div").click(function () {
 
     var index=$(".content").index($(this).parent().parent());
@@ -779,12 +801,12 @@ $(".content .list div").click(function () {
     if(index<4){
         var selectIndex=$(this).index();
         if(selectIndex<=1){
-            codeResult=codeResult+"0";
+            codeResult[index]=0;
         }
         else{
-            codeResult=codeResult+"1";
+            codeResult[index]=1;
         }
-        console.log("题目："+index+"选项："+selectIndex+"结果编码："+codeResult);
+        console.log("题目："+index+"选项："+selectIndex+"结果编码：",codeResult);
     }
 
 

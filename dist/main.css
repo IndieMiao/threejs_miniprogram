@@ -30,15 +30,15 @@ html,body{color:#fff;height:100%;background: #000;overflow: hidden;}
 .img100{width:100%;height:100%;position: absolute;left:0;top:0;display: block;z-index:100;color:#fff;overflow: hidden;}
 .bottom-col{position: relative;}
 
-.content.active  .list.animation div{opacity: 0;transition: transform 4s ease 0.5s,right 4s ease 0.5s,left 4s ease 0.5s,margin 4s ease 0.5s;}
+.content.active  .list.animation div{opacity: 0;transition: transform 4s ease 0.5s,right 4s ease 0.5s,left 4s ease 0.5s,margin 4s ease 0.5s,opacity 4s ease 0.5s;}
 .content.active  .list.animation div.active{opacity: 1;transform-origin:50% 50%;margin-top:0;}
 
 .content.active  .list.animation div:nth-child(2n).active{
-    left:50%;transform:translate(-50%,0%) scale(0,0);
+    left:50%;transform:translate(-50%,0%) scale(0,0);opacity: 0;
 }
 
 .content.active  .list.animation div:nth-child(2n+1).active{
-    right:50%;transform:translate(50%,0%) scale(0,0);
+    right:50%;transform:translate(50%,0%) scale(0,0);opacity: 0;
 }
 
 .list div{font-size:4.4vw;display: inline-block;position: absolute;
@@ -136,8 +136,6 @@ padding:0 4vw;opacity: 0;}
 
 .logo{position: absolute;left:3vw;top:4vw;width:25.3vw;z-index:1000;}
 
-.graph{position: absolute;width:9.2vw;left:50%;margin-left:-4.6vw;bottom:15.47vw;-webkit-animation: opacity 1.2s linear infinite}
-
 @keyframes opacity {
     0% {
         -webkit-transform: translate(0,0px)
@@ -187,6 +185,11 @@ padding:0 4vw;opacity: 0;}
 .last-btn{transition:all 3.5s;opacity: 0;transform:translateY(1500px);}
 .swiper-slide-active .img{opacity:1;transform:translateY(0);}
 .swiper-slide-active .last-btn{opacity: 1;transform:translateY(0);}
+
+.graph{position: absolute;width:9.2vw;left:50%;margin-left:-4.6vw;bottom:15.47vw;-webkit-animation: opacity 1.2s linear infinite;opacity: 0;
+    transition:all 1s  ease-in 1s;}
+.swiper-slide-active .graph{opacity: 0.9;}
+
 .tansuo{transition:all 2s;z-index:-1;opacity:0;}
 .tansuo.active{opacity:1;z-index:100;}
 
