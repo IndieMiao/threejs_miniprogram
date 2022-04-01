@@ -146,9 +146,9 @@ const sectionColorList =
     [
         {
             colorLayers: ['#9f5ffe','#4c39ec','#d04e98', '#6c1fff'],
-            cubeColor: '#151515',
+            cubeColor: '#09053f',
             baseColor: '#76f6fa',
-            absorbColor: '#000000'
+            absorbColor: '#181201'
         },
         {
             colorLayers: ['#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE'],
@@ -607,21 +607,33 @@ const cube_fx= {
     size: 0.5,
 }
 
+function scale_cube_group(from = 0.75,to=1.7,duration = 1)
+{
+    cube_fx.size= from
+    gsap.to(cube_fx,{size:to, duration:1, onUpdate:()=>{
+            roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+            energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+        }})
+
+}
+
 const cube_fx_function = {
-    scale_up:function(){
-        cube_fx.size = 1
-        gsap.to(cube_fx,{size:1.7, duration:1, onUpdate:()=>{
-            roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
-            energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
-        }})
-    },
-    scale_down:function(){
-        cube_fx.size = 1.7
-        gsap.to(cube_fx,{size:1, duration:1, onUpdate:()=>{
-            roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
-            energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
-        }})
-    },
+    // scale_up:function(){
+    //     cube_fx.size = 1
+    //     gsap.to(cube_fx,{size:1.7, duration:1, onUpdate:()=>{
+    //         roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+    //         energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+    //     }})
+    // },
+    // scale_down:function(){
+    //     cube_fx.size = 1.7
+    //     gsap.to(cube_fx,{size:1, duration:1, onUpdate:()=>{
+    //         roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+    //         energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
+    //     }})
+    // },
+    scale_up:()=>{scale_cube_group(0.75,1.7,1)},
+    scale_down:()=>{scale_cube_group(1.7,0.75,1)},
     pos_fx:()=>{animate_cube_posy(-1.5,0.3,1.5)},
 rot_fx:function(){},
 }
