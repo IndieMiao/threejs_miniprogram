@@ -650,16 +650,23 @@ gui.add(cube_fx_function,'pos_fx')
 let intro_number = 0
 let intro_offset_list = [-0.66,-0.55,-0.38,1]
 
-const gradient_fx = {
-    intro:function (){
-        const intro_step = intro_number % 4
-        // let intro_offset= -0.66 + (1+0.66)*intro_step/4
-        gsap.to(gradient_material.uniforms.u_rampMaskOffset,{value:intro_offset_list[intro_step], duration:4})
-        console.log(intro_step)
-        intro_number +=1
-    },
+function intro_gradient_switch(intro_step)
+{
+    //intro_step :2 为一半
+    //intro_step :3 为全部铺满
+    gsap.to(gradient_material.uniforms.u_rampMaskOffset,{value:intro_offset_list[intro_step], duration:4})
 }
-gui.add(gradient_fx,'intro')
+
+// const gradient_fx = {
+//     intro:function (){
+//         const intro_step = intro_number % 4
+//         // let intro_offset= -0.66 + (1+0.66)*intro_step/4
+//         gsap.to(gradient_material.uniforms.u_rampMaskOffset,{value:intro_offset_list[intro_step], duration:4})
+//         console.log(intro_step)
+//         intro_number +=1
+//     },
+// }
+// gui.add(gradient_fx,'intro')
 
 
 
