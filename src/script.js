@@ -158,7 +158,7 @@ const sectionColorList =
         },
         {
             colorLayers: ['#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2'],
-            cubeColor: '#053d1f',
+            cubeColor: '#032814',
             baseColor: '#acffe5',
             absorbColor: '#2f0512'
         },
@@ -177,7 +177,7 @@ const sectionColorList =
         },
         {
             colorLayers: ['#F37DB2', '#E68BD6', '#F37DB2', '#E68BD6'],
-            cubeColor: '#420a27',
+            cubeColor: '#5e2140',
             baseColor: '#ffb8d4',
             absorbColor: '#0b2d18'
         },
@@ -313,12 +313,12 @@ function initEnvMap()
 
     environmentMap = cubeTextureLoader.load(
         [
-            '/textures/hdr4/px.png',
-            '/textures/hdr4/nx.png',
-            '/textures/hdr4/py.png',
-            '/textures/hdr4/ny.png',
-            '/textures/hdr4/pz.png',
-            '/textures/hdr4/nz.png'
+            '/textures/hdr6/px.png',
+            '/textures/hdr6/nx.png',
+            '/textures/hdr6/py.png',
+            '/textures/hdr6/ny.png',
+            '/textures/hdr6/pz.png',
+            '/textures/hdr6/nz.png'
         ]
     )
 }
@@ -336,11 +336,11 @@ function initRoundCube()
     //Geometry
     roundCube_uniform = {
         iGlobalTime:{type:'f',value:0.01},
-        u_intensity:{type:'f',value:1.7},
+        u_intensity:{type:'f',value:1.4},
         u_opacityOffset:{type:'f',value:0.55},
         u_opacity:{type:'f',value:1},
         u_chromeOffset:{type:'f',value:0.01},
-        u_colorOverlay:{value:new THREE.Color('#4a098a')},
+        u_colorOverlay:{value:new THREE.Color('#390769')},
         u_colorOverlayIntensity:{value:0.7},
         u_cameraPerspective:{value:3.5},
         u_cameraOffset:{value:6},
