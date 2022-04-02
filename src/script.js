@@ -146,9 +146,9 @@ const sectionColorList =
     [
         {
             colorLayers: ['#9f5ffe','#4c39ec','#d04e98', '#6c1fff'],
-            cubeColor: '#09053f',
+            cubeColor: '#4a098a',
             baseColor: '#76f6fa',
-            absorbColor: '#181201'
+            absorbColor: '#213603'
         },
         {
             colorLayers: ['#3397FF', '#6BC4FF', '#AD7DF0', '#A7AEFE'],
@@ -158,7 +158,7 @@ const sectionColorList =
         },
         {
             colorLayers: ['#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2'],
-            cubeColor: '#06264d',
+            cubeColor: '#053d1f',
             baseColor: '#acffe5',
             absorbColor: '#2f0512'
         },
@@ -171,7 +171,7 @@ const sectionColorList =
         },
         {
             colorLayers: ['#F5689B', '#fd4b89', '#E8E39B', '#9f1f4e'],
-            cubeColor: '#480729',
+            cubeColor: '#5b0934',
             baseColor: '#ffb9d5',
             absorbColor: '#130823'
         },
@@ -183,7 +183,7 @@ const sectionColorList =
         },
         {
             colorLayers: ['#42a6be', '#6bceec', '#B984F6', '#8861F5'],
-            cubeColor: '#100d45',
+            cubeColor: '#17377c',
             baseColor: '#a9deef',
             absorbColor: '#2f0926'
         }
@@ -313,12 +313,12 @@ function initEnvMap()
 
     environmentMap = cubeTextureLoader.load(
         [
-            '/textures/hdr5/px.png',
-            '/textures/hdr5/nx.png',
-            '/textures/hdr5/py.png',
-            '/textures/hdr5/ny.png',
-            '/textures/hdr5/pz.png',
-            '/textures/hdr5/nz.png'
+            '/textures/hdr4/px.png',
+            '/textures/hdr4/nx.png',
+            '/textures/hdr4/py.png',
+            '/textures/hdr4/ny.png',
+            '/textures/hdr4/pz.png',
+            '/textures/hdr4/nz.png'
         ]
     )
 }
@@ -336,15 +336,15 @@ function initRoundCube()
     //Geometry
     roundCube_uniform = {
         iGlobalTime:{type:'f',value:0.01},
-        u_intensity:{type:'f',value:1.6},
+        u_intensity:{type:'f',value:1.7},
         u_opacityOffset:{type:'f',value:0.55},
         u_opacity:{type:'f',value:1},
         u_chromeOffset:{type:'f',value:0.01},
-        u_colorOverlay:{value:new THREE.Color('#09053f')},
+        u_colorOverlay:{value:new THREE.Color('#4a098a')},
         u_colorOverlayIntensity:{value:0.7},
         u_cameraPerspective:{value:3.5},
         u_cameraOffset:{value:6},
-        u_absorb:{value:new THREE.Color('#181201')},
+        u_absorb:{value:new THREE.Color('#362203')},
         u_cubePhi:{value:4.4},
         u_dist:{value:12},
         u_inner_rot_offset:{value: new Vector3(0,0,0)},
