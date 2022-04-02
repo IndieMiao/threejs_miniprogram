@@ -158,9 +158,9 @@ const sectionColorList =
         },
         {
             colorLayers: ['#2A74F0', '#5BF4C3', '#70D3EA', '#57C9E2'],
-            cubeColor: '#032814',
+            cubeColor: '#054120',
             baseColor: '#acffe5',
-            absorbColor: '#2f0512'
+            absorbColor: '#2f050b'
         },
         //a2cd7a ,3be05b
         {
@@ -302,9 +302,9 @@ function initDebug()
 {
     gui = new dat.GUI({ width: 220 })
     debugObject = {}
-    stats = new Stats()
-    document.body.appendChild(stats.dom)
-    // gui.hide()
+    // stats = new Stats()
+    // document.body.appendChild(stats.dom)
+    gui.hide()
 }
 
 function initEnvMap()
@@ -462,7 +462,7 @@ function debugTick()
 
 const tick = () =>
 {
-    stats.begin()
+    // stats.begin()
     const elapsedTime = clock.getElapsedTime()
 
     if(roundCube_material)
@@ -496,7 +496,7 @@ const tick = () =>
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
-    stats.end()
+    // stats.end()
 }
 
 init()
