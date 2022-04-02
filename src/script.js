@@ -690,7 +690,7 @@ var swiper = new Swiper(".mySwiper", {
                $(".content1").addClass("active");
                $(".bottom-icon").show();
                animate_cube_posy(0.16,0,1);
-               scale_cube_group(0.9,0.9,1)
+               scale_cube_group(1.3,1.3,1)
 
            }
 
@@ -713,10 +713,17 @@ else{
 
 $(".img-fourth").click(function(){
 
-    $(".intro-first").removeClass("active");
-    $(".swiper").addClass("active");
-    animate_cube_posy(-1.5,0.3,1);
-    intro_gradient_switch(3);
+    $(".intro-first").addClass("out");
+    setTimeout(function(){
+        $(".intro-first").removeClass("active");
+        $(".swiper").addClass("active");
+       animate_cube_posy(-1.5,0.3,2);
+       intro_gradient_switch(3);
+
+    },1500);
+
+
+
 
 
 
@@ -806,7 +813,6 @@ $(".content .list div").click(function () {
         $(".bottom-icon").hide();
         $(".success").addClass("active");
         $(".logo").show();
-        cube_fx_function.scale_down();
         animate_cube_posy(0,0.15,1);
         return;
     }
