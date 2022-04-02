@@ -689,8 +689,8 @@ var swiper = new Swiper(".mySwiper", {
                $("#startCol").addClass("active");
                $(".content1").addClass("active");
                $(".bottom-icon").show();
-               animate_cube_posy(0.16,0,1);
-               scale_cube_group(1.3,1.3,1)
+               animate_cube_posy(0.16,0,2);
+               scale_cube_group(1.3,1.3,2)
 
            }
 

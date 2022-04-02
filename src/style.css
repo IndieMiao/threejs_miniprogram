@@ -79,28 +79,28 @@ padding:0 4vw;opacity: 0;}
 .list div:nth-child(1){
     right:1vw;
     margin-top:-44vw;
-    transition: all 0.8s;
+    transition: all 0.8s ease 0.5s;
 }
 .list div:nth-child(2){
     left:1vw;
     margin-top:-32vw;
-    transition: all 1.6s;
+    transition: all 1.6s ease 0.5s;
 }
 .list div:nth-child(3){
     right:0;
     margin-top:40vw;
-    transition: all 2.4s;
+    transition: all 2.4s ease 0.5s;
 }
 
 .list div:nth-child(4){
     left:6.4vw;
     margin-top:26vw;
-    transition: all 3.2s;
+    transition: all 3.2s ease 0.5s;
 }
 
 .bottom-col{position: absolute;bottom:13.87vw;width:100%;text-align: center;}
 .bottom-col .text{font-size:2.667vw;padding-bottom:4vw;}
-.text-col{display: block;position: absolute;left:3.76vw;top:22vw;opacity: 0;transition: all 2s;}
+.text-col{display: block;position: absolute;left:3.76vw;top:22vw;opacity: 0;transition: all 3s ease 0.5s;}
 .content.active .text-col{opacity: 1;}
 .no-col{
     position: absolute;left:5.86vw;top:8vw;
@@ -130,8 +130,8 @@ padding:0 4vw;opacity: 0;}
 }
 
 .swiper .intro-second .img{transform:translateY(800px);opacity: 0;}
-.swiper .intro-second .img-first{transition:all 1s ease 1.5s;}
-.swiper .intro-second .img-second{transition:all 1s ease 1.8s;}
+.swiper .intro-second .img-first{transition:all 1s ease 1.6s;}
+.swiper .intro-second .img-second{transition:all 1s ease 2.2s;}
 .swiper.active .intro-second .img{opacity:1;transform:translateY(0);}
 .swiper.active .intro-second .graph{opacity: 1;}
 
