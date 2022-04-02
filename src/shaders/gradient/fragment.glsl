@@ -18,6 +18,6 @@ void main() {
         color.g -= pow(st.y + sin(-12.0) * st.x, u_shadow_power) * 0.4;
     }
     mask = pow(clamp(1.-st.y + u_rampMaskOffset, 0., 1.),u_rampMaskPow);
-            gl_FragColor = vec4(color * u_intensiy, mask);
+            gl_FragColor = vec4(color * u_intensiy* mask, 1.);
 //    gl_FragColor = vec4(vec3(mask), 1.0);
 }
