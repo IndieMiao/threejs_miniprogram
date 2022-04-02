@@ -679,23 +679,20 @@ var changecolorFun=function(colorID){
 
 var swiper = new Swiper(".mySwiper", {
     direction: 'vertical',
+    allowSlidePrev: false,
     on: {
         slideChange: function (e) {
 
-            intro_number=e.realIndex;
-            if(e.realIndex==2){
-                console.log(2);
-                setTimeout(function() {
-                    gradient_fx.intro();
-                    cube_fx_function.pos_fx();
-                },10);
-            }
-            else{
-                setTimeout(function(){
-                    gradient_fx.intro();
-                    animate_cube_posy(-1.5,-1,1)
-                },1);
-            }
+           if(e.realIndex>0){
+
+               $(".logo").hide();
+               $("#startCol").addClass("active");
+               $(".content1").addClass("active");
+               $(".bottom-icon").show();
+               animate_cube_posy(0.16,0,1);
+               scale_cube_group(0.9,0.9,1)
+
+           }
 
 
         }
@@ -708,28 +705,24 @@ if(window.location.href.indexOf("step=2")>-1){
     animate_cube_posy(0,0.15,1);
 }
 else{
-    $(".mySwiper").show();
+    $(".intro-first").addClass("active");
     animate_cube_posy(-1.5,-1.5,0);
-    gradient_fx.intro();
+    intro_gradient_switch(2);
 
 }
 
+$(".img-fourth").click(function(){
+
+    $(".intro-first").removeClass("active");
+    $(".swiper").addClass("active");
+    animate_cube_posy(-1.5,0.3,1);
+    intro_gradient_switch(3);
 
 
-$("#btn1").click(function () {
-    $(".mySwiper").hide();
-    $(".logo").hide();
-    $("#startCol").addClass("active");
-    $(".content1").addClass("active");
-    $(".bottom-icon").show();
-    gradient_fx.intro();
-    animate_cube_posy(0.16,0,1);
-    cube_fx_function.scale_up();
 
-    /*$(".success").addClass("active");
-    gradient_fx.intro();*/
+});
 
-})
+
 
 $("#btn2").click(function () {
     window.location.href="index.html";
@@ -808,10 +801,11 @@ $(".content .list div").click(function () {
     if(cIndex==6){
         console.log("结束");
 
-        $(".mySwiper").hide();
+        $(".swiper").removeClass("active");
         $("#startCol").hide();
         $(".bottom-icon").hide();
         $(".success").addClass("active");
+        $(".logo").show();
         cube_fx_function.scale_down();
         animate_cube_posy(0,0.15,1);
         return;
