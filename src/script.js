@@ -560,9 +560,9 @@ function animate_gradient(origin_id,target_id, duration)
     const energy_duration = duration*2
     const inner_rot = {inner_rot_offset:0}
     energy_mesh.scale.set(origin_scale)
-    energy_material.uniforms.u_intensity.value = 0.8
+    energy_material.uniforms.u_intensity.value = 0.4
 
-    tl.to(energy_material.uniforms.u_intensity,{value:1.5, duration:energy_duration, ease:'custom'},'+=1.5')
+    tl.to(energy_material.uniforms.u_intensity,{value:0.8, duration:energy_duration, ease:'custom'},'+=1.5')
     tl.fromTo(absorb_scale,{scale:origin_scale},{scale:3.5,duration:energy_duration,ease:'custom', onUpdate:()=>{
         energy_mesh.scale.set(absorb_scale.scale,absorb_scale.scale,absorb_scale.scale)
     }}, "<")
