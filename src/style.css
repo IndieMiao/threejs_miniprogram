@@ -23,7 +23,7 @@ html,body{color:#fff;height:100%;background: #000;overflow: hidden;}
     transition: all 2s ease 0.5s;
 }
 
-.intro-first.out .img-fourth{opacity: 0;transition: all 1.5s;}
+.intro-first.out .img-fourth{opacity: 0;transition: all 0.5s;}
 .intro-first.out .out-col{transform: translateY(-1000px);transition: all 2s;}
 
 .intro-first .img-third{
