@@ -714,11 +714,14 @@ else{
 $(".img-fourth").click(function(){
 
     $(".intro-first").addClass("out");
+
+    intro_gradient_switch(3);
+
     setTimeout(function(){
+
         $(".intro-first").removeClass("active");
         $(".swiper").addClass("active");
        animate_cube_posy(-1.5,0.3,2);
-       intro_gradient_switch(3);
 
     },1500);
 
