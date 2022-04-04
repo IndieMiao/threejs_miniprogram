@@ -14,6 +14,7 @@ import gradientfragment from './shaders/gradient/fragment.glsl'
 import gradientvertex from './shaders/gradient/vertex.glsl'
 import energyfragment from './shaders/energy/energyfragment.glsl'
 import energyvertex from './shaders/energy/energyvertex.glsl'
+import textplanefragment from './shaders/textShader/textplanefragment.glsl'
 import {Text} from 'troika-three-text'
 import Stats from 'stats.js'
 import gsap from 'gsap'
@@ -42,6 +43,7 @@ let gradient_material
 let energy_mesh
 let axesHelper
 let stats
+let intro_cube_material, intro_cube_mesh
 
 
 var colorlayers_uniform=[]
@@ -67,6 +69,8 @@ function init()
     initEnvMap()
     initDebug()
     initHelper()
+
+    initIntroCube()
 
 
     initCameraControl()
@@ -106,6 +110,45 @@ function initHierarchy()
     // cubeMeshGroup.position.set(0,0.2,0.1)
 
     // scene.add(cubeRootGroup)
+
+}
+function initIntroCube()
+{
+    const energy_size = 0.85
+    // instantiate a loader
+    const base_texture = new THREE.TextureLoader().load('textures/intro_cube.png')
+    // const light_texture = new THREE.TextureLoader().load('textures/intro_cube_light.png')
+    const uniform = {
+        iGlobalTime:{type:'f',value:0.01},
+        u_map: { type: 't', value: base_texture },
+        u_base_intensity:{value:0.75},
+        u_opacity:{type:'t',value:1},
+        u_base_pow:{value:1.6},
+        u_light_pow:{value:0.15},
+        u_light_intensity:{value:3},
+        u_light_offset:{type:'f',value: -0.5},
+        u_light_color:{value:new THREE.Color('#458abd'),
+        }
+    }
+
+    //Geometry
+
+    const intro_cube_geometry= new THREE.PlaneGeometry(energy_size,energy_size,2,2)
+    intro_cube_material= new THREE.ShaderMaterial(
+        {
+            vertexShader: energyvertex,
+            fragmentShader: textplanefragment,
+            // side:THREE.DoubleSide,
+            uniforms:uniform
+        }
+    )
+    intro_cube_material.transparent = true
+    // intro_cube_material.blending = THREE.AdditiveBlending
+    // Mesh
+    intro_cube_mesh = new THREE.Mesh(intro_cube_geometry, intro_cube_material)
+    scene.add(intro_cube_mesh)
+    intro_cube_mesh.position.y = -0.1
+    intro_cube_mesh.position.x = -0.01
 
 }
 
@@ -480,6 +523,15 @@ const tick = () =>
         energy_material.uniforms.u_rot.value = new Vector2((Math.sin(elapsedTime)+1)*0.15,0.2)
         // energyMaterial.uniforms.u_rot.value = new Vector2(0.5,0.5)
     }
+    if(intro_cube_material)
+    {
+        const scale =1+Math.cos(elapsedTime)*0.02
+        intro_cube_material.uniforms.iGlobalTime.value =elapsedTime
+        intro_cube_material.uniforms.u_light_intensity.value =(Math.sin(elapsedTime*2.5)+1)*2.5+0.03
+        intro_cube_mesh.position.y = Math.sin(elapsedTime)*0.02-0.1;
+        // intro_cube_mesh.scale.set(new Vector3(1+Math.cos(elapsedTime)*0.1));
+        // intro_cube_mesh.scale.set(scale,scale,scale);
+    }
     // Update controls
     controls.update()
 
@@ -602,10 +654,27 @@ function animate_gradient(origin_id,target_id, duration)
     }
 }
 
+function intro_cube_fade(from = 0,to = 1,duration = 0.5)
+{
+    const intro_cube_opacity = {
+        opacity :0,
+    }
+    gsap.fromTo(intro_cube_material.uniforms.u_opacity,{value:from},{value:to,duration:duration})
+}
+const intro_cube_test =
+    {
+        fade_in:()=>{intro_cube_fade(0,1,1.0)},
+        fade_out:()=>{intro_cube_fade(1,0,0.5)},
+    }
+gui.add(intro_cube_test,'fade_in')
+gui.add(intro_cube_test,'fade_out')
+
+
 const cube_fx= {
     pos:{ x:0, y:0, },
     size: 0.5,
 }
+
 
 function scale_cube_group(from = 0.75,to=1.7,duration = 1)
 {
@@ -614,7 +683,6 @@ function scale_cube_group(from = 0.75,to=1.7,duration = 1)
             roundCube_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
             energy_mesh.scale.set(cube_fx.size,cube_fx.size,cube_fx.size)
         }})
-
 }
 
 const cube_fx_function = {
